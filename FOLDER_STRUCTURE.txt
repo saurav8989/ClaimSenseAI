@@ -1,0 +1,105 @@
+========================================================================
+                   CLAIMSENSE AI - PROJECT FOLDER STRUCTURE
+========================================================================
+
+To keep development organized and prevent conflicts, we will use a unified
+directory structure. Below is the layout for our two stack options. 
+
+We recommend **Option A (Next.js Fullstack)** because it runs everything in 
+one place and simplifies parallel development.
+
+------------------------------------------------------------------------
+OPTION A: NEXT.JS FULLSTACK (RECOMMENDED)
+------------------------------------------------------------------------
+
+All code exists in a single project tree. Developers work in designated
+folders based on their roles.
+
+ClaimSenseAI/
+├── src/
+│   ├── app/                      # Page views and API routes (Next.js App Router)
+│   │   ├── page.jsx              # Landing / Role Selection Page
+│   │   │
+│   │   ├── doctor/               # [DEV 1] Doctor Note / Claim Builder Page
+│   │   │   └── page.jsx
+│   │   │
+│   │   ├── reviewer/             # [DEV 3] Reviewer Queue & Details Page
+│   │   │   └── page.jsx
+│   │   │
+│   │   └── api/                  # API Endpoints
+│   │       ├── openimis/         # [DEV 1] Mock openIMIS API (claim storage)
+│   │       │   └── route.js
+│   │       ├── suggest-icd/      # [DEV 2] Autocomplete suggestions endpoint
+│   │       │   └── route.js
+│   │       └── analyze/          # [DEV 2] Compliance & Risk scoring endpoint
+│   │           └── route.js
+│   │
+│   ├── components/               # Reusable Frontend Components
+│   │   ├── ClaimBuilder.jsx      # [DEV 1] Form components
+│   │   ├── ReviewerQueue.jsx     # [DEV 3] Main reviewer queue list
+│   │   ├── DeviationTimeline.jsx # [DEV 3] Interactive STP deviation timeline
+│   │   └── ui/                   # Shared UI primitives (buttons, modals)
+│   │
+│   ├── lib/                      # [DEV 2] Core Business Logic (No UI code)
+│   │   ├── icdSuggester.js       # ICD recommendation keyword engine
+│   │   ├── stpEngine.js          # Rules engine for standard treatment protocols
+│   │   ├── riskScorer.js         # Score calculator and flag trigger
+│   │   └── mockDb.js             # Mock SQLite or JSON claim database
+│   │
+│   └── styles/                   # Styling systems (Tailwind/CSS)
+│
+├── public/                       # Static assets (images, logos)
+├── package.json
+└── README.md
+
+---
+
+------------------------------------------------------------------------
+OPTION B: SEPARATED FRONTEND & BACKEND (REACT + PYTHON/FASTAPI)
+------------------------------------------------------------------------
+
+If you choose a Python-based backend, divide the repository into two root
+folders (`frontend/` and `backend/`):
+
+ClaimSenseAI/
+├── backend/                      # [DEV 2 & DEV 1 Backend]
+│   ├── app/
+│   │   ├── main.py               # FastAPI entrypoint
+│   │   ├── database.py           # Mock Database connections
+│   │   ├── schemas.py            # Pydantic data schemas
+│   │   ├── routers/
+│   │   │   ├── openimis.py       # [DEV 1] Mock openIMIS API routes
+│   │   │   └── claimsense.py     # [DEV 2] Clinical & STP check API routes
+│   │   └── services/             # Core algorithms
+│   │       ├── icd_suggest.py    # [DEV 2] Keyword suggestion engine
+│   │       ├── stp_checker.py    # [DEV 2] STP Rules engine
+│   │       └── risk_scorer.py    # [DEV 2] Risk & Priority scoring
+│   ├── requirements.txt          # Python dependencies
+│   └── README.md
+│
+├── frontend/                     # [DEV 1 & DEV 3 Frontend]
+│   ├── src/
+│   │   ├── components/           # UI Elements (ClaimBuilder, ReviewerQueue)
+│   │   ├── pages/
+│   │   │   ├── DoctorPage.jsx    # [DEV 1] Doctor Claim entry UI
+│   │   │   └── ReviewerPage.jsx  # [DEV 3] Dashboard UI
+│   │   ├── services/             # Axios/Fetch API calls to Python backend
+│   │   │   └── api.js
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── package.json
+│   └── README.md
+│
+└── README.md
+
+---
+
+------------------------------------------------------------------------
+MEMBER ACTION ITEM
+------------------------------------------------------------------------
+
+Once the team selects Option A or Option B:
+1. **Initialize the workspace structure** (e.g. create folders `/src/app/`, `/src/components/`, and `/src/lib/` for Option A).
+2. **Develop exclusively in your module directories** to prevent merge conflicts.
+3. **Commit often** to the `dev` branch.
+========================================================================
