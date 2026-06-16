@@ -6,29 +6,6 @@ This guide explains how our 3 developers and 1 documenter will collaborate
 using our three primary Git branches: `main`, `qa`, and `dev`.
 
 ------------------------------------------------------------------------
-0. CLONING THE REPOSITORY & FIRST-TIME SETUP
-------------------------------------------------------------------------
-
-When joining the project for the first time, follow these steps to clone
-the repository and set up your local environment:
-
-Step 1: Clone the repository to your local machine:
-    git clone <YOUR_REPOSITORY_GITHUB_URL>
-
-Step 2: Enter the project directory:
-    cd ClaimSenseAI
-
-Step 3: Fetch all remote branches from GitHub:
-    git fetch --all
-
-Step 4: Switch to the active development branch (dev):
-    git checkout dev
-
-Step 5: Verify you are on the dev branch before starting any work:
-    git branch
-    (You should see '* dev' highlighted)
-
-------------------------------------------------------------------------
 1. BRANCH STRUCTURE & ROLES
 ------------------------------------------------------------------------
 
