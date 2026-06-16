@@ -1,0 +1,56 @@
+# Node / Frontend
+node_modules/
+dist/
+build/
+.next/
+.svelte-kit/
+.nuxt/
+out/
+.docusaurus/
+.cache/
+.parcel-cache/
+.turbo/
+.npm
+*.log
+
+# Python / Backend
+venv/
+.venv/
+env/
+ENV/
+bin/
+lib/
+include/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+
+# OS / IDEs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Project specific
+db.sqlite3
+*.db
