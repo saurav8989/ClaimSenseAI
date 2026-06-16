@@ -3,97 +3,82 @@
 ========================================================================
 
 To enable maximum parallel development and avoid code merge conflicts, 
-responsibilities are divided into independent modules with clear interfaces.
+the 9 core application modules are distributed among team members with
+agreed-upon interfaces and timelines.
 
 ------------------------------------------------------------------------
-1. TEAM ROLES & ASSIGNMENTS
+1. TEAM ROLES & MODULE ASSIGNMENTS
 ------------------------------------------------------------------------
 
-*   DEVELOPER 1: Provider Portal & openIMIS Mock (Frontend UI & Mock Integration)
-*   DEVELOPER 2: ClaimSense AI Core Engine (Clinical Rules & Risk Scoring)
-*   DEVELOPER 3: Medical Reviewer Dashboard (Reviewer UI & Action Syncer)
-*   TEAM MEMBER 4: Documentation, Pitch & Presentation (Slides & Technical Docs)
+### 👤 DEVELOPER 1: Provider UI & Mock Integrations
+*   **Module 4: Claim Builder (Provider Side)**
+    - Helper tools to construct claims including Selected ICD, Meds, Services, and Procedures.
+*   **Module 9: Dashboard (Provider View)**
+    - Clinical Note text box, instant AI suggestion list, and Claim Builder interface.
+*   **openIMIS Mock Integration**
+    - Mock API endpoints for claim creation and retrieval.
+
+### 👤 DEVELOPER 2: Core AI Engine & Clinical Rules (Backend Logic)
+*   **Module 1: ICD Knowledge Engine**
+    - Syncing WHO ICD-11 API data into a local search index.
+*   **Module 2: AI Clinical Note Interpreter**
+    - Extracts symptoms and suspected conditions using LLM or rule-based parser.
+*   **Module 3: AI ICD Coding Engine**
+    - Text embedding $\rightarrow$ Vector similarity search $\rightarrow$ Confidence score suggestions.
+*   **Module 5: Clinical Validation Engine**
+    - Cross-checking Diagnosis ↔ Service, Diagnosis ↔ Medication, and Diagnosis ↔ Procedure.
+*   **Module 6: STP Compliance Engine**
+    - Compares care pathways against the 10 Clinical Protocols, calculating compliance scores.
+*   **Module 7: Risk Scoring Engine**
+    - Calculates 0-100 overall risk score based on weighted factors (ICD, Match, STP, Anomaly).
+
+### 👤 DEVELOPER 3: Medical Reviewer Dashboard & Adjudication
+*   **Module 8: Reviewer Prioritization Engine**
+    - Automated sorting algorithms ranking submitted claims by risk score (descending).
+*   **Module 9: Dashboard (Reviewer View)**
+    - Main claims queue showing prioritized lists.
+    - Inspect panels breaking down clinical validation failures and care pathway deviations.
+    - Status syncer backend endpoint executing payment decisions (Approve / Reject / Modify).
+
+### 👤 TEAM MEMBER 4: Documentation, Pitch & Presentation
+*   Technical documentation, README maintenance, user guides.
+*   Architecture visualizations, sequence diagrams, slide deck creation (Problem, Solution, Tech, Impact).
+*   Video demo scripting and presentation execution.
 
 ------------------------------------------------------------------------
-2. MODULE SPECIFICATIONS & INTERFACES (PARALLEL BOUNDARIES)
+2. MODULE SPECIFICATIONS & BOUNDARIES
 ------------------------------------------------------------------------
 
-To work in parallel without blocking each other, we will use mock JSON files
-and agreed-upon API endpoints as boundaries.
+To develop parallelly:
+*   **Developer 1** uses static mocks of `/api/suggest-icd` and `/api/analyze` to build the UI immediately.
+*   **Developer 3** uses static mocks of `/api/openimis/claims` to build the queue and timeline.
+*   **Developer 2** builds the actual logic in isolated functions (`lib/icdSuggester.js`, `lib/stpEngine.js`) without depending on UI elements.
 
 ---
 
-### [DEVELOPER 1] - Provider Portal & openIMIS Mock
-*   Scope:
-    - Build the "Doctor's Note Input" screen.
-    - Build the "Claim Builder" form (inputting patient details, diagnoses,
-      prescribed medications, and procedures).
-    - Implement the frontend autocomplete for diagnoses (querying the keyword 
-      matching endpoint built by Developer 2).
-    - Build the mock `openIMIS` submission handler (submits claim to DB/state).
-*   Key Deliverables:
-    - `components/DoctorNoteInput.jsx`
-    - `components/ClaimBuilderForm.jsx`
-    - `api/openimis/claims` (Mock endpoints to Create and Retrieve claims)
-
----
-
-### [DEVELOPER 2] - ClaimSense AI Core Engine (Backend Logic)
-*   Scope:
-    - Create the keyword-matching dictionary for ICD codes and clinical services
-      (e.g., matching "fever" to Malaria, or "chest pain" to Hypertension).
-    - Write the STP (Standard Treatment Protocol) rule evaluator.
-    - Write the clinical validation rules (e.g., verifying drug compatibility
-      and proper procedure association).
-    - Write the Risk Scoring & Priority logic (0-100 score + severity flags).
-*   Key Deliverables:
-    - `lib/icdSuggestEngine.js` (Fuzzy keyword to code recommender)
-    - `lib/stpRuleEvaluator.js` (Validates care pathways, calculates score)
-    - `api/claimsense/analyze` (API route evaluating submitted claims)
-
----
-
-### [DEVELOPER 3] - Medical Reviewer Dashboard
-*   Scope:
-    - Build the Reviewer Dashboard landing page showing claims queue sorted by
-      Priority/Risk Score (High risk claims at the top).
-    - Build the detailed "Claim Reviewer Panel" showing:
-      * Standard patient details.
-      * Claim status, flags, and overall risk score.
-      * Visual timeline/flow of care pathway, highlighting deviation points.
-      * Explanations of clinical validation failures.
-    - Implement action buttons (Approve / Reject / Modify Claim) that write back
-      to the mock openIMIS database.
-*   Key Deliverables:
-    - `components/ReviewerQueue.jsx`
-    - `components/DeviationTimeline.jsx` (Pathway visualizer)
-    - `api/reviewer/adjudicate` (Saves decision to DB)
-
----
-
-### [TEAM MEMBER 4] - Documentation & Pitch
-*   Scope:
-    - Maintain and refine project documentation (README, setup guides).
-    - Document the selected clinical conditions & protocols modeled in the system.
-    - Create the pitch slides (Problem Statement, Solution, Architecture, Impact).
-    - Manage the submission resources (pitch video recording, GitHub repository).
-
 ------------------------------------------------------------------------
-3. WORKFLOW TIMELINE FOR PARALLEL WORK
+3. WORKFLOW TIMELINE FOR PARALLEL WORK (24-HOUR HACKATHON)
 ------------------------------------------------------------------------
 
-*   Phase 1 (Setup & Mocking - Hours 0-4):
-    - Developer 1 defines the standard Claim JSON schema.
-    - Developer 2 defines the expected `/api/claimsense/analyze` response schema.
-    - Developer 3 designs wireframes for the Reviewer Queue.
+#### 🕐 Phase 1: Setup & Interface Definition (Hours 0 - 4)
+*   **DEV 1**: Set up Next.js pages structure, create initial CSS/Tailwind layouts.
+*   **DEV 2**: Set up local Mock database (`lib/mockDb.js`) and define JSON schemas. Fetch WHO ICD-11 codes.
+*   **DEV 3**: Set up dashboard routes and review timeline wireframes.
+*   **MEMBER 4**: Write project README and start the slide outline.
 
-*   Phase 2 (Independent Build - Hours 4-16):
-    - Developer 1 builds the Doctor claim entry UI.
-    - Developer 2 builds the algorithms (scoring, STP validation rules).
-    - Developer 3 builds the dashboard UI using static mock data.
+#### 🕐 Phase 2: Core Implementation (Hours 4 - 12)
+*   **DEV 1**: Build Provider note editor, Claim builder list, and mock submit handler.
+*   **DEV 2**: Write Module 1, 2, 3 (ICD engines, note parsers, embeddings) and Module 5 & 6 (Validation & STP rules).
+*   **DEV 3**: Build Reviewer Queue interface, layout the priority list, and build action APIs.
+*   **MEMBER 4**: Design architecture schematics, document the 10 Clinical Protocols.
 
-*   Phase 3 (Integration & Testing - Hours 16-24):
-    - Connect UI fields to Backend endpoints on the `dev` branch.
-    - Merge `dev` into `qa` and resolve bugs.
-    - Finalize slides and prep demo.
+#### 🕐 Phase 3: Integration & Testing (Hours 12 - 18)
+*   **DEV 1 + DEV 2**: Connect doctor note editor to `/api/suggest-icd` and claim submitter to `/api/analyze`.
+*   **DEV 2 + DEV 3**: Feed `/api/analyze` risk output into the reviewer priority list. Connect action buttons.
+*   **DEV 1 + DEV 3**: Run end-to-end user flows (Doctor note $\rightarrow$ submit $\rightarrow$ check $\rightarrow$ review $\rightarrow$ approve).
+*   **MEMBER 4**: Finalize slides, assemble screenshots/recordings of working components.
+
+#### 🕐 Phase 4: Polish & Delivery (Hours 18 - 24)
+*   **DEV 1, 2, 3**: Fix integration bugs, refine UI animations, ensure quick loads.
+*   **ALL**: Practice the presentation, record the product video, push stable code to `main`.
 ========================================================================
