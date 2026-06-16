@@ -202,8 +202,8 @@ sequenceDiagram
 
 Based on alignment, we have finalized the following scoping decisions:
 *   **openIMIS Integration**: We will use a **Mock/Simulated openIMIS API** approach. This will involve exposing API endpoints (e.g., webhook receiver) that mirror realistic openIMIS schemas.
-*   **Clinical Conditions**: We will focus on **3 to 4 clinical conditions** to model rules and protocols for (e.g., Hypertension, Malaria, Type 2 Diabetes, Acute Appendicitis).
-*   **AI ICD Suggestion**: We will use a **rule-based / keyword search engine** (fast, offline-capable, and deterministic) rather than a dynamic LLM API.
+*   **Clinical Conditions**: We will focus on **10 clinical conditions** to model rules and protocols for (e.g., Malaria, Hypertension, Diabetes, Appendicitis, Tuberculosis, Anemia, Tonsillitis, Asthma, Cholecystitis, UTI).
+*   **AI ICD Suggestion**: We will implement a multi-layered engine including a local database synced with the WHO ICD API, an LLM-based note interpreter, and an embedding-based similarity search index.
 
 ---
 
@@ -220,6 +220,124 @@ To match our team structure (3 active developers and 1 documenter), we will main
 3.  **`dev`** (Active Development Collaboration):
     *   This is the shared playground for our 3 developers. 
     *   Instead of working in isolated silos, the 3 developers pull from `dev` and push their incremental additions to `dev` frequently. This ensures early integration and immediate visibility of API or component contract changes.
+
+---
+
+## 10. Core Application Modules
+
+We will implement the following 9 modules as defined in the system specification:
+
+### 🟦 Module 1: ICD Knowledge Engine
+*   **Purpose**: Provide standardized disease coding mappings.
+*   **Data Source**: World Health Organization (WHO) ICD-11 API.
+*   **Process**: WHO ICD API $\rightarrow$ Local Database $\rightarrow$ Search Index.
+*   **Stored Structure**:
+    ```json
+    {
+      "code": "J18.9",
+      "title": "Pneumonia",
+      "synonyms": ["lung infection", "fever cough"]
+    }
+    ```
+
+### 🟦 Module 2: AI Clinical Note Interpreter
+*   **Purpose**: Convert unstructured doctor text into structured clinical meaning.
+*   **Input**: `“Fever, cough, difficulty breathing”`
+*   **Process**: LLM extraction (e.g., Gemini API) or Rule-based extraction.
+*   **Output**:
+    ```json
+    {
+      "symptoms": ["fever", "cough", "breathlessness"],
+      "suspected_diagnosis": "pneumonia"
+    }
+    ```
+
+### 🟦 Module 3: AI ICD Coding Engine
+*   **Purpose**: Suggest appropriate ICD codes based on clinical notes.
+*   **Process**: Text $\rightarrow$ Generate Text Embedding $\rightarrow$ Perform ICD Similarity Search $\rightarrow$ Return top 3 matched ICD codes.
+*   **Output**:
+    ```json
+    [
+      { "code": "J18.9", "confidence": 0.94 },
+      { "code": "J00", "confidence": 0.40 }
+    ]
+    ```
+
+### 🟦 Module 4: Claim Builder (Provider Side)
+*   **Purpose**: Assist doctors in constructing a structured, valid claim payload.
+*   **Input**: Selected ICD code, prescribed medicines, services, and CPT procedures.
+*   **Output**:
+    ```json
+    {
+      "icd": "J18.9",
+      "services": ["Chest X-Ray", "CBC"],
+      "medicines": ["Amoxicillin"]
+    }
+    ```
+
+### 🟦 Module 5: Clinical Validation Engine (Core Innovation)
+*   **Purpose**: Detect and flag clinical mismatches during claim compilation.
+*   **Validation Checks**:
+    1. *Diagnosis ↔ Service*: e.g., Pneumonia + MRI Brain ❌
+    2. *Diagnosis ↔ Medication*: e.g., Diabetes + Antibiotic ❌
+    3. *Diagnosis ↔ Procedure*: e.g., Cold + CT Scan ❌
+*   **Output**:
+    ```json
+    {
+      "issues": ["MRI Brain not clinically justified"],
+      "status": "warning"
+    }
+    ```
+
+### 🟦 Module 6: STP Compliance Engine
+*   **Purpose**: Evaluate the care pathway against national Standard Treatment Protocols (STPs).
+*   **Evaluation Example**:
+    - *Expected*: Acute Diarrhea $\rightarrow$ ORS + Zinc
+    - *Actual*: CT Scan + IV Antibiotics
+*   **Output**:
+    ```json
+    {
+      "compliance_score": 38,
+      "deviation": "High"
+    }
+    ```
+
+### 🟦 Module 7: Risk Scoring Engine
+*   **Purpose**: Quantify the overall claim risk score using a weighted multi-factor calculation.
+*   **Risk Factors & Weights**:
+    - **ICD Accuracy**: 25%
+    - **Clinical Match (Diagnosis ↔ Services/Meds)**: 30%
+    - **STP Compliance**: 30%
+    - **Anomaly Detection**: 15%
+*   **Output**:
+    ```json
+    {
+      "risk_score": 87,
+      "risk_level": "HIGH"
+    }
+    ```
+
+### 🟦 Module 8: Reviewer Prioritization Engine
+*   **Purpose**: Sort and prioritize claims dynamically for the insurance review queue.
+*   **Function**: Sort claims by Risk Score descending (highest risk first).
+*   **Example Queue**:
+    | Claim ID | Risk Score |
+    | :--- | :--- |
+    | `C001` | 92 (High Priority) |
+    | `C003` | 78 (Medium-High Priority) |
+    | `C002` | 45 (Low Priority) |
+
+### 🟦 Module 9: Dashboard (Very Important)
+*   **Provider View**:
+    - Enter unstructured clinical notes.
+    - View instant AI ICD suggestions.
+    - Interactively build the claim checklist.
+    - Review warnings and compliance scores in real-time.
+*   **Reviewer View**:
+    - Claims list sorted dynamically by risk.
+    - Interactive panels highlighting clinical mismatches and STP deviation pathways.
+    - Direct Approve/Reject interface.
+
 
 
 
