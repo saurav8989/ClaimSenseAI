@@ -1,0 +1,90 @@
+========================================================================
+                  CLAIMSENSE AI - CLINICAL REFERENCES
+========================================================================
+
+This document contains the medical guidelines, national standards, and academic
+citations validating the rules in our `clinicalDictionary.json`. Use these references
+during the presentation/pitch to answer questions regarding medical logic.
+
+------------------------------------------------------------------------
+Citations and Presentation Scripts for Judges
+------------------------------------------------------------------------
+
+### 1. Malaria (ICD B54)
+*   **clinicalDictionary Rule**: ACT (`MED-AL-ACT`) requires prior `TEST-MAL-RDT` or `TEST-MAL-SMEAR`.
+*   **Medical Authority Guidelines**: **World Health Organization (WHO) Guidelines for Malaria**.
+*   **Presentation Script**:
+    "To prevent drug resistance and ensure accurate claim legitimacy, we implement the WHO T3 Initiative (Test, Treat, Track). This protocol mandates laboratory confirmation (microscopy or Rapid Diagnostic Test) for all suspected cases before starting Artemether-Lumefantrine (ACT) therapy."
+
+---
+
+### 2. Essential Hypertension (ICD I10)
+*   **clinicalDictionary Rule**: Anti-hypertensive (`MED-AML-5` / `MED-LIS-10`) requires prior `TEST-BP-CHECK`.
+*   **Medical Authority Guidelines**: **ACC/AHA (American College of Cardiology / American Heart Association) Hypertension Guidelines**.
+*   **Presentation Script**:
+    "We utilize the ACC/AHA guidelines, which require documented clinical readings showing Systolic >= 140 or Diastolic >= 90 mmHg to validate a diagnosis of Essential Hypertension before billing anti-hypertensive drugs."
+
+---
+
+### 3. Type 2 Diabetes (ICD E11)
+*   **clinicalDictionary Rule**: Glycemic meds (`MED-MET-500` / `MED-INS-GLAR`) require prior `TEST-GLU-FPG` or `TEST-GLU-HBA1C`. Insulin Glargine requires prior Metformin trial.
+*   **Medical Authority Guidelines**: **ADA (American Diabetes Association) Standards of Care in Diabetes**.
+*   **Presentation Script**:
+    "Following the ADA Guidelines, Metformin is established as the first-line oral therapeutic. The engine triggers a 'step-therapy deviation' if a patient is placed directly on expensive Insulin Glargine without a documented Metformin trial or an HbA1c result exceeding 10%."
+
+---
+
+### 4. Acute Appendicitis (ICD K35.8)
+*   **clinicalDictionary Rule**: Appendectomy (`PROC-APPEND`) requires prior imaging (`TEST-IMG-US` or `TEST-IMG-CT`).
+*   **Medical Authority Guidelines**: **NICE (National Institute for Health and Care Excellence) Guidelines for Appendicitis**.
+*   **Presentation Script**:
+    "To safeguard patient quality of care and optimize surgical claim reviews, we enforce NICE standards. The system flags appendectomy claims lacking preceding abdominal ultrasound or CT scan verification of appendiceal inflammation."
+
+---
+
+### 5. Pulmonary Tuberculosis (ICD A15.0)
+*   **clinicalDictionary Rule**: TB therapy (`MED-TB-HRZE`) requires positive `TEST-TB-AFB` or `TEST-TB-GENEX`. HRZE multi-drug therapy is mandatory.
+*   **Medical Authority Guidelines**: **WHO Consolidated Guidelines on Tuberculosis: Diagnostics and Treatment**.
+*   **Presentation Script**:
+    "Our TB module implements WHO diagnostic algorithms. It blocks TB claims if there is no sputum smear or GeneXpert molecular assay logged, and enforces the standard 4-drug HRZE combination regimen to prevent Multi-Drug Resistant TB (MDR-TB)."
+
+---
+
+### 6. Iron Deficiency Anemia (ICD D50.9)
+*   **clinicalDictionary Rule**: Iron supplement (`MED-IRON-SULF`) requires prior blood panel (`TEST-CBC` or `TEST-FERRITIN`).
+*   **Medical Authority Guidelines**: **ASH (American Society of Hematology) Clinical Guidelines**.
+*   **Presentation Script**:
+    "Based on ASH guidelines, the system flags the billing of iron supplements if a CBC or Ferritin panel is missing, preventing unnecessary supplementation and prompting verification of the underlying cause of anemia."
+
+---
+
+### 7. Acute Tonsillitis (ICD J03.90)
+*   **clinicalDictionary Rule**: Antibiotic (`MED-AMO-500`) requires prior throat swab (`TEST-THROAT-SWB`).
+*   **Medical Authority Guidelines**: **IDSA (Infectious Diseases Society of America) Guidelines for Group A Streptococcal Pharyngitis**.
+*   **Presentation Script**:
+    "To support Antibiotic Stewardship, we use IDSA guidelines. Since most tonsillitis is viral, the system flags claims where antibiotics are billed without a recorded throat culture or Centor clinical score to prevent antibiotic misuse."
+
+---
+
+### 8. Bronchial Asthma (ICD J45.909)
+*   **clinicalDictionary Rule**: Asthma meds (`MED-SAL-INH` / `MED-FLU-INH`) require prior `TEST-SPIROMETRY`. Daily persistent asthma requires controller (`MED-FLU-INH`) alongside rescue (`MED-SAL-INH`).
+*   **Medical Authority Guidelines**: **GINA (Global Initiative for Asthma) Strategy Report**.
+*   **Presentation Script**:
+    "We enforce GINA recommendations, validating that a baseline spirometry lung function test is recorded for new diagnoses, and flagging rescue-only inhaler monotherapy for persistent asthma, which is a major driver of emergency admissions."
+
+---
+
+### 9. Acute Cholecystitis (ICD K81.0)
+*   **clinicalDictionary Rule**: Cholecystectomy (`PROC-CHOLE`) requires prior abdominal ultrasound (`TEST-IMG-US`).
+*   **Medical Authority Guidelines**: **Tokyo Guidelines (TG18) for the Management of Acute Cholecystitis**.
+*   **Presentation Script**:
+    "We utilize the international TG18 (Tokyo Guidelines) criteria. A cholecystectomy claim is flagged if a prior transabdominal ultrasound is missing, ensuring that gallbladder stones or wall thickening are verified prior to surgical billing."
+
+---
+
+### 10. Urinary Tract Infection (N39.0)
+*   **clinicalDictionary Rule**: Antibiotics (`MED-NIT-100` / `MED-CIP-500`) require prior `TEST-URINALYSIS` or `TEST-URINE-CUL`. Nitrofurantoin is first-line; Ciprofloxacin is restricted.
+*   **Medical Authority Guidelines**: **IDSA Guidelines for Acute Uncomplicated Cystitis**.
+*   **Presentation Script**:
+    "We enforce IDSA UTI guidelines: Urinalysis dipstick is required to justify antibiotics. Furthermore, to combat fluoroquinolone resistance, the system flags the use of Ciprofloxacin as first-line treatment unless resistance to Nitrofurantoin is documented."
+========================================================================
