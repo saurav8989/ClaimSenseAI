@@ -102,17 +102,20 @@ The compliance checker should output a **Care Legitimacy Score** (e.g., 0 - 100)
 
 ---
 
-## 4. Potential Tech Stack for ClaimSenseAI
+## 4. Tech Stack for ClaimSenseAI
 
-For a hackathon setting, a **TypeScript/Next.js/React** or **Python/FastAPI + React** stack offers the fastest development cycle, rich UI components, and easy state management.
+We have finalized the tech stack as **Option A (Next.js Fullstack)** using JavaScript.
 
-| Layer | Recommended Tech | Rationale |
+| Layer | Selected Tech | Rationale |
 | :--- | :--- | :--- |
-| **Frontend UI** | React (Next.js / Vite) + Tailwind CSS | Fast prototyping, excellent autocomplete components, interactive graphs for showing care pathway deviations. |
-| **Data Visualization** | Mermaid.js / Recharts | To visualize the care pathway flowchart and highlight where the provider deviated from the STP. |
-| **Backend API** | Python (FastAPI) or Node.js (Express) | Python is excellent if clinical NLP/embeddings are used. Node.js is great for single-language stacks. |
-| **Database / Search** | SQLite / Postgres (with `pgvector`) | Structured queries for rules, vector capability for fuzzy ICD-to-service match. |
-| **Rule Engine** | `json-rules-engine` (JS/TS) | Lightweight, easy to write/read protocols as JSON assets. |
+| **Frontend Framework** | React 19 (Next.js App Router) | Fast page loads, server component optimization, and seamless page routing. |
+| **Styling & Icons** | Tailwind CSS v4 & Lucide React | High-fidelity UI with glassmorphic designs, dark mode capabilities, and consistent icons. |
+| **Data Visualization** | Recharts & SVG timelines | To render responsive patient care pathway flowcharts and identify deviation points. |
+| **Backend API** | Next.js API Routes (Serverless) | Keeps frontend and backend consolidated in a single codebase with unified routing. |
+| **AI / NLP Services** | Gemini API & Fuse.js | Gemini API for note interpretation; local fuzzy index (Fuse.js) for fast autocomplete search. |
+| **Database** | SQLite or Local JSON Storage | Simple, lightweight database to store claims, reviewer logs, and rule metrics. |
+| **Rule Engine** | JavaScript Objects / JSON Engine | Native JS modules or `json-rules-engine` package to evaluate standard treatment protocols. |
+
 
 ---
 
