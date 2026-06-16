@@ -30,7 +30,7 @@ graph TD
     A[User Inputs Diagnosis/ICD-10] --> B(Intelligent Auto-complete)
     B --> C{Validation Engine}
     C -->|Lookup Map/Knowledge Graph| D[Allowed Services / Medications]
-    C -->|Semantic Similarity/LLM| E[Verify Contextual Relevance]
+    C -->|Keyword Matching| E[Verify Contextual Relevance]
     D --> F[Validation Result & Scoring]
     E --> F
 ```
@@ -112,7 +112,7 @@ We have finalized the tech stack as **Option A (Next.js Fullstack)** using JavaS
 | **Styling & Icons** | Tailwind CSS v4 & Lucide React | High-fidelity UI with glassmorphic designs, dark mode capabilities, and consistent icons. |
 | **Data Visualization** | Recharts & SVG timelines | To render responsive patient care pathway flowcharts and identify deviation points. |
 | **Backend API** | Next.js API Routes (Serverless) | Keeps frontend and backend consolidated in a single codebase with unified routing. |
-| **AI / NLP Services** | Gemini API & Fuse.js | Gemini API for note interpretation; local fuzzy index (Fuse.js) for fast autocomplete search. |
+| **AI / NLP Services** | Fuse.js & Keyword Search | Local fuzzy index (Fuse.js) for fast autocomplete search and clinical note keyword matching. |
 | **Database** | SQLite or Local JSON Storage | Simple, lightweight database to store claims, reviewer logs, and rule metrics. |
 | **Rule Engine** | JavaScript Objects / JSON Engine | Native JS modules or `json-rules-engine` package to evaluate standard treatment protocols. |
 
@@ -206,7 +206,7 @@ sequenceDiagram
 Based on alignment, we have finalized the following scoping decisions:
 *   **openIMIS Integration**: We will use a **Mock/Simulated openIMIS API** approach. This will involve exposing API endpoints (e.g., webhook receiver) that mirror realistic openIMIS schemas.
 *   **Clinical Conditions**: We will focus on **10 clinical conditions** to model rules and protocols for (e.g., Malaria, Hypertension, Diabetes, Appendicitis, Tuberculosis, Anemia, Tonsillitis, Asthma, Cholecystitis, UTI).
-*   **AI ICD Suggestion**: We will implement a multi-layered engine including a local database synced with the WHO ICD API, an LLM-based note interpreter, and an embedding-based similarity search index.
+*   **AI ICD Suggestion**: We will use a **rule-based / keyword search engine** (fast, offline-capable, and deterministic) that parses clinical notes and matches them against our clinical dictionary.
 
 ---
 
@@ -246,7 +246,7 @@ We will implement the following 9 modules as defined in the system specification
 ### 🟦 Module 2: AI Clinical Note Interpreter
 *   **Purpose**: Convert unstructured doctor text into structured clinical meaning.
 *   **Input**: `“Fever, cough, difficulty breathing”`
-*   **Process**: LLM extraction (e.g., Gemini API) or Rule-based extraction.
+*   **Process**: Rule-based keyword extraction (regex / symptom dictionary matching).
 *   **Output**:
     ```json
     {
@@ -257,7 +257,7 @@ We will implement the following 9 modules as defined in the system specification
 
 ### 🟦 Module 3: AI ICD Coding Engine
 *   **Purpose**: Suggest appropriate ICD codes based on clinical notes.
-*   **Process**: Text $\rightarrow$ Generate Text Embedding $\rightarrow$ Perform ICD Similarity Search $\rightarrow$ Return top 3 matched ICD codes.
+*   **Process**: Text $\rightarrow$ Tokenize and clean $\rightarrow$ Fuzzy match tokens against local clinical dictionary $\rightarrow$ Return top 3 matched ICD codes based on keyword density.
 *   **Output**:
     ```json
     [
