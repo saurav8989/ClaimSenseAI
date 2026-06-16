@@ -1,0 +1,99 @@
+========================================================================
+                     CLAIMSENSE AI - WORK DIVISION PLAN
+========================================================================
+
+To enable maximum parallel development and avoid code merge conflicts, 
+responsibilities are divided into independent modules with clear interfaces.
+
+------------------------------------------------------------------------
+1. TEAM ROLES & ASSIGNMENTS
+------------------------------------------------------------------------
+
+*   DEVELOPER 1: Provider Portal & openIMIS Mock (Frontend UI & Mock Integration)
+*   DEVELOPER 2: ClaimSense AI Core Engine (Clinical Rules & Risk Scoring)
+*   DEVELOPER 3: Medical Reviewer Dashboard (Reviewer UI & Action Syncer)
+*   TEAM MEMBER 4: Documentation, Pitch & Presentation (Slides & Technical Docs)
+
+------------------------------------------------------------------------
+2. MODULE SPECIFICATIONS & INTERFACES (PARALLEL BOUNDARIES)
+------------------------------------------------------------------------
+
+To work in parallel without blocking each other, we will use mock JSON files
+and agreed-upon API endpoints as boundaries.
+
+---
+
+### [DEVELOPER 1] - Provider Portal & openIMIS Mock
+*   Scope:
+    - Build the "Doctor's Note Input" screen.
+    - Build the "Claim Builder" form (inputting patient details, diagnoses,
+      prescribed medications, and procedures).
+    - Implement the frontend autocomplete for diagnoses (querying the keyword 
+      matching endpoint built by Developer 2).
+    - Build the mock `openIMIS` submission handler (submits claim to DB/state).
+*   Key Deliverables:
+    - `components/DoctorNoteInput.jsx`
+    - `components/ClaimBuilderForm.jsx`
+    - `api/openimis/claims` (Mock endpoints to Create and Retrieve claims)
+
+---
+
+### [DEVELOPER 2] - ClaimSense AI Core Engine (Backend Logic)
+*   Scope:
+    - Create the keyword-matching dictionary for ICD codes and clinical services
+      (e.g., matching "fever" to Malaria, or "chest pain" to Hypertension).
+    - Write the STP (Standard Treatment Protocol) rule evaluator.
+    - Write the clinical validation rules (e.g., verifying drug compatibility
+      and proper procedure association).
+    - Write the Risk Scoring & Priority logic (0-100 score + severity flags).
+*   Key Deliverables:
+    - `lib/icdSuggestEngine.js` (Fuzzy keyword to code recommender)
+    - `lib/stpRuleEvaluator.js` (Validates care pathways, calculates score)
+    - `api/claimsense/analyze` (API route evaluating submitted claims)
+
+---
+
+### [DEVELOPER 3] - Medical Reviewer Dashboard
+*   Scope:
+    - Build the Reviewer Dashboard landing page showing claims queue sorted by
+      Priority/Risk Score (High risk claims at the top).
+    - Build the detailed "Claim Reviewer Panel" showing:
+      * Standard patient details.
+      * Claim status, flags, and overall risk score.
+      * Visual timeline/flow of care pathway, highlighting deviation points.
+      * Explanations of clinical validation failures.
+    - Implement action buttons (Approve / Reject / Modify Claim) that write back
+      to the mock openIMIS database.
+*   Key Deliverables:
+    - `components/ReviewerQueue.jsx`
+    - `components/DeviationTimeline.jsx` (Pathway visualizer)
+    - `api/reviewer/adjudicate` (Saves decision to DB)
+
+---
+
+### [TEAM MEMBER 4] - Documentation & Pitch
+*   Scope:
+    - Maintain and refine project documentation (README, setup guides).
+    - Document the selected clinical conditions & protocols modeled in the system.
+    - Create the pitch slides (Problem Statement, Solution, Architecture, Impact).
+    - Manage the submission resources (pitch video recording, GitHub repository).
+
+------------------------------------------------------------------------
+3. WORKFLOW TIMELINE FOR PARALLEL WORK
+------------------------------------------------------------------------
+
+*   Phase 1 (Setup & Mocking - Hours 0-4):
+    - Developer 1 defines the standard Claim JSON schema.
+    - Developer 2 defines the expected `/api/claimsense/analyze` response schema.
+    - Developer 3 designs wireframes for the Reviewer Queue.
+
+*   Phase 2 (Independent Build - Hours 4-16):
+    - Developer 1 builds the Doctor claim entry UI.
+    - Developer 2 builds the algorithms (scoring, STP validation rules).
+    - Developer 3 builds the dashboard UI using static mock data.
+
+*   Phase 3 (Integration & Testing - Hours 16-24):
+    - Connect UI fields to Backend endpoints on the `dev` branch.
+    - Merge `dev` into `qa` and resolve bugs.
+    - Finalize slides and prep demo.
+========================================================================
