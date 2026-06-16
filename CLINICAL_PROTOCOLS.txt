@@ -12,27 +12,49 @@ and Standard Treatment Protocols (STPs) implemented in ClaimSense AI.
 The system will recognize and support the following mappings:
 
 *   DIAGNOSES (ICD-10-CM)
-    - [B54]   Unspecified malaria (Malaria)
-    - [I10]   Essential (primary) hypertension (Hypertension)
-    - [E11]   Type 2 diabetes mellitus (Type 2 Diabetes)
-    - [K35.8] Acute appendicitis, other and unspecified (Acute Appendicitis)
+    - [B54]     Unspecified malaria (Malaria)
+    - [I10]     Essential (primary) hypertension (Hypertension)
+    - [E11]     Type 2 diabetes mellitus (Type 2 Diabetes)
+    - [K35.8]   Acute appendicitis (Acute Appendicitis)
+    - [A15.0]   Tuberculosis of lung (Pulmonary Tuberculosis)
+    - [D50.9]   Iron deficiency anemia (Iron Deficiency Anemia)
+    - [J03.90]  Acute tonsillitis, unspecified (Acute Tonsillitis)
+    - [J45.909] Unspecified asthma, uncomplicated (Bronchial Asthma)
+    - [K81.0]   Acute cholecystitis (Acute Cholecystitis)
+    - [N39.0]   Urinary tract infection, site not specified (UTI)
 
 *   DIAGNOSTIC TESTS (Mock Codes)
-    - [TEST-MAL-RDT]  Malaria Rapid Diagnostic Test (RDT)
-    - [TEST-MAL-SMEAR] Malaria Blood Smear
-    - [TEST-BP-CHECK]  Blood Pressure Monitoring
-    - [TEST-GLU-FPG]   Fasting Plasma Glucose (FPG)
-    - [TEST-GLU-HBA1C] Glycated Hemoglobin (HbA1c)
-    - [TEST-IMG-US]    Abdominal Ultrasound
-    - [TEST-IMG-CT]    Abdominal CT Scan
+    - [TEST-MAL-RDT]   Malaria Rapid Diagnostic Test (RDT)
+    - [TEST-MAL-SMEAR]  Malaria Blood Smear
+    - [TEST-BP-CHECK]   Blood Pressure Monitoring
+    - [TEST-GLU-FPG]    Fasting Plasma Glucose (FPG)
+    - [TEST-GLU-HBA1C]  Glycated Hemoglobin (HbA1c)
+    - [TEST-IMG-US]     Abdominal Ultrasound
+    - [TEST-IMG-CT]     Abdominal CT Scan
+    - [TEST-TB-AFB]     Sputum Acid-Fast Bacilli (AFB) Smear
+    - [TEST-TB-GENEX]   GeneXpert MTB/RIF Assay
+    - [TEST-CBC]        Complete Blood Count (CBC)
+    - [TEST-FERRITIN]   Serum Ferritin Test
+    - [TEST-THROAT-SWB] Throat Swab Culture
+    - [TEST-SPIROMETRY] Spirometry Lung Function Test
+    - [TEST-URINALYSIS] Urinalysis (Dipstick/Microscopic)
+    - [TEST-URINE-CUL]  Urine Culture & Sensitivity
 
 *   TREATMENTS & PROCEDURES (Mock CPT / RxNorm Codes)
-    - [MED-AL-ACT]    Artemether-Lumefantrine (ACT) (Anti-malarial)
-    - [MED-AML-5]     Amlodipine 5mg (Anti-hypertensive)
-    - [MED-LIS-10]    Lisinopril 10mg (Anti-hypertensive)
-    - [MED-MET-500]   Metformin 500mg (Anti-diabetic)
-    - [MED-INS-GLAR]  Insulin Glargine (Anti-diabetic)
-    - [PROC-APPEND]   Appendectomy (Procedure) (CPT: 44950)
+    - [MED-AL-ACT]      Artemether-Lumefantrine (ACT) (Anti-malarial)
+    - [MED-AML-5]       Amlodipine 5mg (Anti-hypertensive)
+    - [MED-LIS-10]      Lisinopril 10mg (Anti-hypertensive)
+    - [MED-MET-500]     Metformin 500mg (Anti-diabetic)
+    - [MED-INS-GLAR]    Insulin Glargine (Anti-diabetic)
+    - [PROC-APPEND]     Appendectomy (Procedure) (CPT: 44950)
+    - [MED-TB-HRZE]     Rifampicin/Isoniazid/Pyrazinamide/Ethambutol (Anti-TB)
+    - [MED-IRON-SULF]   Ferrous Sulfate (Iron supplement)
+    - [MED-AMO-500]     Amoxicillin 500mg (Antibiotic)
+    - [MED-SAL-INH]     Salbutamol Inhaler (Bronchodilator)
+    - [MED-FLU-INH]     Fluticasone Inhaler (Inhaled Corticosteroid)
+    - [PROC-CHOLE]      Cholecystectomy (Procedure) (CPT: 47562)
+    - [MED-NIT-100]     Nitrofurantoin 100mg (Antibiotic)
+    - [MED-CIP-500]     Ciprofloxacin 500mg (Antibiotic)
 
 ------------------------------------------------------------------------
 2. STANDARD TREATMENT PROTOCOL (STP) RULES
@@ -42,70 +64,148 @@ Each claim's chronological `carePathway` must follow these rules:
 
 ---
 
-### PROTOCOL A: Malaria Uncomplicated Protocol
+### PROTOCOL 1: Malaria Uncomplicated Protocol
 *   **Target Diagnosis**: B54 (Malaria)
-*   **Rule 1: Diagnostic Before Treatment (Mandatory)**
-    - *Condition*: If `MED-AL-ACT` is prescribed, a prior step in the care
-      pathway must be a diagnostic test (`TEST-MAL-RDT` or `TEST-MAL-SMEAR`)
-      with a positive result.
-    - *Deviation*: Missing mandatory diagnostic test.
+*   **Rule 1.1: Diagnostic Before Treatment (Mandatory)**
+    - *Condition*: Prescribing `MED-AL-ACT` requires a prior diagnostic test 
+      (`TEST-MAL-RDT` or `TEST-MAL-SMEAR`) with a positive result.
+    - *Deviation*: Missing diagnostic confirmation before anti-malarial.
     - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 2: Drug Matching (Mandatory)**
-    - *Condition*: If the primary diagnosis is `B54`, the allowed therapeutics
-      are strictly `MED-AL-ACT`. Prescribing other non-relevant therapies (e.g.
-      antibiotics or anti-hypertensives) as a primary therapeutic is flagged.
-    - *Deviation*: Unrelated medication billed for malaria.
+*   **Rule 1.2: Therapy Alignment**
+    - *Condition*: Primary diagnosis `B54` must list `MED-AL-ACT` as the primary 
+      prescribed medication.
+    - *Deviation*: Non-approved therapeutic for Malaria.
     - *Severity*: MAJOR (Penalty: 20 points)
 
 ---
 
-### PROTOCOL B: Essential Hypertension Protocol
+### PROTOCOL 2: Essential Hypertension Protocol
 *   **Target Diagnosis**: I10 (Hypertension)
-*   **Rule 1: BP Check Confirmation (Mandatory)**
-    - *Condition*: A claim for primary diagnosis `I10` must contain a
-      `TEST-BP-CHECK` step with a recorded reading (e.g., Systolic > 140 or
-      Diastolic > 90).
+*   **Rule 2.1: BP Check Confirmation (Mandatory)**
+    - *Condition*: Claim must contain a `TEST-BP-CHECK` step showing elevated readings.
     - *Deviation*: Prescribing anti-hypertensive without BP record.
     - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 2: Therapy Selection**
-    - *Condition*: Allowed medications under primary diagnosis `I10` are
-      restricted to `MED-AML-5` or `MED-LIS-10`.
+*   **Rule 2.2: First-Line Monotherapy**
+    - *Condition*: Meds must be limited to `MED-AML-5` or `MED-LIS-10`.
     - *Deviation*: Non-approved medication for hypertension.
     - *Severity*: MAJOR (Penalty: 20 points)
 
 ---
 
-### PROTOCOL C: Type 2 Diabetes Mellitus Protocol
+### PROTOCOL 3: Type 2 Diabetes Mellitus Protocol
 *   **Target Diagnosis**: E11 (Type 2 Diabetes)
-*   **Rule 1: Glycemic Testing (Mandatory)**
-    - *Condition*: Prescribing anti-diabetic medications (`MED-MET-500` or
-      `MED-INS-GLAR`) requires a documented diagnostic test (`TEST-GLU-FPG` 
-      or `TEST-GLU-HBA1C`) performed within the care pathway.
+*   **Rule 3.1: Glycemic Testing (Mandatory)**
+    - *Condition*: Prescribing `MED-MET-500` or `MED-INS-GLAR` requires a prior 
+      `TEST-GLU-FPG` or `TEST-GLU-HBA1C` record.
     - *Deviation*: Missing glycemic diagnostic verification.
     - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 2: Line of Treatment Sequencing**
-    - *Condition*: Insulin therapy (`MED-INS-GLAR`) should only be prescribed
-      if there is a documented prior trial of oral medication (`MED-MET-500`)
-      OR if the patient's HbA1c result is documented as > 10%.
+*   **Rule 3.2: Line of Treatment Sequencing**
+    - *Condition*: Insulin (`MED-INS-GLAR`) should only be prescribed if there is 
+      a documented Metformin (`MED-MET-500`) trial or HbA1c result > 10%.
     - *Deviation*: Metformin trial bypassed without clinical justification.
     - *Severity*: MAJOR (Penalty: 25 points)
 
 ---
 
-### PROTOCOL D: Acute Appendicitis Protocol
+### PROTOCOL 4: Acute Appendicitis Protocol
 *   **Target Diagnosis**: K35.8 (Acute Appendicitis)
-*   **Rule 1: Imaging Confirmation (Mandatory)**
-    - *Condition*: Performing an appendectomy (`PROC-APPEND`) requires a prior
-      confirmatory imaging study (`TEST-IMG-US` or `TEST-IMG-CT`) showing signs
-      of appendiceal inflammation.
-    - *Deviation*: Appendectomy performed without supporting ultrasound/CT.
+*   **Rule 4.1: Confirmatory Imaging (Mandatory)**
+    - *Condition*: Appendectomy (`PROC-APPEND`) requires a prior imaging study 
+      (`TEST-IMG-US` or `TEST-IMG-CT`).
+    - *Deviation*: Appendectomy performed without ultrasound or CT confirmation.
     - *Severity*: CRITICAL (Penalty: 45 points)
-*   **Rule 2: Appropriate Procedure Match**
-    - *Condition*: If the primary diagnosis is `K35.8`, the claim billing list
-      must include CPT code `44950` (`PROC-APPEND`).
-    - *Deviation*: Mismatched billing code for acute appendicitis (e.g. no
-      procedure billed, or incorrect procedure like cholecystectomy).
+*   **Rule 4.2: Appropriate Procedure Match**
+    - *Condition*: Claim must include CPT code `44950` (`PROC-APPEND`).
+    - *Deviation*: Mismatched billing code for appendectomy.
     - *Severity*: CRITICAL (Penalty: 40 points)
+
+---
+
+### PROTOCOL 5: Pulmonary Tuberculosis Protocol
+*   **Target Diagnosis**: A15.0 (Pulmonary Tuberculosis)
+*   **Rule 5.1: Microbiological Confirmation (Mandatory)**
+    - *Condition*: Prescribing anti-TB therapy (`MED-TB-HRZE`) requires positive 
+      `TEST-TB-AFB` (Sputum smear) or `TEST-TB-GENEX` (GeneXpert) results.
+    - *Deviation*: TB therapy initiated without lab confirmation.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+*   **Rule 5.2: Multi-Drug Regimen Adherence**
+    - *Condition*: Prescription must consist of combined `MED-TB-HRZE` formulation. 
+      Single-drug treatment is contraindicated for active TB.
+    - *Deviation*: Sub-standard monotherapy regimen for active tuberculosis.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+
+---
+
+### PROTOCOL 6: Iron Deficiency Anemia Protocol
+*   **Target Diagnosis**: D50.9 (Iron Deficiency Anemia)
+*   **Rule 6.1: Lab Verification (Mandatory)**
+    - *Condition*: Prescribing `MED-IRON-SULF` requires a prior blood check 
+      (`TEST-CBC` or `TEST-FERRITIN`) confirming low hemoglobin/ferritin.
+    - *Deviation*: Iron supplements prescribed without diagnostic anemia proof.
+    - *Severity*: MAJOR (Penalty: 30 points)
+*   **Rule 6.2: Therapy Selection**
+    - *Condition*: Billed drug must be `MED-IRON-SULF`.
+    - *Deviation*: Unapproved medication for iron deficiency.
+    - *Severity*: MINOR (Penalty: 10 points)
+
+---
+
+### PROTOCOL 7: Acute Tonsillitis Protocol
+*   **Target Diagnosis**: J03.90 (Acute Tonsillitis)
+*   **Rule 7.1: Antibiotic Stewardship (Bacterial Verification)**
+    - *Condition*: Prescribing antibiotic `MED-AMO-500` requires positive 
+      `TEST-THROAT-SWB` throat culture or documentation of high Centor score.
+    - *Deviation*: Antibiotics prescribed for viral/unspecified tonsillitis.
+    - *Severity*: MAJOR (Penalty: 25 points)
+*   **Rule 7.2: First-Line Choice**
+    - *Condition*: Billed antibiotic must be Penicillin/Amoxicillin (`MED-AMO-500`).
+    - *Deviation*: Broad-spectrum antibiotic used unnecessarily as first-line.
+    - *Severity*: MINOR (Penalty: 15 points)
+
+---
+
+### PROTOCOL 8: Bronchial Asthma Protocol
+*   **Target Diagnosis**: J45.909 (Bronchial Asthma)
+*   **Rule 8.1: Airflow Assessment**
+    - *Condition*: First-time asthma diagnosis and prescription (`MED-SAL-INH` 
+      or `MED-FLU-INH`) requires a `TEST-SPIROMETRY` or peak expiratory flow test.
+    - *Deviation*: Asthma therapy started without baseline lung function test.
+    - *Severity*: MAJOR (Penalty: 20 points)
+*   **Rule 8.2: Controller-Reliever Logic**
+    - *Condition*: Chronic/daily therapy must include controller inhaler 
+      (`MED-FLU-INH`) alongside rescue inhaler (`MED-SAL-INH`).
+    - *Deviation*: Reliever inhaler monotherapy for persistent asthma.
+    - *Severity*: MAJOR (Penalty: 20 points)
+
+---
+
+### PROTOCOL 9: Acute Cholecystitis Protocol
+*   **Target Diagnosis**: K81.0 (Acute Cholecystitis)
+*   **Rule 9.1: Confirmatory Imaging (Mandatory)**
+    - *Condition*: Performing a cholecystectomy (`PROC-CHOLE`) requires prior 
+      imaging confirmation (`TEST-IMG-US`).
+    - *Deviation*: Cholecystectomy performed without confirmatory ultrasound.
+    - *Severity*: CRITICAL (Penalty: 45 points)
+*   **Rule 9.2: Appropriate Procedure Match**
+    - *Condition*: Claim must include CPT code `47562` (`PROC-CHOLE`).
+    - *Deviation*: Mismatched billing code for cholecystectomy.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+
+---
+
+### PROTOCOL 10: Urinary Tract Infection (UTI) Protocol
+*   **Target Diagnosis**: N39.0 (UTI)
+*   **Rule 10.1: Lab Verification (Mandatory)**
+    - *Condition*: Prescribing `MED-NIT-100` or `MED-CIP-500` requires a prior 
+      positive test (`TEST-URINALYSIS` or `TEST-URINE-CUL`).
+    - *Deviation*: Antibiotics prescribed for UTI without lab confirmation.
+    - *Severity*: CRITICAL (Penalty: 35 points)
+*   **Rule 10.2: First-line Selection**
+    - *Condition*: Billed antibiotic must be `MED-NIT-100`. Broad-spectrum 
+      `MED-CIP-500` should only be billed if there is a documented urine culture 
+      indicating resistance or pyelonephritis.
+    - *Deviation*: Broad-spectrum fluoroquinolone used without resistance evidence.
+    - *Severity*: MAJOR (Penalty: 20 points)
 
 ------------------------------------------------------------------------
 3. SCORING ENGINE LOGIC (For Developer 2)
@@ -116,7 +216,6 @@ Each claim's chronological `carePathway` must follow these rules:
     associated with each triggered deviation.
 *   **Risk Categorization Rules**:
     - **Score 80 - 100**: LOW RISK (Priority 5) -> Green Flag. Auto-approvable.
-    - **Score 50 - 79**: MEDIUM RISK (Priority 3) -> Yellow Flag. Needs reviewer
-      eyes.
-    - **Score 0 - 49**: HIGH RISK (Priority 1) -> Red Flag. Sent to top of queue.
+    - **Score 50 - 79**: MEDIUM RISK (Priority 3) -> Yellow Flag. Needs reviewer eyes.
+    - **Score 0 - 49**: HIGH RISK (Priority 1) -> Red Flag. Sent to top of reviewer queue.
 ========================================================================
