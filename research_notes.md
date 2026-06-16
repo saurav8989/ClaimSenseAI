@@ -39,13 +39,13 @@ graph TD
    *   **Mechanism**: A predefined relational database or JSON mapping of ICD codes to eligible CPT codes and RxNorm ingredients.
    *   **Pros**: Deterministic, fast, 100% auditable.
    *   **Cons**: High maintenance; hard to cover all medical edge cases manually.
-2. **Vector/Semantic Search (Clinical Embeddings)**:
-   *   **Mechanism**: Convert diagnoses and services into high-dimensional vectors (using sentence-transformers trained on clinical text, like `BioBERT` or `ClinicalBERT`). Perform vector similarity search (using FAISS, pgvector, or a lightweight front-end library like `fuse.js` if the subset is small).
-   *   **Pros**: Handles synonyms, typos, and fuzzy descriptions (e.g., "High blood pressure" matches "Essential hypertension" and suggests anti-hypertensive codes).
-   *   **Cons**: Non-deterministic; requires threshold tuning.
-3. **Hybrid Model (Recommended)**:
-   *   Use **semantic search** for the autocomplete UI to help providers select the right codes quickly.
-   *   Use a **rule-based validation engine** for the hard clinical restrictions (e.g., "Medication X is only approved for Diagnoses A, B, and C").
+2. **Fuzzy Keyword Matching (Local Search)**:
+   *   **Mechanism**: Tokenize input text, clean stop words, and perform fuzzy keyword matching (using a library like `fuse.js` or basic string similarity metrics) against a structured local dictionary of ICD-10 titles and clinical synonyms.
+   *   **Pros**: Deterministic, fast, 100% offline-capable, easy to customize for specific conditions.
+   *   **Cons**: Relies on dictionary synonyms coverage.
+3. **Keyword-to-Rule Engine Matching (Recommended)**:
+   *   Use **fuzzy keyword search** for the autocomplete UI to help providers select the right codes quickly.
+   *   Use a **rule-based validation engine** for the hard clinical restrictions (e.g., checking if medications, services, and procedures are compatible with the selected ICD code).
 
 ---
 
@@ -119,11 +119,22 @@ We have finalized the tech stack as **Option A (Next.js Fullstack)** using JavaS
 
 ---
 
-## 5. Next Steps
+## 5. Next Steps for Implementation
 
-*   **Align on Stack**: Choose between JS/TS fullstack vs. Python + React.
-*   **Determine Data Scope**: Pick 3-5 standard clinical conditions (e.g., Hypertension, Malaria, Type 2 Diabetes, Acute Appendicitis) to model fully for the demo.
-*   **Acquire Datasets**: Prepare mock ICD-10 codes, medication names, CPT codes, and STP rule files.
+Now that our project scaffolding, tech stack, schemas, and clinical protocols are finalized, the developers can begin building the following features in parallel:
+
+*   **For Developer 1 (Provider UI)**: 
+    1. Create the claim builder UI layout (`src/app/doctor/page.jsx`).
+    2. Write the client-side claim state manager (compiling structured claims).
+    3. Mock the local openIMIS submission route (`src/app/api/openimis/route.js`).
+*   **For Developer 2 (AI Engine)**:
+    1. Implement the local dictionary JSON file (`src/lib/clinicalDictionary.json`) containing our 10 clinical protocols.
+    2. Write the fuzzy keyword autocomplete suggestions logic (`src/lib/icdSuggester.js`).
+    3. Write the rule evaluator (`src/lib/stpEngine.js`) validating pathways and calculating scores.
+*   **For Developer 3 (Reviewer Queue)**:
+    1. Build the list queue layout showing claims sorted by priority (`src/app/reviewer/page.jsx`).
+    2. Build the review detailed panel displaying deviation visual timelines.
+    3. Expose the adjudication route (`src/app/api/adjudicate/route.js`).
 
 ---
 
