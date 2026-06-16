@@ -1,0 +1,122 @@
+========================================================================
+                  CLAIMSENSE AI - CLINICAL PROTOCOLS
+========================================================================
+
+This document acts as the definitive source of truth for the clinical rules
+and Standard Treatment Protocols (STPs) implemented in ClaimSense AI.
+
+------------------------------------------------------------------------
+1. MEDICAL CODING & TERMINOLOGY DICTIONARY
+------------------------------------------------------------------------
+
+The system will recognize and support the following mappings:
+
+*   DIAGNOSES (ICD-10-CM)
+    - [B54]   Unspecified malaria (Malaria)
+    - [I10]   Essential (primary) hypertension (Hypertension)
+    - [E11]   Type 2 diabetes mellitus (Type 2 Diabetes)
+    - [K35.8] Acute appendicitis, other and unspecified (Acute Appendicitis)
+
+*   DIAGNOSTIC TESTS (Mock Codes)
+    - [TEST-MAL-RDT]  Malaria Rapid Diagnostic Test (RDT)
+    - [TEST-MAL-SMEAR] Malaria Blood Smear
+    - [TEST-BP-CHECK]  Blood Pressure Monitoring
+    - [TEST-GLU-FPG]   Fasting Plasma Glucose (FPG)
+    - [TEST-GLU-HBA1C] Glycated Hemoglobin (HbA1c)
+    - [TEST-IMG-US]    Abdominal Ultrasound
+    - [TEST-IMG-CT]    Abdominal CT Scan
+
+*   TREATMENTS & PROCEDURES (Mock CPT / RxNorm Codes)
+    - [MED-AL-ACT]    Artemether-Lumefantrine (ACT) (Anti-malarial)
+    - [MED-AML-5]     Amlodipine 5mg (Anti-hypertensive)
+    - [MED-LIS-10]    Lisinopril 10mg (Anti-hypertensive)
+    - [MED-MET-500]   Metformin 500mg (Anti-diabetic)
+    - [MED-INS-GLAR]  Insulin Glargine (Anti-diabetic)
+    - [PROC-APPEND]   Appendectomy (Procedure) (CPT: 44950)
+
+------------------------------------------------------------------------
+2. STANDARD TREATMENT PROTOCOL (STP) RULES
+------------------------------------------------------------------------
+
+Each claim's chronological `carePathway` must follow these rules:
+
+---
+
+### PROTOCOL A: Malaria Uncomplicated Protocol
+*   **Target Diagnosis**: B54 (Malaria)
+*   **Rule 1: Diagnostic Before Treatment (Mandatory)**
+    - *Condition*: If `MED-AL-ACT` is prescribed, a prior step in the care
+      pathway must be a diagnostic test (`TEST-MAL-RDT` or `TEST-MAL-SMEAR`)
+      with a positive result.
+    - *Deviation*: Missing mandatory diagnostic test.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+*   **Rule 2: Drug Matching (Mandatory)**
+    - *Condition*: If the primary diagnosis is `B54`, the allowed therapeutics
+      are strictly `MED-AL-ACT`. Prescribing other non-relevant therapies (e.g.
+      antibiotics or anti-hypertensives) as a primary therapeutic is flagged.
+    - *Deviation*: Unrelated medication billed for malaria.
+    - *Severity*: MAJOR (Penalty: 20 points)
+
+---
+
+### PROTOCOL B: Essential Hypertension Protocol
+*   **Target Diagnosis**: I10 (Hypertension)
+*   **Rule 1: BP Check Confirmation (Mandatory)**
+    - *Condition*: A claim for primary diagnosis `I10` must contain a
+      `TEST-BP-CHECK` step with a recorded reading (e.g., Systolic > 140 or
+      Diastolic > 90).
+    - *Deviation*: Prescribing anti-hypertensive without BP record.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+*   **Rule 2: Therapy Selection**
+    - *Condition*: Allowed medications under primary diagnosis `I10` are
+      restricted to `MED-AML-5` or `MED-LIS-10`.
+    - *Deviation*: Non-approved medication for hypertension.
+    - *Severity*: MAJOR (Penalty: 20 points)
+
+---
+
+### PROTOCOL C: Type 2 Diabetes Mellitus Protocol
+*   **Target Diagnosis**: E11 (Type 2 Diabetes)
+*   **Rule 1: Glycemic Testing (Mandatory)**
+    - *Condition*: Prescribing anti-diabetic medications (`MED-MET-500` or
+      `MED-INS-GLAR`) requires a documented diagnostic test (`TEST-GLU-FPG` 
+      or `TEST-GLU-HBA1C`) performed within the care pathway.
+    - *Deviation*: Missing glycemic diagnostic verification.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+*   **Rule 2: Line of Treatment Sequencing**
+    - *Condition*: Insulin therapy (`MED-INS-GLAR`) should only be prescribed
+      if there is a documented prior trial of oral medication (`MED-MET-500`)
+      OR if the patient's HbA1c result is documented as > 10%.
+    - *Deviation*: Metformin trial bypassed without clinical justification.
+    - *Severity*: MAJOR (Penalty: 25 points)
+
+---
+
+### PROTOCOL D: Acute Appendicitis Protocol
+*   **Target Diagnosis**: K35.8 (Acute Appendicitis)
+*   **Rule 1: Imaging Confirmation (Mandatory)**
+    - *Condition*: Performing an appendectomy (`PROC-APPEND`) requires a prior
+      confirmatory imaging study (`TEST-IMG-US` or `TEST-IMG-CT`) showing signs
+      of appendiceal inflammation.
+    - *Deviation*: Appendectomy performed without supporting ultrasound/CT.
+    - *Severity*: CRITICAL (Penalty: 45 points)
+*   **Rule 2: Appropriate Procedure Match**
+    - *Condition*: If the primary diagnosis is `K35.8`, the claim billing list
+      must include CPT code `44950` (`PROC-APPEND`).
+    - *Deviation*: Mismatched billing code for acute appendicitis (e.g. no
+      procedure billed, or incorrect procedure like cholecystectomy).
+    - *Severity*: CRITICAL (Penalty: 40 points)
+
+------------------------------------------------------------------------
+3. SCORING ENGINE LOGIC (For Developer 2)
+------------------------------------------------------------------------
+
+*   **Initial Legitimacy Score**: 100 points.
+*   **Score Deductions**: Deduct points dynamically based on the penalty value
+    associated with each triggered deviation.
+*   **Risk Categorization Rules**:
+    - **Score 80 - 100**: LOW RISK (Priority 5) -> Green Flag. Auto-approvable.
+    - **Score 50 - 79**: MEDIUM RISK (Priority 3) -> Yellow Flag. Needs reviewer
+      eyes.
+    - **Score 0 - 49**: HIGH RISK (Priority 1) -> Red Flag. Sent to top of queue.
+========================================================================
