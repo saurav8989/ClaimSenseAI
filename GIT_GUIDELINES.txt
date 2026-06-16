@@ -1,0 +1,124 @@
+========================================================================
+                     CLAIMSENSE AI - GIT WORKFLOW GUIDELINES
+========================================================================
+
+This guide explains how our 3 developers and 1 documenter will collaborate
+using our three primary Git branches: `main`, `qa`, and `dev`.
+
+------------------------------------------------------------------------
+1. BRANCH STRUCTURE & ROLES
+------------------------------------------------------------------------
+
+*   main (Stable / Demo Version)
+    - What it is: The production-ready code shown to judges.
+    - Rules: Never commit or push directly to `main`. It only accepts merges
+      from `qa` once the features are thoroughly verified.
+
+*   qa (Quality Assurance / Staging)
+    - What it is: The integration testing gate.
+    - Rules: Used to test end-to-end functionality of the combined system
+      (Claim Builder + Engine + Reviewer Dashboard). Code is merged here from
+      `dev` for validation.
+
+*   dev (Active Development)
+    - What it is: The shared workspace for our developers.
+    - Rules: All developers push their daily updates here. Sync frequently 
+      to make sure your local copy has everyone's latest code.
+
+------------------------------------------------------------------------
+2. DAILY WORKFLOW FOR DEVELOPERS
+------------------------------------------------------------------------
+
+Always start your session by getting the latest changes from the team:
+
+Step 1: Switch to `dev` and pull latest changes
+    git checkout dev
+    git pull origin dev
+
+Step 2: Write your code and test it locally.
+
+Step 3: Stage and commit your changes
+    git add .
+    git commit -m "feat: add keyword matching logic to ICD suggestion engine"
+
+Step 4: Pull again right before pushing to handle any new updates
+    git pull origin dev
+
+Step 5: Push your changes to the remote repository
+    git push origin dev
+
+------------------------------------------------------------------------
+3. PROMOTING CODE TO QA (TESTING GATE)
+------------------------------------------------------------------------
+
+When features are stable on `dev` and ready for integration testing:
+
+Step 1: Switch to `qa` and ensure it is up to date
+    git checkout qa
+    git pull origin qa
+
+Step 2: Merge the `dev` branch into `qa`
+    git merge dev
+
+Step 3: Push the updated `qa` branch to GitHub
+    git push origin qa
+
+Step 4: Run your integrated tests and verify the UI works end-to-end.
+
+------------------------------------------------------------------------
+4. RELEASING TO MAIN (STABLE DEMO)
+------------------------------------------------------------------------
+
+Once the code on `qa` is fully validated and verified:
+
+Step 1: Switch to `main` and pull latest changes
+    git checkout main
+    git pull origin main
+
+Step 2: Merge `qa` into `main`
+    git merge qa
+
+Step 3: Push the updated `main` branch
+    git push origin main
+
+------------------------------------------------------------------------
+5. RESOLVING MERGE CONFLICTS
+------------------------------------------------------------------------
+
+If Git warns you about a conflict during a `pull` or `merge`:
+
+1. Open the conflicting files. Look for these markers:
+   <<<<<<< HEAD
+   Your changes
+   =======
+   Someone else's changes
+   >>>>>>> branch-name
+
+2. Discuss with the team to decide which code to keep (or how to combine them).
+3. Delete the markers (`<<<<<<<`, `=======`, `>>>>>>>`) and keep the correct code.
+4. Save the file.
+5. Add and commit the resolved files:
+   git add .
+   git commit -m "merge: resolve conflicts between dev and local changes"
+   git push origin dev
+
+------------------------------------------------------------------------
+6. QUICK REFERENCE CHEATSHEET
+------------------------------------------------------------------------
+
+*   Check current branch and status:
+    git status
+
+*   See branch history list:
+    git branch -a
+
+*   Discard local changes in a file (revert):
+    git checkout -- path/to/file
+
+*   Undo the last commit (keeping your code changes staged):
+    git reset --soft HEAD~1
+
+*   Temporarily save unstaged changes to clean your directory:
+    git stash
+    (Restore them later with: git stash pop)
+========================================================================
