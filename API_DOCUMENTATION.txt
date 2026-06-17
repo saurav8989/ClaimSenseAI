@@ -1,0 +1,174 @@
+========================================================================
+                  CLAIMSENSE AI - API DOCUMENTATION
+========================================================================
+
+This document provides technical documentation for the local APIs implemented
+in ClaimSense AI. These APIs are designed to support frontend development for the 
+Provider UI, automated ICD coding suggestions, and protocol rule lookup.
+
+------------------------------------------------------------------------
+1. CLINICAL PROTOCOLS ENDPOINT
+------------------------------------------------------------------------
+Endpoint: /api/protocols
+Method:   GET
+Source:   src/lib/clinicalDictionary.json
+
+Description:
+Retrieves the standard clinical treatment protocols (STPs) and validation rules. 
+Supports retrieving the entire dictionary or looking up a single condition by its 
+primary ICD-10 code.
+
+Query Parameters:
+*   code (optional, string): The ICD-10 code of the target condition (e.g. B54, I10).
+    - Case-insensitive, automatically trimmed.
+    - If provided, returns the specific condition's protocol object.
+    - If omitted, returns the complete dictionary containing all 10 protocols.
+
+Example 1: Fetch Specific Protocol
+---------------------------------
+Request: GET /api/protocols?code=B54
+
+Response (200 OK):
+{
+  "id": "malaria",
+  "name": "Malaria",
+  "synonyms": ["fever", "chills", "sweating", "shivering", "headache", "malaria", "mosquito bite", "plasmodium"],
+  "diagnosticTests": [
+    { "code": "TEST-MAL-RDT", "name": "Malaria Rapid Diagnostic Test (RDT)", "mandatory": true },
+    { "code": "TEST-MAL-SMEAR", "name": "Malaria Blood Smear", "mandatory": true }
+  ],
+  "medications": [
+    { "code": "MED-AL-ACT", "name": "Artemether-Lumefantrine (ACT)", "firstLine": true }
+  ],
+  "procedures": [],
+  "rules": [
+    {
+      "id": "RULE-MAL-1",
+      "name": "Malaria Diagnostic Check",
+      "type": "test_required",
+      "severity": "CRITICAL",
+      "penalty": 40,
+      "description": "Prescribing anti-malarial (ACT) requires a prior diagnostic verification (RDT or Blood Smear)."
+    },
+    {
+      "id": "RULE-MAL-2",
+      "name": "Malaria Treatment Match",
+      "type": "medication_match",
+      "severity": "MAJOR",
+      "penalty": 20,
+      "description": "Primary diagnosis Malaria must list Artemether-Lumefantrine (ACT) as the primary prescribed medication."
+    }
+  ]
+}
+
+Example 2: Fetch Entire Dictionary
+---------------------------------
+Request: GET /api/protocols
+
+Response (200 OK):
+{
+  "B54": { ... },
+  "I10": { ... },
+  "E11": { ... },
+  ...
+}
+
+Error Responses:
+*   404 Not Found (Missing dictionary file):
+    { "error": "Clinical Dictionary file not found." }
+*   404 Not Found (Invalid code parameter):
+    { "error": "No clinical protocol found for ICD code: \"INVALID-CODE\"" }
+*   500 Internal Server Error:
+    { "error": "Internal Server Error", "details": "Error message details" }
+
+------------------------------------------------------------------------
+2. ICD SUGGESTION ENGINE ENDPOINT
+------------------------------------------------------------------------
+Endpoint: /api/suggest-icd
+Method:   GET
+Source:   src/lib/icdDatabase.json
+
+Description:
+Performs fuzzy-keyword lookup against the indexed ICD-11 database. It compares 
+the search term against the condition titles and synonym tags, returning a list of 
+matching conditions ranked by matching confidence.
+
+Query Parameters:
+*   query (optional, string): The keyword or phrase input by the doctor (e.g. "cough").
+    - Case-insensitive, automatically trimmed.
+    - If provided, filters results and calculates a confidence score based on the match type.
+    - If omitted, returns the entire list of 10 conditions.
+
+Confidence Score Logic:
+*   1.0: Exact title match (e.g. query "Type 2 Diabetes Mellitus")
+*   0.8: Partial title match (e.g. query "Diabetes")
+*   0.6: Synonym or keyword match (e.g. query "sugar" or "thirst" matching Diabetes synonyms)
+
+Example 1: Fetch Suggestions for Keyword
+----------------------------------------
+Request: GET /api/suggest-icd?query=fever
+
+Response (200 OK):
+{
+  "results": [
+    {
+      "code": "1F45",
+      "icd10Code": "B54",
+      "title": "Malaria without parasitological confirmation",
+      "synonyms": ["fever", "chills", "plasmodium", "shivering", ...],
+      "confidence": 0.8
+    },
+    {
+      "code": "DB10.02",
+      "icd10Code": "K35.8",
+      "title": "Acute appendicitis without localised or generalised peritonitis",
+      "synonyms": ["abdominal pain", "nausea", "vomiting", "fever", ...],
+      "confidence": 0.8
+    },
+    {
+      "code": "CA03.Z",
+      "icd10Code": "J03.90",
+      "title": "Acute tonsillitis, unspecified",
+      "synonyms": ["sore throat", "painful swallowing", "swollen tonsils", "throat pain", "acute tonsillitis", "acute tonsillitis nos"],
+      "confidence": 0.6
+    }
+  ]
+}
+
+Example 2: Get Unfiltered Database List
+--------------------------------------
+Request: GET /api/suggest-icd
+
+Response (200 OK):
+{
+  "results": [
+    { "code": "1F45", "icd10Code": "B54", "title": "Malaria...", "synonyms": [...] },
+    ... (returns all 10 conditions)
+  ]
+}
+
+Error Responses:
+*   404 Not Found (Missing database file):
+    { "error": "ICD Database file not found. Run the fetch script first." }
+*   500 Internal Server Error:
+    { "error": "Internal Server Error", "details": "Error message details" }
+
+------------------------------------------------------------------------
+3. DATABASE REGENERATION & SEEDING
+------------------------------------------------------------------------
+The database `icdDatabase.json` is generated using a standalone script that pulls 
+live descriptions and synonyms from the official WHO ICD-11 API.
+
+To update or regenerate the local cache:
+1. Ensure the root `.env` file contains correct WHO API credentials:
+   WHO_CLIENT_ID=your_client_id_here
+   WHO_CLIENT_SECRET=your_client_secret_here
+
+2. Run the script from the project root:
+   node scripts/fetchIcdCodes.js
+
+The script will attempt to authenticate with the WHO Access Management server, fetch 
+updated terms/synonyms for the 10 target conditions, and output the result directly to 
+`src/lib/icdDatabase.json`. If authentication fails, it automatically seeds 
+pre-configured fallback values so development can continue offline.
+========================================================================
