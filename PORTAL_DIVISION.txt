@@ -1,0 +1,89 @@
+========================================================================
+           CLAIMSENSE AI - PORTAL ARCHITECTURAL DIVISION
+========================================================================
+
+ClaimSense AI is structured as a two-sided clinical validation platform, 
+splitting logic and interfaces between the Provider (Doctor) and the 
+Insurance (Medical Reviewer) stakeholders. This document outlines the separation 
+across routing, components, user experience, and data flows.
+
+------------------------------------------------------------------------
+1. ROUTING & DIRECTORY STRUCTURE
+------------------------------------------------------------------------
+To avoid merge conflicts during parallel development, the codebase is separated 
+into dedicated paths inside the Next.js App Router tree:
+
+*   Provider (Doctor) Portal:
+    - Main Route View: src/app/doctor/page.jsx
+    - Form Components: src/components/ClaimBuilder.jsx
+    - Integration: Uses /api/suggest-icd to fetch autocomplete suggestions.
+
+*   Insurance (Medical Reviewer) Dashboard:
+    - Main Route View: src/app/reviewer/page.jsx
+    - List Queue:      src/components/ReviewerQueue.jsx
+    - Timeline Visual: src/components/DeviationTimeline.jsx
+    - Integration: Uses /api/openimis/claims to fetch submitted claims.
+
+*   Gateway Selection (Landing Page):
+    - Main Route View: src/app/page.js
+    - Action: A simple selection screen permitting entrance to either portal.
+
+------------------------------------------------------------------------
+2. VISUAL IDENTITY & DESIGN THEMES
+------------------------------------------------------------------------
+Each portal caters to a different operational context, using custom styling:
+
+*   Provider Portal (Doctor Workspace):
+    - Tone: Clinical, clean, focused, and minimal.
+    - Theme Colors: Calming medical teals, clinical blues, and light slate.
+    - Focus: Fast note taking and error-free claim preparation.
+
+*   Insurance Dashboard (Reviewer Workspace):
+    - Tone: Analytical, high-density, and alert-driven.
+    - Theme Colors: Sleek dark modes, glassmorphism, and alert flags.
+    - Color Indicators: 
+      * Red (High Risk, Score 0-49)
+      * Yellow (Medium Risk, Score 50-79)
+      * Green (Low Risk, Score 80-100)
+
+------------------------------------------------------------------------
+3. DATA LIFECYCLE & INTEGRATION FLOW
+------------------------------------------------------------------------
+The two portals never communicate directly. They interact asynchronously using the 
+mock openIMIS system (src/lib/mockDb.js / api/openimis/claims) as the data bridge:
+
+  +------------------+
+  |  DOCTOR PORTAL   |
+  +--------+---------+
+           | (1) Submit Claim Payload
+           v
+  +--------+---------+
+  |  openIMIS DB     |<--------------------+
+  +--------+---------+                     |
+           | (2) Triggers Analysis         |
+           v                               | (5) Syncs Adjudication Decision
+  +--------+---------+                     |     (Approve / Reject / Modify)
+  |  ClaimSense Engine                     |
+  |  - Clinical Match                      |
+  |  - STP Compliance                      |
+  |  - Risk Scoring                        |
+  +--------+---------+                     |
+           | (3) Annotates & Ranks Claim   |
+           v                               |
+  +--------+---------+                     |
+  |  REVIEWER DASHBOARD                    |
+  |  - Sorted by Risk Score (Desc)         |
+  |  - Audit timeline of deviations        |
+  +------------------+---------------------+
+
+------------------------------------------------------------------------
+4. MOCK INTERFACES FOR DEVELOPMENT
+------------------------------------------------------------------------
+To support parallel development, the modules use the following mocks:
+*   The Doctor Portal uses static API mocks of `/api/suggest-icd` and 
+    `/api/analyze` to develop the note parser UI.
+*   The Reviewer Dashboard uses mock data from `/api/openimis/claims` to render 
+    the queue and pathways before the engine is finalized.
+*   The final integration merges the analyzer engine directly into the 
+    openIMIS claim submission endpoint.
+========================================================================
