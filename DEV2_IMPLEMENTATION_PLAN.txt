@@ -5,19 +5,35 @@
 This implementation plan provides a detailed breakdown, step-by-step guide,
 and skeleton code structures for Developer 2 (Core AI Engine & Clinical Rules).
 
-As Developer 2, your scope covers:
-1. Module 2: AI Clinical Note Interpreter
-2. Module 3: AI ICD Coding Engine
-3. Module 5: Clinical Validation Engine
-4. Module 6: STP Compliance Engine
-5. Module 7: Risk Scoring Engine
-6. API Endpoint: /api/analyze
+As Developer 2, your scope covers all 6 of your designated modules:
+1. Module 1: ICD Knowledge Engine
+2. Module 2: AI Clinical Note Interpreter
+3. Module 3: AI ICD Coding Engine
+4. Module 5: Clinical Validation Engine
+5. Module 6: STP Compliance Engine
+6. Module 7: Risk Scoring Engine
+7. API Endpoint: /api/analyze
 
 ------------------------------------------------------------------------
-MILESTONE 1: CLINICAL NOTE INTERPRETER & ICD SUGGESTER
+MILESTONE 0: ICD KNOWLEDGE ENGINE (MODULE 1)
 ------------------------------------------------------------------------
-Goal: Parse unstructured physician text and return matching ICD codes from 
-      icdDatabase.json using keyword density and synonym lookups.
+Goal: Ensure WHO ICD-11 API data is synced and indexed in the local cache.
+
+Files involved:
+- [EXISTING] scripts/fetchIcdCodes.js
+- [EXISTING] src/lib/icdDatabase.json
+
+Tasks:
+- Verify that `src/lib/icdDatabase.json` contains the seeded entries for the 10 conditions.
+- If WHO credentials in `.env` are updated, run `node scripts/fetchIcdCodes.js` to refresh the cache.
+
+------------------------------------------------------------------------
+MILESTONE 1: CLINICAL NOTE INTERPRETER & ICD SUGGESTER (MODULES 2 & 3)
+------------------------------------------------------------------------
+Goal: Parse unstructured physician text (clinical note) and recommend the 
+      best-matching ICD codes using keyword density and synonym matching.
+      (Note: Per hackathon scope decisions, vector embeddings are replaced by
+      a highly efficient and deterministic local keyword/synonym scanner).
 
 Files to create/modify:
 - [NEW] src/lib/icdSuggester.js
@@ -278,16 +294,109 @@ export function calculateRiskScore(clinicalValidation, stpCompliance, claimPaylo
 ```
 
 ------------------------------------------------------------------------
-MILESTONE 4: MOCK CLINICAL VALIDATOR & API INTEGRATION
+MILESTONE 4: CLINICAL VALIDATION ENGINE (MODULE 5)
 ------------------------------------------------------------------------
-Goal: Build the `/api/analyze` endpoint. It parses incoming claims and 
-      orchestrates calls to the validation, compliance, and risk engines.
+Goal: Check for mismatches between diagnoses and prescribed medications, 
+      procedures, or diagnostic tests. Uses clinicalDictionary.json dynamically 
+      to ensure every service has clinical justification.
+
+Files to create:
+- [NEW] src/lib/clinicalValidator.js
+
+Implementation Logic for `clinicalValidator.js`:
+- For all diagnoses listed in the claim, fetch their allowed medications, 
+  procedures, and tests from the dictionary.
+- Iterate through the claim's `carePathway`.
+- If a medication, procedure, or test code is not present in the allowed set of 
+  any of the patient's diagnoses, add a mismatch issue to the results.
+
+Skeleton Code for `src/lib/clinicalValidator.js`:
+```javascript
+import fs from 'fs';
+import path from 'path';
+
+export function validateClinicalServices(claimPayload) {
+  const dictionaryPath = path.resolve(process.cwd(), 'src/lib/clinicalDictionary.json');
+  const protocols = JSON.parse(fs.readFileSync(dictionaryPath, 'utf8'));
+
+  const issues = [];
+  const diagnoses = claimPayload.diagnoses || [];
+  
+  if (diagnoses.length === 0) {
+    return {
+      isValid: false,
+      issues: [{ severity: "CRITICAL", type: "MISSING_DIAGNOSIS", message: "No diagnosis found on claim." }]
+    };
+  }
+
+  // 1. Gather all allowed codes for all diagnoses listed on the claim
+  const allowedMeds = new Set();
+  const allowedProcs = new Set();
+  const allowedTests = new Set();
+
+  diagnoses.forEach(diag => {
+    const code = diag.code.toUpperCase().trim();
+    const protocol = protocols[code];
+    if (protocol) {
+      protocol.medications?.forEach(m => allowedMeds.add(m.code.toUpperCase().trim()));
+      protocol.procedures?.forEach(p => allowedProcs.add(p.code.toUpperCase().trim()));
+      protocol.diagnosticTests?.forEach(t => allowedTests.add(t.code.toUpperCase().trim()));
+    }
+  });
+
+  // 2. Scan the care pathway to find mismatched items
+  const carePathway = claimPayload.carePathway || [];
+  carePathway.forEach(step => {
+    const stepCode = step.code?.toUpperCase().trim();
+    if (!stepCode) return;
+
+    if (step.type === 'medication') {
+      if (!allowedMeds.has(stepCode)) {
+        issues.push({
+          severity: "CRITICAL",
+          type: "MISMATCHED_SERVICE",
+          message: `Medication ${step.name || stepCode} does not match the diagnosed condition(s).`
+        });
+      }
+    } else if (step.type === 'procedure') {
+      if (!allowedProcs.has(stepCode)) {
+        issues.push({
+          severity: "CRITICAL",
+          type: "MISMATCHED_SERVICE",
+          message: `Procedure ${step.name || stepCode} does not match the diagnosed condition(s).`
+        });
+      }
+    } else if (step.type === 'diagnostic_test') {
+      if (!allowedTests.has(stepCode)) {
+        issues.push({
+          severity: "MAJOR",
+          type: "MISMATCHED_SERVICE",
+          message: `Diagnostic test ${step.name || stepCode} does not match the diagnosed condition(s).`
+        });
+      }
+    }
+  });
+
+  return {
+    isValid: issues.length === 0,
+    issues: issues
+  };
+}
+```
+
+------------------------------------------------------------------------
+MILESTONE 5: API ORCHESTRATION & INTEGRATION (MODULES 5, 6, & 7 API)
+------------------------------------------------------------------------
+Goal: Build the `/api/analyze` endpoint. It receives the incoming claim, 
+      orchestrates calls to `clinicalValidator`, `stpEngine`, and `riskScorer`,
+      and returns the annotated analysis payload.
 
 Files to create:
 - [NEW] src/app/api/analyze/route.js
 
 Example Implementation `/api/analyze/route.js`:
 ```javascript
+import { validateClinicalServices } from '@/lib/clinicalValidator';
 import { evaluateStpCompliance } from '@/lib/stpEngine';
 import { calculateRiskScore } from '@/lib/riskScorer';
 
@@ -295,36 +404,13 @@ export async function POST(request) {
   try {
     const claimPayload = await request.json();
 
-    // 1. Run Clinical Validation
-    const clinicalIssues = [];
-    const primaryDiagnosis = claimPayload.diagnoses?.find(d => d.isPrimary) || claimPayload.diagnoses?.[0];
-    const medications = claimPayload.carePathway?.filter(s => s.type === 'medication') || [];
-    
-    // Check if medication matches diagnosis
-    if (primaryDiagnosis && medications.length > 0) {
-      const code = primaryDiagnosis.code.toUpperCase().trim();
-      // Simple cross-checks to mock Clinical Validation
-      if (code === 'K35.8') { // Appendicitis
-        const hasAmlodipine = medications.some(m => m.code === 'MED-AML-5');
-        if (hasAmlodipine) {
-          clinicalIssues.push({
-            severity: "CRITICAL",
-            type: "MISMATCHED_SERVICE",
-            message: "Medication Amlodipine does not match diagnosis of Acute Appendicitis."
-          });
-        }
-      }
-    }
+    // 1. Run Clinical Validation (Module 5)
+    const clinicalValidation = validateClinicalServices(claimPayload);
 
-    const clinicalValidation = {
-      isValid: clinicalIssues.length === 0,
-      issues: clinicalIssues
-    };
-
-    // 2. Run STP Compliance Check
+    // 2. Run STP Compliance Check (Module 6)
     const stpCompliance = evaluateStpCompliance(claimPayload);
 
-    // 3. Run Risk Scoring Engine
+    // 3. Run Risk Scoring Engine (Module 7)
     const riskScoring = calculateRiskScore(clinicalValidation, stpCompliance, claimPayload);
 
     // 4. Return combined result conforming to CLAIMSENSE AI ANALYSIS SCHEMA
@@ -338,7 +424,7 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error('Error in claim analysis:', error);
+    console.error('Error in claim analysis API:', error);
     return Response.json(
       { error: 'Internal Server Error', details: error.message },
       { status: 500 }
