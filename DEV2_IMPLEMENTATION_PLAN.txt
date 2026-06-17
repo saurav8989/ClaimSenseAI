@@ -1,0 +1,359 @@
+========================================================================
+            CLAIMSENSE AI - DEVELOPER 2 IMPLEMENTATION PLAN
+========================================================================
+
+This implementation plan provides a detailed breakdown, step-by-step guide,
+and skeleton code structures for Developer 2 (Core AI Engine & Clinical Rules).
+
+As Developer 2, your scope covers:
+1. Module 2: AI Clinical Note Interpreter
+2. Module 3: AI ICD Coding Engine
+3. Module 5: Clinical Validation Engine
+4. Module 6: STP Compliance Engine
+5. Module 7: Risk Scoring Engine
+6. API Endpoint: /api/analyze
+
+------------------------------------------------------------------------
+MILESTONE 1: CLINICAL NOTE INTERPRETER & ICD SUGGESTER
+------------------------------------------------------------------------
+Goal: Parse unstructured physician text and return matching ICD codes from 
+      icdDatabase.json using keyword density and synonym lookups.
+
+Files to create/modify:
+- [NEW] src/lib/icdSuggester.js
+- [MODIFY] src/app/api/suggest-icd/route.js
+
+Implementation Logic for `icdSuggester.js`:
+- Tokenize and sanitize input query (lowercase, remove punctuation, remove stop words).
+- Search title and synonym array for matches.
+- Rank by match confidence (exact title = 1.0, partial title = 0.8, synonym = 0.6).
+- If multiple query words match synonyms, accumulate confidence up to 1.0.
+
+Skeleton Code for `src/lib/icdSuggester.js`:
+```javascript
+import fs from 'fs';
+import path from 'path';
+
+export function suggestIcdCodes(noteText) {
+  const dbPath = path.resolve(process.cwd(), 'src/lib/icdDatabase.json');
+  const icdData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+
+  if (!noteText || noteText.trim() === '') {
+    return icdData.slice(0, 3); // Default recommendations
+  }
+
+  const query = noteText.toLowerCase().trim();
+  const results = icdData.map(condition => {
+    let score = 0;
+    
+    // 1. Direct title matching
+    if (condition.title.toLowerCase() === query) {
+      score = 1.0;
+    } else if (condition.title.toLowerCase().includes(query)) {
+      score = 0.8;
+    } else {
+      // 2. Tokenize and search synonyms
+      const tokens = query.split(/\s+/);
+      let synonymMatches = 0;
+      condition.synonyms.forEach(synonym => {
+        tokens.forEach(token => {
+          if (token.length > 2 && synonym.toLowerCase().includes(token)) {
+            synonymMatches++;
+          }
+        });
+      });
+      if (synonymMatches > 0) {
+        score = Math.min(0.6 + (synonymMatches * 0.05), 0.95);
+      }
+    }
+
+    return { ...condition, confidence: score };
+  })
+  .filter(item => item.confidence > 0)
+  .sort((a, b) => b.confidence - a.confidence);
+
+  return results.slice(0, 3); // Return top 3 suggestions
+}
+```
+
+------------------------------------------------------------------------
+MILESTONE 2: CLINICAL VALIDATION & STP COMPLIANCE ENGINE
+------------------------------------------------------------------------
+Goal: Check if prescribed meds/procedures match the primary diagnosis, and 
+      validate the sequence of events in the care pathway against 
+      clinicalDictionary.json guidelines.
+
+Files to create:
+- [NEW] src/lib/stpEngine.js
+
+Validation Engine Rules (Module 5):
+- Checks if the treatments/medications/procedures match the diagnosis.
+- Trigger warnings if code-service mismatches are found.
+
+STP Compliance Engine (Module 6):
+- Evaluates the chronological pathway.
+- Deducts points based on rule failures.
+- Output: Legitimacy Score (100 - penalties).
+
+Skeleton Code for `src/lib/stpEngine.js`:
+```javascript
+import fs from 'fs';
+import path from 'path';
+
+export function evaluateStpCompliance(claimPayload) {
+  const dictionaryPath = path.resolve(process.cwd(), 'src/lib/clinicalDictionary.json');
+  const protocols = JSON.parse(fs.readFileSync(dictionaryPath, 'utf8'));
+
+  const primaryDiagnosis = claimPayload.diagnoses.find(d => d.isPrimary) || claimPayload.diagnoses[0];
+  if (!primaryDiagnosis) {
+    return {
+      isCompliant: false,
+      complianceScore: 0,
+      protocolName: "Unknown",
+      deviations: [{ type: "MISSING_DIAGNOSIS", message: "No primary diagnosis found on claim.", penalty: 100 }]
+    };
+  }
+
+  const code = primaryDiagnosis.code.toUpperCase().trim();
+  const protocol = protocols[code];
+  if (!protocol) {
+    return {
+      isCompliant: true,
+      complianceScore: 100,
+      protocolName: `No protocol defined for code ${code}`,
+      deviations: []
+    };
+  }
+
+  const deviations = [];
+  const carePathway = claimPayload.carePathway || [];
+  
+  // Extract lists for validation
+  const symptoms = carePathway.filter(s => s.type === 'symptom').map(s => s.name.toLowerCase());
+  const diagnostics = carePathway.filter(s => s.type === 'diagnostic_test').map(s => s.code.toUpperCase().trim());
+  const medications = carePathway.filter(s => s.type === 'medication').map(s => s.code.toUpperCase().trim());
+  const procedures = carePathway.filter(s => s.type === 'procedure').map(s => s.code.toUpperCase().trim());
+
+  // Evaluate Rules Dynamically based on clinicalDictionary.json
+  protocol.rules.forEach(rule => {
+    let triggered = false;
+    let message = "";
+
+    if (rule.type === "test_required") {
+      // Rule 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1, 9.1, 10.1
+      // Check if required diagnostic test is in the pathway
+      const requiredTests = protocol.diagnosticTests.map(t => t.code);
+      const hasTest = diagnostics.some(test => requiredTests.includes(test));
+      if (!hasTest) {
+        triggered = true;
+        message = rule.description;
+      }
+    } 
+    
+    else if (rule.type === "medication_match") {
+      // Checks for medication alignment with the clinical dictionary
+      const allowedMeds = protocol.medications.map(m => m.code);
+      if (allowedMeds.length > 0) {
+        const hasMatchingMed = medications.some(med => allowedMeds.includes(med));
+        if (!hasMatchingMed && medications.length > 0) {
+          triggered = true;
+          message = rule.description;
+        }
+      }
+    } 
+    
+    else if (rule.type === "procedure_match") {
+      // Checks for procedure alignment with the clinical dictionary
+      const requiredProcs = protocol.procedures.map(p => p.code);
+      if (requiredProcs.length > 0) {
+        const hasMatchingProc = procedures.some(proc => requiredProcs.includes(proc));
+        if (!hasMatchingProc) {
+          triggered = true;
+          message = rule.description;
+        }
+      }
+    }
+
+    // Handle special sequencing rules
+    else if (rule.type === "treatment_sequence") {
+      if (code === "E11") {
+        // Diabetes Sequence: Insulin Glargine requires Metformin trial first
+        const hasInsulin = medications.includes("MED-INS-GLAR");
+        const hasMetformin = medications.includes("MED-MET-500");
+        if (hasInsulin && !hasMetformin) {
+          triggered = true;
+          message = rule.description;
+        }
+      } else if (code === "J45.909") {
+        // Asthma: Persistent asthma requires controller (Fluticasone) along with rescue
+        const hasRescue = medications.includes("MED-SAL-INH");
+        const hasController = medications.includes("MED-FLU-INH");
+        if (hasRescue && !hasController) {
+          triggered = true;
+          message = rule.description;
+        }
+      }
+    }
+
+    if (triggered) {
+      deviations.push({
+        type: rule.type.toUpperCase(),
+        message: message,
+        penalty: rule.penalty
+      });
+    }
+  });
+
+  const totalPenalty = deviations.reduce((sum, dev) => sum + dev.penalty, 0);
+  const complianceScore = Math.max(100 - totalPenalty, 0);
+
+  return {
+    isCompliant: complianceScore >= 80,
+    complianceScore: complianceScore,
+    protocolName: `${protocol.name} Standard Treatment Protocol`,
+    deviations: deviations
+  };
+}
+```
+
+------------------------------------------------------------------------
+MILESTONE 3: RISK SCORING ENGINE
+------------------------------------------------------------------------
+Goal: Quantify overall claim risk score based on clinical validation matches, 
+      STP compliance scores, and potential anomalies.
+
+Files to create:
+- [NEW] src/lib/riskScorer.js
+
+Scoring Breakdown:
+- STP Compliance (Weight: 50%)
+- Clinical Matches (Weight: 30%)
+- Billing/Cost anomalies (Weight: 20%)
+
+Skeleton Code for `src/lib/riskScorer.js`:
+```javascript
+export function calculateRiskScore(clinicalValidation, stpCompliance, claimPayload) {
+  let compliancePenalty = (100 - stpCompliance.complianceScore) * 0.50; // Max 50 points
+  
+  let validationPenalty = 0; // Max 30 points
+  if (!clinicalValidation.isValid) {
+    validationPenalty = clinicalValidation.issues.length * 15;
+    validationPenalty = Math.min(validationPenalty, 30);
+  }
+
+  let billingAnomalyPenalty = 0; // Max 20 points
+  const totalAmount = claimPayload.billing?.totalClaimedAmount || 0;
+  // Basic anomaly: high claimed costs without adequate procedures/tests
+  if (totalAmount > 500 && claimPayload.carePathway?.length < 3) {
+    billingAnomalyPenalty = 20;
+  } else if (totalAmount > 150) {
+    billingAnomalyPenalty = 10;
+  }
+
+  const overallRiskScore = Math.round(compliancePenalty + validationPenalty + billingAnomalyPenalty);
+  
+  let riskCategory = "LOW";
+  let reviewerPriority = 5;
+
+  if (overallRiskScore >= 71) {
+    riskCategory = "HIGH";
+    reviewerPriority = 1;
+  } else if (overallRiskScore >= 31) {
+    riskCategory = "MEDIUM";
+    reviewerPriority = 3;
+  }
+
+  const riskFlags = [];
+  if (compliancePenalty > 20) riskFlags.push("HIGH_PROTOCOL_DEVIATION");
+  if (validationPenalty > 0) riskFlags.push("CLINICAL_SERVICE_MISMATCH");
+  if (billingAnomalyPenalty > 15) riskFlags.push("COST_INFLATION_SUSPECT");
+
+  return {
+    overallRiskScore,
+    riskCategory,
+    riskFlags,
+    reviewerPriority
+  };
+}
+```
+
+------------------------------------------------------------------------
+MILESTONE 4: MOCK CLINICAL VALIDATOR & API INTEGRATION
+------------------------------------------------------------------------
+Goal: Build the `/api/analyze` endpoint. It parses incoming claims and 
+      orchestrates calls to the validation, compliance, and risk engines.
+
+Files to create:
+- [NEW] src/app/api/analyze/route.js
+
+Example Implementation `/api/analyze/route.js`:
+```javascript
+import { evaluateStpCompliance } from '@/lib/stpEngine';
+import { calculateRiskScore } from '@/lib/riskScorer';
+
+export async function POST(request) {
+  try {
+    const claimPayload = await request.json();
+
+    // 1. Run Clinical Validation
+    const clinicalIssues = [];
+    const primaryDiagnosis = claimPayload.diagnoses?.find(d => d.isPrimary) || claimPayload.diagnoses?.[0];
+    const medications = claimPayload.carePathway?.filter(s => s.type === 'medication') || [];
+    
+    // Check if medication matches diagnosis
+    if (primaryDiagnosis && medications.length > 0) {
+      const code = primaryDiagnosis.code.toUpperCase().trim();
+      // Simple cross-checks to mock Clinical Validation
+      if (code === 'K35.8') { // Appendicitis
+        const hasAmlodipine = medications.some(m => m.code === 'MED-AML-5');
+        if (hasAmlodipine) {
+          clinicalIssues.push({
+            severity: "CRITICAL",
+            type: "MISMATCHED_SERVICE",
+            message: "Medication Amlodipine does not match diagnosis of Acute Appendicitis."
+          });
+        }
+      }
+    }
+
+    const clinicalValidation = {
+      isValid: clinicalIssues.length === 0,
+      issues: clinicalIssues
+    };
+
+    // 2. Run STP Compliance Check
+    const stpCompliance = evaluateStpCompliance(claimPayload);
+
+    // 3. Run Risk Scoring Engine
+    const riskScoring = calculateRiskScore(clinicalValidation, stpCompliance, claimPayload);
+
+    // 4. Return combined result conforming to CLAIMSENSE AI ANALYSIS SCHEMA
+    return Response.json({
+      claimId: claimPayload.claimId,
+      analyzedAt: new Date().toISOString(),
+      status: "PENDING_REVIEW",
+      clinicalValidation,
+      stpCompliance,
+      riskScoring
+    });
+
+  } catch (error) {
+    console.error('Error in claim analysis:', error);
+    return Response.json(
+      { error: 'Internal Server Error', details: error.message },
+      { status: 500 }
+    );
+  }
+}
+```
+
+------------------------------------------------------------------------
+TIPS FOR WINNING THE HACKATHON
+------------------------------------------------------------------------
+1. Keep algorithms fast: Since we're using synchronous JSON files rather than heavy 
+   database checks, keep searches optimized.
+2. Align with Developer 1: Share the JSON fields exactly so their frontend doesn't break
+   when submitting to `/api/analyze` or `/api/openimis/claims`.
+3. Align with Developer 3: Ensure your `/api/analyze` risk score outputs match the exact 
+   fields expected by the priority queues.
+========================================================================
