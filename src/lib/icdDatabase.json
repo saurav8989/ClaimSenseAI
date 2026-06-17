@@ -1,0 +1,159 @@
+[
+  {
+    "code": "1F45",
+    "icd10Code": "B54",
+    "title": "Malaria without parasitological confirmation",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria nos",
+      "recurrent malaria",
+      "remittent malaria",
+      "clinically diagnosed malaria",
+      "malarial fever",
+      "malaria fever nos",
+      "malarial cachexia",
+      "clinically diagnosed malaria without parasitological confirmation"
+    ]
+  },
+  {
+    "code": "BA00.Z",
+    "icd10Code": "I10",
+    "title": "Essential hypertension, unspecified",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "essential hypertension",
+      "essential (primary) hypertension, unspecified, without mention of hypertensive crisis"
+    ]
+  },
+  {
+    "code": "5A11",
+    "icd10Code": "E11",
+    "title": "Type 2 diabetes mellitus",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "diabetes mellitus type 2",
+      "t2dm - [type 2 diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "DB10.02",
+    "icd10Code": "K35.8",
+    "title": "Acute appendicitis without localised or generalised peritonitis",
+    "synonyms": [
+      "abdominal pain",
+      "nausea",
+      "vomiting",
+      "fever",
+      "acute appendicitis nos",
+      "acute appendicitis with phlegmone",
+      "acute appendicitis with no specification if perforated or not",
+      "acute appendicitis with no perforation or abscess and no visible pus"
+    ]
+  },
+  {
+    "code": "1B10.Z",
+    "icd10Code": "A15.0",
+    "title": "Respiratory tuberculosis, without mention of bacteriological or histological confirmation",
+    "synonyms": [
+      "chronic cough",
+      "coughing blood",
+      "night sweats",
+      "weight loss",
+      "pulmonary tuberculosis",
+      "tuberculosis of lung",
+      "primary pulmonary tuberculosis",
+      "tuberculous lung ulcer",
+      "tuberculous pulmonary fistula",
+      "tuberculous pulmonary fibrosis",
+      "lung tb - [tuberculosis]",
+      "lung tbc - [tuberculosis]",
+      "primary complex pulmonary tuberculosis",
+      "tuberculous mycobacterial pulmonary infection",
+      "pulmonary tuberculosis, childhood type or first infection",
+      "tuberculous atypical mycobacterial pulmonary infection",
+      "tuberculosis of lung, without mention of bacteriological or histological confirmation",
+      "pulmonary tuberculosis without mention of bacteriological or histological confirmation",
+      "tuberculosis of lung, nos (without mention of bacteriological or histological confirmation)",
+      "bronchopulmonary tb - [tuberculosis]",
+      "tuberculous fibrosis of lung, without mention of bacteriological or histological confirmation",
+      "tuberculous fibrosis of lung, nos without mention of bacteriological or histological confirmation"
+    ]
+  },
+  {
+    "code": "3A00.Z",
+    "icd10Code": "D50.9",
+    "title": "Iron deficiency anaemia, unspecified",
+    "synonyms": [
+      "fatigue",
+      "weakness",
+      "pale skin",
+      "shortness of breath",
+      "iron deficiency anaemia",
+      "acquired iron deficiency anaemia",
+      "fe - [iron] deficiency anemia nos",
+      "ida - [iron deficiency anemia]"
+    ]
+  },
+  {
+    "code": "CA03.Z",
+    "icd10Code": "J03.90",
+    "title": "Acute tonsillitis, unspecified",
+    "synonyms": [
+      "sore throat",
+      "painful swallowing",
+      "swollen tonsils",
+      "throat pain",
+      "acute tonsillitis",
+      "acute tonsillitis nos"
+    ]
+  },
+  {
+    "code": "CA23.32",
+    "icd10Code": "J45.909",
+    "title": "Unspecified asthma, uncomplicated",
+    "synonyms": [
+      "wheezing",
+      "coughing",
+      "chest tightness",
+      "shortness of breath",
+      "bronchial asthma nos"
+    ]
+  },
+  {
+    "code": "DC12.0Z",
+    "icd10Code": "K81.0",
+    "title": "Acute cholecystitis, unspecified",
+    "synonyms": [
+      "upper right abdominal pain",
+      "gallstones",
+      "gallbladder pain",
+      "acute cholecystitis",
+      "acute cholecystitis infection",
+      "acute acalculous cholecystitis"
+    ]
+  },
+  {
+    "code": "GC08.Z",
+    "icd10Code": "N39.0",
+    "title": "Urinary tract infection, site and agent not specified",
+    "synonyms": [
+      "burning urination",
+      "painful pee",
+      "frequent urination",
+      "urine infection",
+      "urinary tract infection nos",
+      "urinary tract infection, site not specified",
+      "uti - [urinary tract infection]",
+      "uti nos - [urinary tract infection nos]"
+    ]
+  }
+]
