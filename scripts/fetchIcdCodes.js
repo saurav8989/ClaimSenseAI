@@ -33,16 +33,16 @@ const CLIENT_SECRET = process.env.WHO_CLIENT_SECRET;
 
 // Target clinical conditions we want to index
 const TARGET_CONDITIONS = [
-  { term: 'Malaria', defaultCode: '1F45', defaultIcd10: 'B54', defaultSynonyms: ['fever', 'chills', 'plasmodium', 'shivering', 'malaria'] },
-  { term: 'Plasmodium falciparum', defaultCode: '1F40', defaultIcd10: 'B54', defaultSynonyms: ['falciparum', 'malaria'] },
-  { term: 'Plasmodium vivax', defaultCode: '1F41', defaultIcd10: 'B54', defaultSynonyms: ['vivax', 'malaria'] },
-  { term: 'Plasmodium malariae', defaultCode: '1F42', defaultIcd10: 'B54', defaultSynonyms: ['malariae', 'malaria'] },
-  { term: 'Plasmodium ovale', defaultCode: '1F43', defaultIcd10: 'B54', defaultSynonyms: ['ovale', 'malaria'] },
-  { term: 'Congenital malaria', defaultCode: 'KA64.2', defaultIcd10: 'B54', defaultSynonyms: ['congenital', 'baby', 'malaria'] },
-  { term: 'Essential Hypertension', defaultCode: 'BA00.Z', defaultIcd10: 'I10', defaultSynonyms: ['high blood pressure', 'elevated bp', 'headache', 'dizziness', 'hypertension'] },
-  { term: 'Type 2 Diabetes Mellitus', defaultCode: '5A11', defaultIcd10: 'E11', defaultSynonyms: ['diabetes', 'sugar', 'high glucose', 'thirst', 't2dm'] },
-  { term: 'Dengue Fever', defaultCode: '1D2Z', defaultIcd10: 'A90', defaultSynonyms: ['fever', 'chills', 'mosquito', 'platelets', 'headache', 'joint pain', 'dengue'] },
-  { term: 'Pneumonia', defaultCode: 'CA40.Z', defaultIcd10: 'J18.9', defaultSynonyms: ['cough', 'fever', 'shortness of breath', 'difficulty breathing', 'chest pain', 'pneumonia'] }
+  { term: 'Malaria', defaultCode: '1F45', defaultSynonyms: ['fever', 'chills', 'plasmodium', 'shivering', 'malaria'] },
+  { term: 'Plasmodium falciparum', defaultCode: '1F40', defaultSynonyms: ['falciparum', 'malaria'] },
+  { term: 'Plasmodium vivax', defaultCode: '1F41', defaultSynonyms: ['vivax', 'malaria'] },
+  { term: 'Plasmodium malariae', defaultCode: '1F42', defaultSynonyms: ['malariae', 'malaria'] },
+  { term: 'Plasmodium ovale', defaultCode: '1F43', defaultSynonyms: ['ovale', 'malaria'] },
+  { term: 'Congenital malaria', defaultCode: 'KA64.2', defaultSynonyms: ['congenital', 'baby', 'malaria'] },
+  { term: 'Essential Hypertension', defaultCode: 'BA00.Z', defaultSynonyms: ['high blood pressure', 'elevated bp', 'headache', 'dizziness', 'hypertension'] },
+  { term: 'Type 2 Diabetes Mellitus', defaultCode: '5A11', defaultSynonyms: ['diabetes', 'sugar', 'high glucose', 'thirst', 't2dm'] },
+  { term: 'Dengue Fever', defaultCode: '1D2Z', defaultSynonyms: ['fever', 'chills', 'mosquito', 'platelets', 'headache', 'joint pain', 'dengue'] },
+  { term: 'Pneumonia', defaultCode: 'CA40.Z', defaultSynonyms: ['cough', 'fever', 'shortness of breath', 'difficulty breathing', 'chest pain', 'pneumonia'] }
 ];
 
 async function getAccessToken() {
@@ -80,7 +80,7 @@ async function fetchFromWhoApi(token) {
   const addedCodes = new Set();
 
   for (const condition of TARGET_CONDITIONS) {
-    const searchUrl = `https://id.who.int/icd/release/11/2024-01/mms/search?q=${encodeURIComponent(condition.term)}`;
+    const searchUrl = `https://id.who.int/icd/release/11/2026-01/mms/search?q=${encodeURIComponent(condition.term)}`;
     console.log(`🔎 Searching WHO ICD-11 for: "${condition.term}"...`);
 
     try {

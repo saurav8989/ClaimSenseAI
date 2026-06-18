@@ -1,7 +1,7 @@
 [
   {
-    "code": "1F45",
-    "title": "Malaria without parasitological confirmation",
+    "code": "1F4Z",
+    "title": "Malaria, unspecified",
     "synonyms": [
       "fever",
       "chills",
@@ -10,23 +10,10 @@
       "malaria",
       "malaria nos",
       "recurrent malaria",
-      "remittent malaria",
-      "clinically diagnosed malaria",
+      "malaria fever",
       "malarial fever",
-      "malaria fever nos",
-      "malarial cachexia",
-      "clinically diagnosed malaria without parasitological confirmation"
-    ]
-  },
-  {
-    "code": "1F4Z",
-    "title": "Malaria, unspecified",
-    "synonyms": [
-      "fever",
-      "chills",
-      "plasmodium",
-      "shivering",
-      "malaria"
+      "intermittent fever in malaria",
+      "malarial cachexia"
     ]
   },
   {
@@ -43,7 +30,19 @@
       "plasmodium malariae malaria nos",
       "malaria by plasmodium malariae",
       "quartan malaria",
-      "quartan malarial"
+      "quartan malarial fever"
+    ]
+  },
+  {
+    "code": "KA64.2Z",
+    "title": "Congenital malaria, unspecified",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "congenital malaria"
     ]
   },
   {
@@ -66,18 +65,6 @@
     ]
   },
   {
-    "code": "KA64.Y",
-    "title": "Other specified parasitic diseases in the fetus or newborn",
-    "synonyms": [
-      "fever",
-      "chills",
-      "plasmodium",
-      "shivering",
-      "malaria",
-      "other congenital malaria"
-    ]
-  },
-  {
     "code": "1F40.Z",
     "title": "Malaria due to Plasmodium falciparum, unspecified",
     "synonyms": [
@@ -86,8 +73,11 @@
       "plasmodium",
       "shivering",
       "malaria",
+      "st - [subtertian] malaria",
       "tropical malaria",
+      "falciparum malaria",
       "pernicious malaria",
+      "mt - [malignant tertian] malaria",
       "malignant malaria",
       "haemoglobinuric malaria",
       "malaria tropica",
@@ -96,19 +86,17 @@
       "algid malaria",
       "severe malarial falciparum",
       "malaria due to plasmodium falciparum",
-      "st - [subtertian malaria]",
       "malarial shock",
       "malignant tertian malaria",
       "continued malaria fever",
       "aestivo autumnal malaria",
       "estivo-autumnal malaria",
       "severe plasmodium falciparum malaria",
+      "stm - [subtertian malaria]",
       "malarial haematuria",
-      "tm -[malignant tertian malaria]",
       "subtertian malaria fever",
       "malarial blackwater fever",
       "malarial haemoglobinuria",
-      "falciparum malaria [malignant tertian]",
       "subtertian malignant tertian malaria",
       "mtm - [malignant tertian malaria]",
       "malarial haematinuria",
@@ -163,7 +151,20 @@
     ]
   },
   {
-    "code": "KA64.1",
+    "code": "1F45",
+    "title": "Malaria without parasitological confirmation",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "clinically diagnosed malaria",
+      "clinically diagnosed malaria without parasitological confirmation"
+    ]
+  },
+  {
+    "code": "KA64.20",
     "title": "Congenital falciparum malaria",
     "synonyms": [
       "fever",
@@ -200,7 +201,7 @@
   },
   {
     "code": "1F40.Y",
-    "title": "Other severe and complicated Plasmodium falciparum malaria",
+    "title": "Other severe or complicated Plasmodium falciparum malaria",
     "synonyms": [
       "fever",
       "chills",
@@ -208,6 +209,19 @@
       "shivering",
       "malaria",
       "myelitis due to malaria"
+    ]
+  },
+  {
+    "code": "KA64.21",
+    "title": "Congenital non-falciparum malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "congenital malaria due to plasmodium ovale",
+      "congenital malaria due to plasmodium vivax"
     ]
   },
   {
@@ -436,7 +450,7 @@
   },
   {
     "code": "1C62.Z",
-    "title": "Human immunodeficiency virus disease without mention of associated disease or condition, clinical stage unspecified",
+    "title": "Human immunodeficiency virus disease without mention of tuberculosis or malaria, clinical stage unspecified",
     "synonyms": [
       "fever",
       "chills",
@@ -500,7 +514,8 @@
       "dizziness",
       "hypertension",
       "essential hypertension",
-      "essential (primary) hypertension, unspecified, without mention of hypertensive crisis"
+      "essential (primary) hypertension, unspecified, without mention of hypertensive crisis",
+      "essential htn - [hypertension], without mention of hypertensive crisis"
     ]
   },
   {
@@ -523,7 +538,8 @@
       "elevated bp",
       "headache",
       "dizziness",
-      "hypertension"
+      "hypertension",
+      "hypertensive crisis [essential htn - [hypertension], without mention of hypertensive crisis]"
     ]
   },
   {
@@ -545,7 +561,8 @@
       "elevated bp",
       "headache",
       "dizziness",
-      "hypertension"
+      "hypertension",
+      "hypertensive crisis [essential htn - [hypertension], with mention of hypertensive crisis]"
     ]
   },
   {
@@ -569,7 +586,8 @@
       "elevated bp",
       "headache",
       "dizziness",
-      "hypertension"
+      "hypertension",
+      "essential htn - [hypertension], with mention of hypertensive crisis"
     ]
   },
   {
@@ -580,7 +598,8 @@
       "elevated bp",
       "headache",
       "dizziness",
-      "hypertension"
+      "hypertension",
+      "hypertensive retinopathy [essential htn - [hypertension], without mention of hypertensive crisis]"
     ]
   },
   {
@@ -614,7 +633,8 @@
       "elevated bp",
       "headache",
       "dizziness",
-      "hypertension"
+      "hypertension",
+      "hypertensive retinopathy [essential htn - [hypertension], with mention of hypertensive crisis]"
     ]
   },
   {
@@ -627,7 +647,8 @@
       "dizziness",
       "hypertension",
       "intracerebral hypertensive haemorrhage [essential hypertension, unspecified]",
-      "intracerebral hypertensive haemorrhage [essential (primary) hypertension, unspecified, without mention of hypertensive crisis]"
+      "intracerebral hypertensive haemorrhage [essential (primary) hypertension, unspecified, without mention of hypertensive crisis]",
+      "intracerebral hypertensive haemorrhage [essential htn - [hypertension], without mention of hypertensive crisis]"
     ]
   },
   {
@@ -651,7 +672,8 @@
       "headache",
       "dizziness",
       "hypertension",
-      "intracerebral hypertensive haemorrhage [essential (primary) hypertension, unspecified, with mention of hypertensive crisis]"
+      "intracerebral hypertensive haemorrhage [essential (primary) hypertension, unspecified, with mention of hypertensive crisis]",
+      "intracerebral hypertensive haemorrhage [essential htn - [hypertension], with mention of hypertensive crisis]"
     ]
   },
   {
@@ -689,7 +711,11 @@
       "thirst",
       "t2dm",
       "diabetic foot [type 2 diabetes mellitus]",
-      "neuropathic ulceration of foot due to diabetes [type 2 diabetes mellitus]"
+      "chronic diabetic foot ulcer [type 2 diabetes mellitus]",
+      "neuropathic ulceration of foot due to diabetes [type 2 diabetes mellitus]",
+      "neuropathic and vasculopathic ulceration of foot due to diabetes mellitus [diabetic type 2]",
+      "neuropathic and vasculopathic ulceration of foot due to diabetes mellitus [type 2 diabetes mellitus]",
+      "neuropathic and vasculopathic ulceration of foot due to diabetes mellitus [insulin requiring type 2 diabetes]"
     ]
   },
   {
@@ -705,7 +731,7 @@
       "brittle diabetes [type 2 diabetes mellitus]",
       "inadequate control of diabetes [type 2 diabetes mellitus]",
       "poorly controlled diabetes [type 2 diabetes mellitus]",
-      "uncontrolled or unstable diabetes mellitus [type 2 diabetes]",
+      "uncontrolled or unstable diabetes mellitus [diabetic type 2]",
       "uncontrolled or unstable diabetes mellitus [insulin requiring type 2 diabetes]"
     ]
   },
@@ -730,7 +756,7 @@
       "high glucose",
       "thirst",
       "t2dm",
-      "other specified acute complications of diabetes mellitus [type 2 diabetes]",
+      "other specified acute complications of diabetes mellitus [diabetic type 2]",
       "other specified acute complications of diabetes mellitus [insulin requiring type 2 diabetes]"
     ]
   },
@@ -744,8 +770,8 @@
       "thirst",
       "t2dm",
       "diabetic glomerulopathy [type 2 diabetes mellitus]",
-      "glomerular disorders in diabetes mellitus [type 2 diabetes]",
       "glomerular disorders in diabetes mellitus [type 2 diabetes mellitus]",
+      "glomerular disorders in diabetes mellitus [diabetic type 2]",
       "glomerular disorders in diabetes mellitus [insulin requiring type 2 diabetes]"
     ]
   },
@@ -771,7 +797,9 @@
       "t2dm",
       "diabetic foot [other specified diabetes mellitus, not type 1 and not type 2]",
       "diabetic foot ulcer [other specified diabetes mellitus, not type 1 and not type 2]",
-      "neuropathic ulceration of foot due to diabetes [other specified diabetes mellitus, not type 1 and not type 2]"
+      "chronic diabetic foot ulcer [other specified diabetes mellitus, not type 1 and not type 2]",
+      "neuropathic ulceration of foot due to diabetes [other specified diabetes mellitus, not type 1 and not type 2]",
+      "neuropathic and vasculopathic ulceration of foot due to diabetes mellitus [other specified diabetes mellitus, not type 1 and not type 2]"
     ]
   },
   {
@@ -784,9 +812,9 @@
       "thirst",
       "t2dm",
       "diabetic charcot foot [type 2 diabetes mellitus]",
-      "neuropathic arthropathy due to diabetes mellitus [type 2 diabetes]",
       "neuropathic arthropathy due to diabetes mellitus [type 2 diabetes mellitus]",
       "diabetic neuropathic arthropathy [type 2 diabetes mellitus]",
+      "neuropathic arthropathy due to diabetes mellitus [diabetic type 2]",
       "neuropathic arthropathy due to diabetes mellitus [insulin requiring type 2 diabetes]"
     ]
   },
@@ -958,7 +986,7 @@
   },
   {
     "code": "9B71.0Z/5A11",
-    "title": "Diabetic retinopathy, unspecified [Type 2 diabetes mellitus]",
+    "title": "Diabetic retinopathy, unspecified whether nonproliferative or proliferative [Type 2 diabetes mellitus]",
     "synonyms": [
       "diabetes",
       "sugar",
@@ -989,8 +1017,8 @@
       "high glucose",
       "thirst",
       "t2dm",
-      "autonomic neuropathy due to diabetes mellitus [type 2 diabetes]",
       "diabetic autonomic neuropathy [type 2 diabetes mellitus]",
+      "autonomic neuropathy due to diabetes mellitus [diabetic type 2]",
       "autonomic neuropathy due to diabetes mellitus [insulin requiring type 2 diabetes]"
     ]
   },
@@ -1020,17 +1048,6 @@
       "t2dm",
       "diabetic neuropathy nos [other specified diabetes mellitus, not type 1 and not type 2]",
       "diabetic polyneuropathy [other specified diabetes mellitus, not type 1 and not type 2]"
-    ]
-  },
-  {
-    "code": "9B71.02/5A11",
-    "title": "Diabetic macular oedema [Type 2 diabetes mellitus]",
-    "synonyms": [
-      "diabetes",
-      "sugar",
-      "high glucose",
-      "thirst",
-      "t2dm"
     ]
   },
   {
@@ -1125,8 +1142,8 @@
       "high glucose",
       "thirst",
       "t2dm",
-      "diabetes mellitus, independent of type with proliferative retinopathy [type 2 diabetes]",
       "diabetes mellitus, independent of type with proliferative retinopathy [type 2 diabetes mellitus]",
+      "diabetes mellitus, independent of type with proliferative retinopathy [diabetic type 2]",
       "diabetes mellitus, independent of type with proliferative retinopathy [dm2]",
       "diabetes mellitus, independent of type with proliferative retinopathy [insulin requiring type 2 diabetes]",
       "diabetes mellitus, independent of type with proliferative retinopathy [t2dm - [type 2 diabetes mellitus]]"
@@ -1146,14 +1163,15 @@
   },
   {
     "code": "9B71.0Z/5A13",
-    "title": "Diabetic retinopathy, unspecified [Diabetes mellitus, other specified type]",
+    "title": "Diabetic retinopathy, unspecified whether nonproliferative or proliferative [Diabetes mellitus, other specified type]",
     "synonyms": [
       "diabetes",
       "sugar",
       "high glucose",
       "thirst",
       "t2dm",
-      "diabetic retinopathy [other specified diabetes mellitus, not type 1 and not type 2]"
+      "diabetic retinopathy [other specified diabetes mellitus, not type 1 and not type 2]",
+      "diabetic retinopathy, unspecified whether nonproliferative or proliferative [other specified diabetes mellitus, not type 1 and not type 2]"
     ]
   },
   {
@@ -1224,8 +1242,8 @@
       "high glucose",
       "thirst",
       "t2dm",
-      "hypoglycaemia in the context of diabetes mellitus [type 2 diabetes]",
       "hypoglycaemia in the context of diabetes mellitus [type 2 diabetes mellitus]",
+      "hypoglycaemia in the context of diabetes mellitus [diabetic type 2]",
       "hypoglycaemia in the context of diabetes mellitus [insulin requiring type 2 diabetes]"
     ]
   },
@@ -1241,18 +1259,6 @@
       "diabetic ketoacidosis nos [type 2 diabetes mellitus]",
       "dka - [diabetic ketoacidosis] nos [type 2 diabetes mellitus]",
       "dka - [diabetic ketoacidosis] without coma [type 2 diabetes mellitus]"
-    ]
-  },
-  {
-    "code": "9B71.02/5A13",
-    "title": "Diabetic macular oedema [Diabetes mellitus, other specified type]",
-    "synonyms": [
-      "diabetes",
-      "sugar",
-      "high glucose",
-      "thirst",
-      "t2dm",
-      "diabetic macular oedema [other specified diabetes mellitus, not type 1 and not type 2]"
     ]
   },
   {
@@ -1317,19 +1323,28 @@
     ]
   },
   {
-    "code": "1D2Z",
-    "title": "Dengue fever, unspecified",
+    "code": "GB42.0/5A11",
+    "title": "Albuminuria, Grade A2 [Type 2 diabetes mellitus]",
     "synonyms": [
-      "fever",
-      "chills",
-      "mosquito",
-      "platelets",
-      "headache",
-      "joint pain",
-      "dengue",
-      "classical dengue fever",
-      "df - [dengue fever]",
-      "seven-day dengue fever"
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "albuminuria, grade a2 [type ii diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "GB42.0/5A14",
+    "title": "Albuminuria, Grade A2 [Diabetes mellitus, type unspecified]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "albuminuria, grade a2 [diabetes mellitus, type unspecified without complications]",
+      "albuminuria, grade a2 [diabetes without mention of type of diabetes mellitus]"
     ]
   },
   {
@@ -1346,6 +1361,22 @@
       "severe dengue fever",
       "encephalitis due to dengue fever",
       "severe dengue haemorrhagic fever"
+    ]
+  },
+  {
+    "code": "1D2Z",
+    "title": "Dengue, unspecified",
+    "synonyms": [
+      "fever",
+      "chills",
+      "mosquito",
+      "platelets",
+      "headache",
+      "joint pain",
+      "dengue",
+      "classical dengue fever",
+      "df - [dengue fever]",
+      "seven-day dengue fever"
     ]
   },
   {
@@ -1515,7 +1546,8 @@
       "bacterial double pneumonia",
       "bacterial lobar pneumonia",
       "bacillus double pneumonia",
-      "bronchopneumonia due to bacteria other than s. pneumoniae and h. influenzae"
+      "bronchopneumonia due to bacteria other than s. pneumoniae and h. influenzae",
+      "bronchopneumonia due to bacteria other than streptococcus pneumoniae and haemophilus influenzae"
     ]
   },
   {
@@ -1716,8 +1748,9 @@
       "difficulty breathing",
       "chest pain",
       "pneumonia",
-      "pneumonia due to chlamydia",
       "pneumonia due to chlamydia pneumoniae",
+      "pneumonia due to chlamydia",
+      "pneumonia due to chlamydiaceae",
       "late-onset pneumonia due to chlamydia"
     ]
   },
@@ -1770,8 +1803,8 @@
     ]
   },
   {
-    "code": "1F20.0Y",
-    "title": "Invasive aspergillosis of other specified site",
+    "code": "1F20.0Y&XA57M6",
+    "title": "Invasive pulmonary aspergillosis",
     "synonyms": [
       "cough",
       "fever",
@@ -1779,7 +1812,8 @@
       "difficulty breathing",
       "chest pain",
       "pneumonia",
-      "aspergillus pneumonia"
+      "aspergillus pneumonia",
+      "pneumonia in aspergillosis"
     ]
   },
   {
@@ -1793,12 +1827,11 @@
       "chest pain",
       "pneumonia",
       "endemic pneumonia",
-      "pneumonia due to pplo - [pleuro-pneumonia-like-organism]",
+      "pneumonia due to pplo - [pleuropneumonia-like-organism]",
       "mycoplasmal pneumonia",
       "eaton agent pneumonia",
       "primary atypical pneumonia due to mycoplasma pneumoniae",
-      "pleuro-pneumonia-like-organism",
-      "infection by pplo - [pleuro-pneumonia-like-organism]"
+      "infection by pplo - [pleuropneumonia-like-organism]"
     ]
   },
   {
@@ -1840,9 +1873,11 @@
       "influenzal pneumonia",
       "influenzal lobar pneumonia",
       "influenza with pneumonia nos",
+      "primary influenza pneumonia",
       "influenzal pneumonia, unspecified or specific virus not identified",
       "influenza with pneumonia, any form",
       "influenza with pneumonia, virus not identified",
+      "pneumonia due to not identified influenza virus",
       "influenzal bronchopneumonia, unspecified or specific virus not identified"
     ]
   },
@@ -1915,7 +1950,6 @@
       "difficulty breathing",
       "chest pain",
       "pneumonia",
-      "pneumonia in aspergillosis",
       "late-onset pneumonia due to other fungi"
     ]
   },
@@ -2094,7 +2128,8 @@
       "difficulty breathing",
       "chest pain",
       "pneumonia",
-      "nosocomial pneumonia"
+      "nosocomial pneumonia",
+      "hospital acquired pneumonia"
     ]
   },
   {
@@ -2112,21 +2147,6 @@
       "pneumonia with tularaemia",
       "tularaemia pneumonia",
       "pneumonia due to tularaemia"
-    ]
-  },
-  {
-    "code": "CA40.0Y/1C22",
-    "title": "Pneumonia in chlamydia psittaci infection",
-    "synonyms": [
-      "cough",
-      "fever",
-      "shortness of breath",
-      "difficulty breathing",
-      "chest pain",
-      "pneumonia",
-      "louisiana pneumonia",
-      "pneumonia in chlamydophila psittaci infection",
-      "ornithosis with pneumonia"
     ]
   },
   {
@@ -2200,6 +2220,21 @@
       "chest pain",
       "pneumonia",
       "desquamative interstitial pneumonia"
+    ]
+  },
+  {
+    "code": "CA40.08",
+    "title": "Pneumonia due to beta-haemolytic Streptococcus",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "group b streptococcal pneumonia",
+      "pneumonia due to streptococcus, group b",
+      "early-onset pneumonia due to group b streptococcus"
     ]
   }
 ]
