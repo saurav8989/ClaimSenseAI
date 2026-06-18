@@ -148,7 +148,7 @@ async function fetchFromWhoApi(token) {
   return database;
 }
 
-function useFallbackSeeding() {
+function fallbackSeeding() {
   console.log('📦 Seeding local database with pre-configured default values (Offline Mode)...');
   return TARGET_CONDITIONS.map(condition => ({
     code: condition.defaultCode,
@@ -165,7 +165,7 @@ async function main() {
     finalDatabase = await fetchFromWhoApi(token);
   } catch (err) {
     console.log(`ℹ️ Info: API fetching skipped/failed (${err.message}). Using local cache seeds.`);
-    finalDatabase = useFallbackSeeding();
+    finalDatabase = fallbackSeeding();
   }
 
   // Ensure target folder exists
