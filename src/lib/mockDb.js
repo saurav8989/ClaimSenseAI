@@ -153,8 +153,13 @@ export function updateClaimStatus(claimId, status, comments = "") {
   const claims = getClaims();
   const idx = claims.findIndex(c => c.claimId === claimId);
   if (idx !== -1) {
-    claims[idx].status = status;
-    claims[idx].reviewerComments = comments;
+    let resolvedStatus = status.toUpperCase();
+    if (resolvedStatus === 'APPROVE') resolvedStatus = 'APPROVED';
+    if (resolvedStatus === 'REJECT') resolvedStatus = 'REJECTED';
+    if (resolvedStatus === 'MODIFY') resolvedStatus = 'MODIFIED';
+
+    claims[idx].status = resolvedStatus;
+    claims[idx].reviewerComments = comments || `Claim ${status.toLowerCase()}ed`;
     claims[idx].reviewedAt = new Date().toISOString();
     fs.writeFileSync(dbPath, JSON.stringify(claims, null, 2), 'utf8');
     return claims[idx];
