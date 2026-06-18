@@ -54,3 +54,4 @@ Thumbs.db
 # Project specific
 db.sqlite3
 *.db
+claims_db.json
