@@ -7,12 +7,6 @@ const mockClaims = [
     providerId: "PROV-9082",
     providerName: "Dr. Sarah Jenkins",
     submittedAt: "2026-06-16T14:30:00Z",
-    patient: {
-      id: "PAT-5542",
-      name: "John Doe",
-      age: 45,
-      gender: "Male"
-    },
     diagnoses: [
       {
         code: "K35.8",
@@ -38,9 +32,6 @@ const mockClaims = [
         timestamp: "2026-06-16T14:15:00Z"
       }
     ],
-    billing: {
-      totalClaimedAmount: 45.00
-    },
     status: "PENDING_REVIEW",
     clinicalValidation: {
       isValid: false,
@@ -75,12 +66,6 @@ const mockClaims = [
     providerId: "PROV-1022",
     providerName: "Dr. Alan Grant",
     submittedAt: "2026-06-17T09:15:00Z",
-    patient: {
-      id: "PAT-1123",
-      name: "Ellie Sattler",
-      age: 32,
-      gender: "Female"
-    },
     diagnoses: [
       {
         code: "E11.9",
@@ -99,9 +84,6 @@ const mockClaims = [
         timestamp: "2026-06-17T09:10:00Z"
       }
     ],
-    billing: {
-      totalClaimedAmount: 25.00
-    },
     status: "PENDING_REVIEW",
     clinicalValidation: {
       isValid: true,
