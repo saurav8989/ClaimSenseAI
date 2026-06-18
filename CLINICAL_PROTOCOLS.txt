@@ -3,7 +3,8 @@
 ========================================================================
 
 This document acts as the definitive source of truth for the clinical rules
-and Standard Treatment Protocols (STPs) implemented in ClaimSense AI.
+and Standard Treatment Protocols (STPs) implemented in ClaimSense AI. These
+rules are directly based on the Nepalese national Standard Treatment Protocols.
 
 ------------------------------------------------------------------------
 1. MEDICAL CODING & TERMINOLOGY DICTIONARY
@@ -11,52 +12,54 @@ and Standard Treatment Protocols (STPs) implemented in ClaimSense AI.
 
 The system will recognize and support the following mappings:
 
-*   DIAGNOSES (ICD-10-CM)
-    - [B54]     Unspecified malaria (Malaria)
-    - [I10]     Essential (primary) hypertension (Hypertension)
-    - [E11]     Type 2 diabetes mellitus (Type 2 Diabetes)
-    - [A15.0]   Tuberculosis of lung (Pulmonary Tuberculosis)
-    - [J45.909] Unspecified asthma, uncomplicated (Bronchial Asthma)
-    - [N39.0]   Urinary tract infection, site not specified (UTI)
-    - [A90]     Dengue fever, unspecified (Dengue)
-    - [E03.9]   Hypothyroidism, unspecified (Hypothyroidism)
-    - [E05.9]   Thyrotoxicosis, unspecified (Hyperthyroidism)
+*   DIAGNOSES (ICD-11 Prefix & Family Codes)
+    - [1F4]     Malaria (covers Plasmodium vivax, falciparum, mixed, etc.)
+    - [KA64.2]  Congenital malaria
+    - [BA00]    Essential Hypertension
+    - [5A11]    Type 2 Diabetes Mellitus
+    - [1D2]     Dengue Fever
+    - [CA40]    Pneumonia
 
 *   DIAGNOSTIC TESTS (Mock Codes)
     - [TEST-MAL-RDT]    Malaria Rapid Diagnostic Test (RDT)
-    - [TEST-MAL-SMEAR]  Malaria Blood Smear
+    - [TEST-MAL-MIC]    Malaria Blood Smear / Microscopy
     - [TEST-BP-CHECK]   Blood Pressure Monitoring
+    - [TEST-ECG]        Electrocardiogram (ECG)
+    - [TEST-RENAL]      Serum Urea & Creatinine
+    - [TEST-UA]         Urine Analysis (Dipstick/Microscopic)
+    - [TEST-LIPID]      Lipid Profile
     - [TEST-GLU-FPG]    Fasting Plasma Glucose (FPG)
+    - [TEST-GLU-PPG]    2-Hour Post-Prandial Glucose (PPG)
+    - [TEST-GLU-RBS]    Random Blood Sugar (RBS)
     - [TEST-GLU-HBA1C]  Glycated Hemoglobin (HbA1c)
-    - [TEST-TB-AFB]     Sputum Acid-Fast Bacilli (AFB) Smear
-    - [TEST-TB-GENEX]   GeneXpert MTB/RIF Assay
-    - [TEST-CBC]        Complete Blood Count (CBC)
-    - [TEST-SPIROMETRY] Spirometry Lung Function Test
-    - [TEST-URINALYSIS] Urinalysis (Dipstick/Microscopic)
-    - [TEST-URINE-CUL]  Urine Culture & Sensitivity
-    - [TEST-DEN-NS1]    Dengue NS1 Antigen Test
-    - [TEST-DEN-IGM]    Dengue IgM Antibody Test
-    - [TEST-THY-TSH]    Thyroid Stimulating Hormone (TSH) Test
-    - [TEST-THY-FT4]    Free Thyroxine (FT4) Test
+    - [TEST-UA-PROT]    Urine Protein (Nephropathy check)
+    - [TEST-UA-KET]     Urine Ketone (for hyperglycemia check)
+    - [TEST-DEN-RDT]    Dengue Rapid Diagnostic Test (Antigen/Antibody)
+    - [TEST-CBC]        Complete Blood Count (for Platelet and Hematocrit)
+    - [TEST-LFT]        Liver Function Test (AST/ALT)
+    - [TEST-RR-CHECK]   Respiratory Rate (RR) check
+    - [TEST-LUNG-AUS]   Chest Auscultation (Crepitations/Crackles/Wheeze)
 
-*   TREATMENTS & PROCEDURES (Mock CPT / RxNorm Codes)
-    - [MED-AL-ACT]      Artemether-Lumefantrine (ACT) (Anti-malarial)
-    - [MED-AML-5]       Amlodipine 5mg (Anti-hypertensive)
-    - [MED-LIS-10]      Lisinopril 10mg (Anti-hypertensive)
-    - [MED-MET-500]     Metformin 500mg (Anti-diabetic)
-    - [MED-INS-GLAR]    Insulin Glargine (Anti-diabetic)
-    - [MED-TB-HRZE]     Rifampicin/Isoniazid/Pyrazinamide/Ethambutol (Anti-TB)
-    - [MED-SAL-INH]     Salbutamol Inhaler (Bronchodilator)
-    - [MED-FLU-INH]     Fluticasone Inhaler (Inhaled Corticosteroid)
-    - [MED-NIT-100]     Nitrofurantoin 100mg (Antibiotic)
-    - [MED-CIP-500]     Ciprofloxacin 500mg (Antibiotic)
-    - [MED-PAR-500]     Paracetamol 500mg (Analgesic/Antipyretic)
-    - [MED-IBU-400]     Ibuprofen 400mg (NSAID - Contraindicated for Dengue)
-    - [MED-LEV-50]      Levothyroxine Sodium 50mcg (Thyroid Replacement)
-    - [MED-LEV-100]     Levothyroxine Sodium 100mcg (Thyroid Replacement)
-    - [MED-CARB-10]     Carbimazole 10mg (Antithyroid)
-    - [MED-METH-5]      Methimazole 5mg (Antithyroid)
-    - [MED-PROP-40]     Propranolol 40mg (Beta-Blocker)
+*   TREATMENTS & MEDICATIONS (Mock CPT / RxNorm Codes)
+    - [MED-CQ-150]      Chloroquine 150mg base tablet
+    - [MED-PQ-7.5]      Primaquine 7.5mg tablet
+    - [MED-PQ-2.5]      Primaquine 2.5mg tablet (for infants 6 months - 1 year)
+    - [MED-AL-ACT]      Artemether (20mg) + Lumefantrine (120mg) (AL)
+    - [MED-DHAP]        Dihydroartemisinin + Piperaquine (DHAP) (Second-line)
+    - [MED-ART-INJ]     Inj Artesunate (IV/IM) (Severe/Pre-referral)
+    - [MED-AML-5]       Amlodipine 5mg tablet
+    - [MED-AML-10]      Amlodipine 10mg tablet (Severe emergency stat)
+    - [MED-LOS-25]      Losartan 25mg tablet
+    - [MED-LOS-50]      Losartan 50mg tablet (Severe emergency stat)
+    - [MED-MET-500]     Metformin 500mg tablet
+    - [MED-GLI-1]       Glimepiride 1mg tablet (For lean & thin patients)
+    - [MED-PAR-500]     Paracetamol 500mg tablet
+    - [MED-ORS]         Oral Rehydration Salts (ORS)
+    - [MED-AMOX-500]    Amoxicillin 500mg tablet
+    - [MED-AZITH-500]   Azithromycin 500mg tablet
+    - [MED-DOXY-100]    Doxycycline 100mg tablet
+    - [MED-SAL-INH]     Salbutamol Inhaler (or tablets)
+    - [MED-IBU-400]     Ibuprofen 400mg tablet (NSAID - Contraindicated for Dengue)
 
 ------------------------------------------------------------------------
 2. STANDARD TREATMENT PROTOCOL (STP) RULES
@@ -66,144 +69,105 @@ Each claim's chronological `carePathway` must follow these rules:
 
 ---
 
-### PROTOCOL 1: Malaria Uncomplicated Protocol
-*   **Target Diagnosis**: B54 (Malaria)
+### PROTOCOL 1: Malaria Protocol (Uncomplicated & Severe)
+*   **Target Diagnosis**: 1F4, KA64.2 (Malaria / Congenital Malaria)
 *   **Rule 1.1: Diagnostic Before Treatment (Mandatory)**
-    - *Condition*: Prescribing `MED-AL-ACT` requires a prior diagnostic test 
-      (`TEST-MAL-RDT` or `TEST-MAL-SMEAR`) with a positive result.
-    - *Deviation*: Missing diagnostic confirmation before anti-malarial.
+    - *Condition*: Prescribing antimalarials (CQ, PQ, AL, DHAP, or Artesunate) requires prior diagnostic confirmation via RDT or Microscopy (`TEST-MAL-RDT` or `TEST-MAL-MIC`).
+    - *Deviation*: Missing diagnostic confirmation before anti-malarial therapy.
     - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 1.2: Therapy Alignment**
-    - *Condition*: Primary diagnosis `B54` must list `MED-AL-ACT` as the primary 
-      prescribed medication.
-    - *Deviation*: Non-approved therapeutic for Malaria.
-    - *Severity*: MAJOR (Penalty: 20 points)
+*   **Rule 1.2: Therapy Alignment (Vivax vs. Falciparum)**
+    - *Condition*: 
+      - Vivax Malaria: Must include Chloroquine (`MED-CQ-150`) for 3 days and Primaquine (`MED-PQ-7.5` or `MED-PQ-2.5`) for 14 days.
+      - Falciparum / Mixed Malaria: Must include Artemether-Lumefantrine (`MED-AL-ACT`) for 3 days and single-dose Primaquine (`MED-PQ-7.5`) on Day 1.
+    - *Deviation*: Incorrect first-line therapy or missing partner drug for radical cure.
+    - *Severity*: MAJOR (Penalty: 30 points)
+*   **Rule 1.3: Primaquine Pregnancy/Lactation Contraindication**
+    - *Condition*: Primaquine is strictly contraindicated in pregnant women, infants under 6 months, and lactating mothers of infants under 6 months. For Vivax in pregnancy, CQ weekly chemoprophylaxis is indicated.
+    - *Deviation*: Primaquine prescribed to contraindicated pregnant/lactating/infant patient.
+    - *Severity*: CRITICAL (Penalty: 50 points)
+*   **Rule 1.4: Severe Malaria Pre-referral**
+    - *Condition*: Cases presenting severe signs (coma, prostration, multiple convulsions, respiratory distress/ARDS, shock, bleeding, jaundice, renal impairment) must be administered a pre-referral dose of Inj Artesunate (`MED-ART-INJ`) and immediately referred to a higher center (`REFER`).
+    - *Deviation*: Severe malaria clinical signs present but missing Inj Artesunate or missing referral.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+*   **Rule 1.5: Second-Line (DHAP) Restriction**
+    - *Condition*: Dihydroartemisinin-Piperaquine (`MED-DHAP`) is only indicated for drug intolerance, treatment failure (recrudescence within 28 days), or CQ-resistant imported vivax. It requires a documented referral to a higher center.
+    - *Deviation*: Second-line DHAP prescribed without valid reason or without referral.
+    - *Severity*: MAJOR (Penalty: 25 points)
 
 ---
 
 ### PROTOCOL 2: Essential Hypertension Protocol
-*   **Target Diagnosis**: I10 (Hypertension)
+*   **Target Diagnosis**: BA00 (Hypertension)
 *   **Rule 2.1: BP Check Confirmation (Mandatory)**
-    - *Condition*: Claim must contain a `TEST-BP-CHECK` step showing elevated readings.
+    - *Condition*: Claim must contain a `TEST-BP-CHECK` step showing clinical readings.
     - *Deviation*: Prescribing anti-hypertensive without BP record.
     - *Severity*: CRITICAL (Penalty: 40 points)
 *   **Rule 2.2: First-Line Monotherapy**
-    - *Condition*: Meds must be limited to `MED-AML-5` or `MED-LIS-10`.
-    - *Deviation*: Non-approved medication for hypertension.
+    - *Condition*: Asymptomatic Stage 1 (140-159 / 90-99 mmHg) or Stage 2 (>=160/100 mmHg) must be initiated with low-dose Amlodipine 5mg (`MED-AML-5`) or Losartan 25mg (`MED-LOS-25`) and scheduled for follow-up referral.
+    - *Deviation*: Non-approved anti-hypertensive drug used, or incorrect starting dosage.
     - *Severity*: MAJOR (Penalty: 20 points)
+*   **Rule 2.3: Hypertensive Emergency / Urgency Referral**
+    - *Condition*: If BP is severe (>=180/120 mmHg) or target organ damage is present (stroke, altered mental status, retinopathy, chest pain/ACS, heart failure, renal failure), doctor must administer stat Amlodipine 10mg (`MED-AML-10`) or Losartan 50mg (`MED-LOS-50`) and issue an immediate referral (`REFER`).
+    - *Deviation*: Severe hypertension/crisis present without emergency stat dosing or without referral.
+    - *Severity*: MAJOR (Penalty: 35 points)
 
 ---
 
 ### PROTOCOL 3: Type 2 Diabetes Mellitus Protocol
-*   **Target Diagnosis**: E11 (Type 2 Diabetes)
+*   **Target Diagnosis**: 5A11 (Type 2 Diabetes)
 *   **Rule 3.1: Glycemic Testing (Mandatory)**
-    - *Condition*: Prescribing `MED-MET-500` or `MED-INS-GLAR` requires a prior 
-      `TEST-GLU-FPG` or `TEST-GLU-HBA1C` record.
+    - *Condition*: Prescribing antidiabetic meds (`MED-MET-500` or `MED-GLI-1`) requires prior glycemic testing (`TEST-GLU-FPG`, `TEST-GLU-PPG`, `TEST-GLU-RBS`, or `TEST-GLU-HBA1C`).
     - *Deviation*: Missing glycemic diagnostic verification.
     - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 3.2: Line of Treatment Sequencing**
-    - *Condition*: Insulin (`MED-INS-GLAR`) should only be prescribed if there is 
-      a documented Metformin (`MED-MET-500`) trial or HbA1c result > 10%.
-    - *Deviation*: Metformin trial bypassed without clinical justification.
+*   **Rule 3.2: First-Line Selection & Patient Alignment**
+    - *Condition*: The primary therapeutic must be Metformin 500mg (`MED-MET-500`) unless the patient is "lean and thin", in which case Glimepiride 1mg (`MED-GLI-1`) is approved.
+    - *Deviation*: Metformin bypassed or Glimepiride prescribed inappropriately.
     - *Severity*: MAJOR (Penalty: 25 points)
+*   **Rule 3.3: Preliminary Assessment & Complication Referral**
+    - *Condition*: Diabetes management requires assessments for BP, BMI, feet checks, oral cavity, and urine protein. All newly diagnosed patients must be referred (`REFER`) for further evaluation.
+    - *Deviation*: Newly diagnosed diabetes claim lacks recorded referral.
+    - *Severity*: MINOR (Penalty: 15 points)
 
 ---
 
-### PROTOCOL 4: Pulmonary Tuberculosis Protocol
-*   **Target Diagnosis**: A15.0 (Pulmonary Tuberculosis)
-*   **Rule 4.1: Microbiological Confirmation (Mandatory)**
-    - *Condition*: Prescribing anti-TB therapy (`MED-TB-HRZE`) requires positive 
-      `TEST-TB-AFB` (Sputum smear) or `TEST-TB-GENEX` (GeneXpert) results.
-    - *Deviation*: TB therapy initiated without lab confirmation.
-    - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 4.2: Multi-Drug Regimen Adherence**
-    - *Condition*: Prescription must consist of combined `MED-TB-HRZE` formulation. 
-      Single-drug treatment is contraindicated for active TB.
-    - *Deviation*: Sub-standard monotherapy regimen for active tuberculosis.
-    - *Severity*: CRITICAL (Penalty: 40 points)
-
----
-
-### PROTOCOL 5: Bronchial Asthma Protocol
-*   **Target Diagnosis**: J45.909 (Bronchial Asthma)
-*   **Rule 5.1: Airflow Assessment**
-    - *Condition*: First-time asthma diagnosis and prescription (`MED-SAL-INH` 
-      or `MED-FLU-INH`) requires a `TEST-SPIROMETRY` or peak expiratory flow test.
-    - *Deviation*: Asthma therapy started without baseline lung function test.
-    - *Severity*: MAJOR (Penalty: 20 points)
-*   **Rule 5.2: Controller-Reliever Logic**
-    - *Condition*: Chronic/daily therapy must include controller inhaler 
-      (`MED-FLU-INH`) alongside rescue inhaler (`MED-SAL-INH`).
-    - *Deviation*: Reliever inhaler monotherapy for persistent asthma.
-    - *Severity*: MAJOR (Penalty: 20 points)
-
----
-
-### PROTOCOL 6: Urinary Tract Infection (UTI) Protocol
-*   **Target Diagnosis**: N39.0 (UTI)
-*   **Rule 6.1: Lab Verification (Mandatory)**
-    - *Condition*: Prescribing `MED-NIT-100` or `MED-CIP-500` requires a prior 
-      positive test (`TEST-URINALYSIS` or `TEST-URINE-CUL`).
-    - *Deviation*: Antibiotics prescribed for UTI without lab confirmation.
-    - *Severity*: CRITICAL (Penalty: 35 points)
-*   **Rule 6.2: First-line Selection**
-    - *Condition*: Billed antibiotic must be `MED-NIT-100`. Broad-spectrum 
-      `MED-CIP-500` should only be billed if there is a documented urine culture 
-      indicating resistance or pyelonephritis.
-    - *Deviation*: Broad-spectrum fluoroquinolone used without resistance evidence.
-    - *Severity*: MAJOR (Penalty: 20 points)
-
----
-
-### PROTOCOL 7: Dengue Fever Protocol
-*   **Target Diagnosis**: A90 (Dengue)
-*   **Rule 7.1: Confirmatory Test (Mandatory)**
-    - *Condition*: Dengue diagnosis or treatment requires prior positive 
-      `TEST-DEN-NS1` or `TEST-DEN-IGM` record.
+### PROTOCOL 4: Dengue Fever Protocol
+*   **Target Diagnosis**: 1D2 (Dengue Fever)
+*   **Rule 4.1: Confirmatory Test (Mandatory)**
+    - *Condition*: Dengue diagnosis requires positive Antigen/Antibody confirmation via Dengue RDT (`TEST-DEN-RDT`).
     - *Deviation*: Dengue claim submitted without confirmatory laboratory testing.
     - *Severity*: CRITICAL (Penalty: 35 points)
-*   **Rule 7.2: NSAID Contraindication (Stewardship)**
-    - *Condition*: Claim must not prescribe NSAIDs like Ibuprofen (`MED-IBU-400`) 
-      or Aspirin due to risk of hemorrhagic complications.
-    - *Deviation*: Prescribed contraindicated NSAID for Dengue, increasing hemorrhage risk.
+*   **Rule 4.2: NSAID / Steroid / Antibiotic Contraindication**
+    - *Condition*: Claim must not prescribe NSAIDs like Ibuprofen (`MED-IBU-400`), Aspirin, steroids, or antibiotics due to risk of hemorrhagic complications or inappropriate treatment.
+    - *Deviation*: Prescribed contraindicated drug (NSAID, steroid, antibiotic) in Dengue.
     - *Severity*: CRITICAL (Penalty: 50 points)
-*   **Rule 7.3: Platelet Monitoring (Recommended)**
-    - *Condition*: Dengue claim must include a Complete Blood Count (`TEST-CBC`) 
-      to monitor platelet count and hematocrit.
-    - *Deviation*: Missing platelet count/hematocrit monitoring for Dengue.
+*   **Rule 4.3: Platelet / Hematocrit Monitoring**
+    - *Condition*: Dengue management requires a Complete Blood Count (`TEST-CBC`) to monitor platelet counts and hematocrit.
+    - *Deviation*: Missing platelet/hematocrit monitoring for Dengue.
     - *Severity*: MAJOR (Penalty: 25 points)
-
----
-
-### PROTOCOL 8: Hypothyroidism Protocol
-*   **Target Diagnosis**: E03.9 (Hypothyroidism)
-*   **Rule 8.1: Thyroid Function Testing (Mandatory)**
-    - *Condition*: Prescribing Levothyroxine (`MED-LEV-50` or `MED-LEV-100`) 
-      requires a prior elevated `TEST-THY-TSH` record.
-    - *Deviation*: Thyroid hormone replacement initiated without TSH verification.
-    - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 8.2: Approved Therapy Alignment**
-    - *Condition*: Billed medication must be Levothyroxine (`MED-LEV-50` or `MED-LEV-100`).
-    - *Deviation*: Non-approved medication for hypothyroidism.
+*   **Rule 4.4: Supportive Therapy & Hospital Referral**
+    - *Condition*: Supportive therapy is limited to Paracetamol (`MED-PAR-500`) and ORS (`MED-ORS`). All cases must be referred (`REFER`) to a hospital.
+    - *Deviation*: Missing referral for suspected/confirmed Dengue case.
     - *Severity*: MAJOR (Penalty: 20 points)
 
 ---
 
-### PROTOCOL 9: Hyperthyroidism Protocol
-*   **Target Diagnosis**: E05.9 (Hyperthyroidism)
-*   **Rule 9.1: Thyroid Function Testing (Mandatory)**
-    - *Condition*: Prescribing Carbimazole (`MED-CARB-10`) or Methimazole (`MED-METH-5`) 
-      requires a prior suppressed `TEST-THY-TSH` record.
-    - *Deviation*: Antithyroid therapy initiated without TSH verification.
-    - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 9.2: First-Line Antithyroid Choice**
-    - *Condition*: Billed antithyroid drug must be Carbimazole (`MED-CARB-10`) 
-      or Methimazole (`MED-METH-5`).
-    - *Deviation*: Non-approved antithyroid medication used as first-line therapy.
-    - *Severity*: MAJOR (Penalty: 20 points)
+### PROTOCOL 5: Pneumonia Protocol
+*   **Target Diagnosis**: CA40 (Pneumonia)
+*   **Rule 5.1: First-Line Antibiotic Alignment**
+    - *Condition*: First-line therapy must consist of Amoxicillin 500mg TDS (`MED-AMOX-500`), Azithromycin 500mg OD (`MED-AZITH-500`), or Doxycycline 100mg BD (`MED-DOXY-100`).
+    - *Deviation*: Primary diagnosis Pneumonia treated with non-approved or restricted antibiotics.
+    - *Severity*: MAJOR (Penalty: 25 points)
+*   **Rule 5.2: Doxycycline Age & Pregnancy Contraindication**
+    - *Condition*: Doxycycline (`MED-DOXY-100`) must NOT be prescribed in children under 12 years of age or in pregnant/lactating women.
+    - *Deviation*: Doxycycline prescribed to child under 12 or pregnant/lactating woman.
+    - *Severity*: CRITICAL (Penalty: 45 points)
+*   **Rule 5.3: Severe Case Referral**
+    - *Condition*: Pneumonia cases presenting severe dyspnea, cyanosis, stridor, or showing no improvement after 3 days must be immediately referred (`REFER`) to a higher center.
+    - *Deviation*: Severe pneumonia clinical markers present but missing referral.
+    - *Severity*: MAJOR (Penalty: 30 points)
 
 ------------------------------------------------------------------------
-3. SCORING ENGINE LOGIC (For Developer 2)
+3. SCORING ENGINE LOGIC
 ------------------------------------------------------------------------
 
 *   **Initial Legitimacy Score**: 100 points.
