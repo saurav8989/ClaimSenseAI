@@ -18,10 +18,13 @@ export default function ReviewerDashboard() {
         const data = await res.json();
         setClaims(data);
         
-        // Auto-select the highest risk claim by default
-        if (data.length > 0) {
-          const sorted = [...data].sort((a, b) => b.riskScoring.overallRiskScore - a.riskScoring.overallRiskScore);
+        // Auto-select the highest risk pending claim by default
+        const pending = data.filter(c => c.status === 'PENDING_REVIEW' || !c.status);
+        if (pending.length > 0) {
+          const sorted = [...pending].sort((a, b) => b.riskScoring.overallRiskScore - a.riskScoring.overallRiskScore);
           setSelectedClaim(sorted[0]);
+        } else if (data.length > 0) {
+          setSelectedClaim(data[0]);
         }
       } catch (error) {
         console.error("Failed to fetch claims:", error);
@@ -43,16 +46,26 @@ export default function ReviewerDashboard() {
       });
       
       if (res.ok) {
-        // Remove the processed claim from the queue locally
-        const updatedClaims = claims.filter(c => c.claimId !== claimId);
+        const resData = await res.json();
+        const updatedClaim = resData.claim || {
+          claimId,
+          status: action === 'Approve' ? 'APPROVED' : action === 'Reject' ? 'REJECTED' : 'MODIFIED',
+          reviewerComments: `Claim ${action.toLowerCase()}ed`,
+          reviewedAt: new Date().toISOString()
+        };
+
+        // Update the claim in state rather than filtering it out
+        const updatedClaims = claims.map(c => c.claimId === claimId ? { ...c, ...updatedClaim } : c);
         setClaims(updatedClaims);
         
-        // Auto-select the next highest risk claim
-        if (updatedClaims.length > 0) {
-           const sorted = [...updatedClaims].sort((a, b) => b.riskScoring.overallRiskScore - a.riskScoring.overallRiskScore);
+        // Auto-select the next highest risk pending claim
+        const pendingClaims = updatedClaims.filter(c => c.status === 'PENDING_REVIEW' || !c.status);
+        if (pendingClaims.length > 0) {
+           const sorted = [...pendingClaims].sort((a, b) => b.riskScoring.overallRiskScore - a.riskScoring.overallRiskScore);
            setSelectedClaim(sorted[0]);
         } else {
-           setSelectedClaim(null);
+           const latestClaim = updatedClaims.find(c => c.claimId === claimId);
+           setSelectedClaim(latestClaim || null);
         }
         
         // Show a success alert to the user

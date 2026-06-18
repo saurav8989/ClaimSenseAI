@@ -120,10 +120,8 @@ export async function POST(request) {
     newClaim.stpCompliance = stpCompliance;
     newClaim.riskScoring = riskScoring;
 
-    // Automatically auto-approve low-risk claims
-    if (riskScoring.overallRiskScore <= 30) {
-      newClaim.status = "APPROVED";
-    }
+    // All claims start in PENDING_REVIEW status for adjudication review
+    newClaim.status = "PENDING_REVIEW";
 
     saveClaim(newClaim);
 

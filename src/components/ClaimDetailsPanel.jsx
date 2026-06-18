@@ -11,6 +11,7 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
   );
 
   const isCritical = claim.riskScoring.overallRiskScore > 70;
+  const isAdjudicated = claim.status && claim.status !== 'PENDING_REVIEW';
 
   // Re-use our color logic for the large badge
   const getRiskColor = (category) => {
@@ -25,6 +26,25 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
   return (
     <div className="flex flex-col h-full bg-[#1e2330]/80 backdrop-blur-md rounded-xl border border-gray-700/50 overflow-hidden shadow-2xl">
       
+      {/* Adjudication Status Banner */}
+      {isAdjudicated && (
+        <div className={`px-6 py-3 text-xs font-semibold flex items-center justify-between border-b ${
+          claim.status === 'APPROVED' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+          claim.status === 'REJECTED' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
+          'bg-purple-500/20 text-purple-400 border-purple-500/30'
+        }`}>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
+            <span>CLAIM AUDITED & {claim.status}</span>
+          </div>
+          {claim.reviewedAt && (
+            <span suppressHydrationWarning className="opacity-75 font-mono text-[10px]">
+              {new Date(claim.reviewedAt).toLocaleDateString()} {new Date(claim.reviewedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Top Header Section: Patient & High-Level Info */}
       <div className={`p-6 border-b ${isCritical ? 'border-red-500/30 bg-red-500/5' : 'border-gray-700/50 bg-[#161a24]'}`}>
         <div className="flex justify-between items-start mb-4">
@@ -60,8 +80,23 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
 
       {/* Middle Section: AI Analysis Breakdown */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#161a24]/50">
+        {/* Reviewer Audit Comments */}
+        {isAdjudicated && (
+          <div className={`p-4 rounded-lg border text-sm ${
+            claim.status === 'APPROVED' ? 'bg-green-950/20 border-green-500/20 text-green-300' :
+            claim.status === 'REJECTED' ? 'bg-red-950/20 border-red-500/20 text-red-300' :
+            'bg-purple-950/20 border-purple-500/20 text-purple-300'
+          }`}>
+            <h4 className="font-semibold mb-1.5 uppercase text-xs tracking-wider opacity-90">Reviewer Audit Logs</h4>
+            <div className="space-y-1.5 font-mono text-xs">
+              <div><span className="opacity-70">Decision:</span> <span className="font-bold">{claim.status}</span></div>
+              <div><span className="opacity-70">Comments:</span> <span className="italic">"{claim.reviewerComments || 'No comments left.'}"</span></div>
+            </div>
+          </div>
+        )}
+
         <div>
-          <h3 className="text-lg font-semibold text-gray-200 mb-3 border-b border-gray-700/50 pb-2">AI Analysis Summary</h3>
+          <h3 className="text-base font-semibold text-gray-200 mb-3 border-b border-gray-700/50 pb-2">AI Analysis Summary</h3>
           <ul className="space-y-3">
             {/* Map over any clinical violations the AI found */}
             {claim.clinicalValidation?.isValid === false && claim.clinicalValidation.issues.map((iss, idx) => (
@@ -87,24 +122,32 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
 
       {/* Bottom Section: Adjudication Action Buttons */}
       <div className="p-4 border-t border-gray-700/50 bg-[#161a24] flex gap-3">
-        <button 
-          onClick={() => onAction(claim.claimId, 'Approve')}
-          className="flex-1 bg-green-600 hover:bg-green-500 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-[0_0_15px_rgba(22,163,74,0.3)]"
-        >
-          Approve
-        </button>
-        <button 
-          onClick={() => onAction(claim.claimId, 'Modify')}
-          className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-[0_0_15px_rgba(79,70,229,0.3)]"
-        >
-          Modify
-        </button>
-        <button 
-          onClick={() => onAction(claim.claimId, 'Reject')}
-          className="flex-1 bg-red-600 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-[0_0_15px_rgba(220,38,38,0.3)]"
-        >
-          Reject
-        </button>
+        {isAdjudicated ? (
+          <div className="w-full text-center py-2 text-xs text-gray-500 font-mono italic">
+            This claim has been finalized and cannot be re-adjudicated.
+          </div>
+        ) : (
+          <>
+            <button 
+              onClick={() => onAction(claim.claimId, 'Approve')}
+              className="flex-1 bg-green-600 hover:bg-green-500 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer shadow-[0_0_15px_rgba(22,163,74,0.3)]"
+            >
+              Approve
+            </button>
+            <button 
+              onClick={() => onAction(claim.claimId, 'Modify')}
+              className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)]"
+            >
+              Modify
+            </button>
+            <button 
+              onClick={() => onAction(claim.claimId, 'Reject')}
+              className="flex-1 bg-red-600 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer shadow-[0_0_15px_rgba(220,38,38,0.3)]"
+            >
+              Reject
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
