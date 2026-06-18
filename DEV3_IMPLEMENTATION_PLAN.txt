@@ -1,0 +1,89 @@
+========================================================================
+             CLAIMSENSE AI - DEV 3 IMPLEMENTATION PLAN
+========================================================================
+
+ROLE: DEVELOPER 3
+SCOPE: Medical Reviewer Dashboard & Adjudication
+
+As Developer 3, your primary responsibility is building the Insurance 
+(Medical Reviewer) Dashboard. This involves creating a prioritized queue 
+of submitted claims, providing detailed insights into protocol deviations, 
+and allowing the reviewer to adjudicate claims (Approve/Reject/Modify). 
+
+As per the PORTAL_DIVISION.txt design guidelines, this portal requires 
+an analytical, high-density, alert-driven design with a sleek dark mode 
+and glassmorphism aesthetic.
+
+------------------------------------------------------------------------
+1. DEPENDENCIES & MOCKING
+------------------------------------------------------------------------
+Since we are working in parallel with Dev 1 and Dev 2, this plan relies 
+on creating robust mock data to power the frontend immediately while 
+the backend engine is built. 
+
+------------------------------------------------------------------------
+2. MODULE IMPLEMENTATION STEPS
+------------------------------------------------------------------------
+
+### STEP A: Mock Data & APIs
+We will create a static mock data route so we can build the UI without waiting for Dev 2.
+
+* [NEW] src/app/api/openimis/claims/route.js
+  - Create a GET handler that returns a hardcoded list of claims 
+    (combining CLAIM_SCHEMA and CLAIMSENSE AI ANALYSIS SCHEMA data).
+  - The claims will include various risk levels (Low, Medium, High) to 
+    test the sorting and visual indicators.
+  - Create a POST handler to mock the adjudication decision 
+    (Approve/Reject/Modify).
+
+---
+
+### STEP B: UI Components
+We will create modular components for the reviewer dashboard.
+
+* [NEW] src/components/ReviewerQueue.jsx
+  - A list/table component displaying claims.
+  - Logic: Sorts claims by riskScoring.overallRiskScore in descending 
+    order (highest risk first).
+  - Design: Dark theme. Uses color indicators for risk levels:
+    - Red: High Risk (Score 71-100)
+    - Yellow: Medium Risk (Score 31-70)
+    - Green: Low Risk (Score 0-30)
+  - Displays claim ID, Provider, Patient, and Risk Score.
+
+* [NEW] src/components/DeviationTimeline.jsx
+  - A visual timeline showing the chronological care pathway.
+  - Highlights clinicalValidation issues and stpCompliance deviations 
+    directly on the timeline steps using alert flags.
+  - Design: Glassmorphism styling for individual timeline cards.
+
+* [NEW] src/components/ClaimDetailsPanel.jsx
+  - A side-panel or expanded view showing the full claim details and AI 
+    analysis breakdown.
+  - Includes action buttons: Approve, Reject, Modify.
+  - These buttons will hit the POST endpoint created above.
+
+---
+
+### STEP C: Page Routes
+We will assemble the components into the main reviewer view.
+
+* [MODIFY] src/app/reviewer/page.jsx (Currently empty/missing)
+  - Main layout for the reviewer dashboard.
+  - Fetches data from /api/openimis/claims (Client-side fetching or 
+    Server Component).
+  - Assembles the ReviewerQueue, and when a claim is selected, displays 
+    the DeviationTimeline and ClaimDetailsPanel.
+
+------------------------------------------------------------------------
+3. VERIFICATION PLAN
+------------------------------------------------------------------------
+1. Navigate to /reviewer.
+2. Verify that claims are loaded and sorted by risk score descending.
+3. Verify the dark mode, glassmorphic aesthetic matches the design 
+   requirements.
+4. Click on a claim and verify the Deviation Timeline renders with 
+   correct visual flags.
+5. Click Approve/Reject and verify the mock API responds correctly and 
+   updates the UI state.
+========================================================================
