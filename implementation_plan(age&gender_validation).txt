@@ -1,0 +1,67 @@
+========================================================================
+            CLAIMSENSE AI - AGE & GENDER VALIDATION PLAN
+========================================================================
+
+This implementation plan details the steps required to integrate age, gender,
+pregnancy, and lactation validation checks into the ClaimSenseAI system.
+
+------------------------------------------------------------------------
+1. UI CHANGES: CLAIMBUILDER FRONTEND MODULE
+------------------------------------------------------------------------
+File to modify: src/components/ClaimBuilder.jsx
+
+- Extend the `patient` state hook to include:
+  * `isPregnant`: false
+  * `isLactating`: false
+
+- Render dynamic input checkboxes in the form under the Patient Info section:
+  * Render "Is Patient Pregnant?" checkbox ONLY when Patient Gender is "Female".
+  * Render "Is Patient Lactating?" checkbox ONLY when Patient Gender is "Female".
+
+- Update the submitted claim JSON payload structure under the `patient` property:
+  {
+    "patient": {
+      "name": "Jane Doe",
+      "age": 28,
+      "gender": "Female",
+      "isPregnant": true,
+      "isLactating": false
+    },
+    ...
+  }
+
+------------------------------------------------------------------------
+2. ENGINE CHANGES: STP COMPLIANCE ENGINE
+------------------------------------------------------------------------
+File to modify: src/lib/stpEngine.js
+
+Modify the `evaluateStpCompliance` function to implement rules:
+
+- Malaria (Code 1F4) Contraindications:
+  * If the pathway contains Primaquine (MED-PQ-7.5 or MED-PQ-2.5):
+    * If `patient.isPregnant` is true, or `patient.isLactating` is true, or `patient.age < 0.5` (6 months):
+      * Deduct 50 points (RULE-MAL-3: Primaquine Contraindication).
+  * If the pathway contains Artemether-Lumefantrine (MED-AL-ACT):
+    * If `patient.age < 0.5` (6 months) or `patient.isLactating` is true:
+      * Check that the single-dose Primaquine is NOT prescribed, or flag contraindications.
+
+- Malaria Age-based Dosing Validation:
+  * If `patient.age >= 0.5 && patient.age < 1.0` (6 months to 1 year):
+    * Ensure the Primaquine code matches `MED-PQ-2.5` (and not `MED-PQ-7.5`).
+  * If `patient.age >= 1.0`:
+    * Ensure any Primaquine matches `MED-PQ-7.5`.
+
+- Pneumonia (Code CA40) Contraindications:
+  * If the pathway contains Doxycycline (MED-DOXY-100):
+    * If `patient.age < 12` or `patient.isPregnant` is true:
+      * Deduct 45 points (RULE-PNE-2: Doxycycline Contraindication).
+
+------------------------------------------------------------------------
+3. DATABASE CHANGES: MOCK DATABASE SEEDING
+------------------------------------------------------------------------
+File to modify: src/lib/mockDb.js
+
+- Update seed data objects to include:
+  * `isPregnant: false`
+  * `isLactating: false`
+  to guarantee consistency in existing/pre-loaded claims.
