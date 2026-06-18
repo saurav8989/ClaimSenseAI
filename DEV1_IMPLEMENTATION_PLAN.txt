@@ -1,0 +1,858 @@
+========================================================================
+            CLAIMSENSE AI - DEVELOPER 1 IMPLEMENTATION PLAN
+========================================================================
+
+This implementation plan provides a detailed breakdown, step-by-step guide,
+and skeleton code structures for Developer 1 (Provider UI & Mock Integrations).
+
+As Developer 1, your scope covers:
+1. Mock Database: JSON-based persistent claim store (`src/lib/mockDb.js` saving to `claims_db.json`).
+2. API Endpoints: Mock openIMIS claim router `/api/openimis/claims` (GET, POST, PUT).
+3. Component: Claim Builder form (`src/components/ClaimBuilder.jsx`).
+4. Page View: Doctor Workspace Dashboard (`src/app/doctor/page.jsx`).
+
+------------------------------------------------------------------------
+MILESTONE 0: MOCK DATABASE SETUP (claims_db.json & mockDb.js)
+------------------------------------------------------------------------
+Goal: Create a JSON file-based database. Saving files in the root folder
+      (claims_db.json) avoids triggering Next.js watch/hot-reloads of the
+      "src" directory, ensuring a smooth and uninterrupted hackathon dev flow.
+      We must seed it with sample claims immediately so Dev 3 (Reviewer Queue)
+      has data to load.
+
+Files to create:
+- [NEW] claims_db.json (in root directory)
+- [NEW] src/lib/mockDb.js
+
+Skeleton Code for `src/lib/mockDb.js`:
+```javascript
+import fs from 'fs';
+import path from 'path';
+
+const dbPath = path.resolve(process.cwd(), 'claims_db.json');
+
+// Initialize DB with seed data if it doesn't exist
+function initDb() {
+  if (!fs.existsSync(dbPath)) {
+    const seedClaims = [
+      {
+        claimId: "CLM-10021",
+        providerId: "PROV-9082",
+        providerName: "Dr. Sarah Jenkins",
+        submittedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+        patient: { id: "PAT-001", name: "Alice Smith", age: 29, gender: "Female" },
+        diagnoses: [{ code: "1F4Z", name: "Malaria, unspecified", isPrimary: true }],
+        carePathway: [
+          { stepNumber: 1, type: "symptom", name: "High Fever & Chills", details: "Sudden onset fever, shivering.", cost: 0, timestamp: new Date(Date.now() - 3600000 * 3).toISOString() },
+          { stepNumber: 2, type: "diagnostic_test", code: "TEST-MAL-RDT", name: "Malaria Rapid Diagnostic Test (RDT)", details: "Positive for P. falciparum", cost: 15.00, timestamp: new Date(Date.now() - 3600000 * 2.5).toISOString() },
+          { stepNumber: 3, type: "medication", code: "MED-AL-ACT", name: "Artemether-Lumefantrine (ACT)", details: "Full dose course", cost: 35.00, timestamp: new Date(Date.now() - 3600000 * 2).toISOString() }
+        ],
+        billing: { totalClaimedAmount: 50.00 },
+        status: "APPROVED",
+        clinicalValidation: { isValid: true, issues: [] },
+        stpCompliance: { isCompliant: true, complianceScore: 100, protocolName: "Malaria Standard Treatment Protocol", deviations: [] },
+        riskScoring: { overallRiskScore: 0, riskCategory: "LOW", riskFlags: [], reviewerPriority: 5 }
+      },
+      {
+        claimId: "CLM-10022",
+        providerId: "PROV-9082",
+        providerName: "Dr. Sarah Jenkins",
+        submittedAt: new Date(Date.now() - 3600000).toISOString(),
+        patient: { id: "PAT-002", name: "Bob Johnson", age: 58, gender: "Male" },
+        diagnoses: [{ code: "5A11", name: "Type 2 Diabetes Mellitus", isPrimary: true }],
+        carePathway: [
+          { stepNumber: 1, type: "medication", code: "MED-MET-500", name: "Metformin 500mg", details: "Daily dosage", cost: 25.00, timestamp: new Date().toISOString() }
+        ],
+        billing: { totalClaimedAmount: 25.00 },
+        status: "PENDING_REVIEW",
+        clinicalValidation: { isValid: true, issues: [] },
+        stpCompliance: { 
+          isCompliant: false, 
+          complianceScore: 60, 
+          protocolName: "Type 2 Diabetes Mellitus Standard Treatment Protocol", 
+          deviations: [{ type: "TEST_REQUIRED", message: "Prescribing anti-diabetic medication requires prior HbA1c/FPG testing.", penalty: 40 }] 
+        },
+        riskScoring: { overallRiskScore: 40, riskCategory: "MEDIUM", riskFlags: ["HIGH_PROTOCOL_DEVIATION"], reviewerPriority: 3 }
+      }
+    ];
+    fs.writeFileSync(dbPath, JSON.stringify(seedClaims, null, 2), 'utf8');
+  }
+}
+
+export function getClaims() {
+  initDb();
+  const data = fs.readFileSync(dbPath, 'utf8');
+  return JSON.parse(data);
+}
+
+export function getClaimById(claimId) {
+  const claims = getClaims();
+  return claims.find(c => c.claimId === claimId) || null;
+}
+
+export function saveClaim(claim) {
+  initDb();
+  const claims = getClaims();
+  claims.push(claim);
+  fs.writeFileSync(dbPath, JSON.stringify(claims, null, 2), 'utf8');
+  return claim;
+}
+
+export function updateClaimStatus(claimId, status, comments = "") {
+  initDb();
+  const claims = getClaims();
+  const idx = claims.findIndex(c => c.claimId === claimId);
+  if (idx !== -1) {
+    claims[idx].status = status;
+    claims[idx].reviewerComments = comments;
+    claims[idx].reviewedAt = new Date().toISOString();
+    fs.writeFileSync(dbPath, JSON.stringify(claims, null, 2), 'utf8');
+    return claims[idx];
+  }
+  return null;
+}
+```
+
+------------------------------------------------------------------------
+MILESTONE 1: MOCK openIMIS API ENDPOINTS (api/openimis/claims/route.js)
+------------------------------------------------------------------------
+Goal: Implement the `/api/openimis/claims` endpoint. When a claim is submitted
+      via POST, it should try to run Developer 2's validation libraries if they 
+      are created; otherwise, fallback to stub analysis values so front-end testing 
+      does not crash.
+
+Files to create/modify:
+- [NEW] src/app/api/openimis/claims/route.js
+
+Example Implementation for `src/app/api/openimis/claims/route.js`:
+```javascript
+import { getClaims, getClaimById, saveClaim, updateClaimStatus } from '@/lib/mockDb';
+
+// Attempt to import Dev 2's engines. Fallback gracefully if not yet created.
+let validateClinicalServices = null;
+let evaluateStpCompliance = null;
+let calculateRiskScore = null;
+
+try {
+  const clinicalValidator = require('@/lib/clinicalValidator');
+  validateClinicalServices = clinicalValidator.validateClinicalServices;
+} catch (e) {}
+
+try {
+  const stpEngine = require('@/lib/stpEngine');
+  evaluateStpCompliance = stpEngine.evaluateStpCompliance;
+} catch (e) {}
+
+try {
+  const riskScorer = require('@/lib/riskScorer');
+  calculateRiskScore = riskScorer.calculateRiskScore;
+} catch (e) {}
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const claimId = searchParams.get('claimId');
+
+  if (claimId) {
+    const claim = getClaimById(claimId);
+    if (!claim) return Response.json({ error: "Claim not found" }, { status: 404 });
+    return Response.json(claim);
+  }
+
+  const claims = getClaims();
+  return Response.json(claims);
+}
+
+export async function POST(request) {
+  try {
+    const claimPayload = await request.json();
+    const claimId = `CLM-${Math.floor(10000 + Math.random() * 90000)}`;
+    const submittedAt = new Date().toISOString();
+
+    // 1. Prepare base claim
+    const newClaim = {
+      ...claimPayload,
+      claimId,
+      submittedAt,
+      status: "PENDING_REVIEW"
+    };
+
+    // 2. Run Analysis Engines if available, else fall back to static/stub assessment
+    let clinicalValidation = { isValid: true, issues: [] };
+    let stpCompliance = { isCompliant: true, complianceScore: 100, protocolName: "General Consultation Protocol", deviations: [] };
+    let riskScoring = { overallRiskScore: 0, riskCategory: "LOW", riskFlags: [], reviewerPriority: 5 };
+
+    if (validateClinicalServices && evaluateStpCompliance && calculateRiskScore) {
+      clinicalValidation = validateClinicalServices(newClaim);
+      stpCompliance = evaluateStpCompliance(newClaim);
+      riskScoring = calculateRiskScore(clinicalValidation, stpCompliance, newClaim);
+    } else {
+      // Mock Fallback Logic for early testing before Dev 2 is finished
+      const primaryDiag = newClaim.diagnoses.find(d => d.isPrimary) || newClaim.diagnoses[0];
+      const code = primaryDiag?.code || "UNKNOWN";
+      
+      // Stub check: if Malaria code is selected and no test is present
+      if (code.startsWith("1F4")) {
+        const hasTest = newClaim.carePathway.some(step => step.code === "TEST-MAL-RDT" || step.code === "TEST-MAL-MIC");
+        if (!hasTest) {
+          stpCompliance = {
+            isCompliant: false,
+            complianceScore: 60,
+            protocolName: "Malaria Standard Treatment Protocol",
+            deviations: [{ type: "TEST_REQUIRED", message: "Prescribing antimalarials requires a prior diagnostic verification (RDT or Microscopy).", penalty: 40 }]
+          };
+          riskScoring = { overallRiskScore: 40, riskCategory: "MEDIUM", riskFlags: ["HIGH_PROTOCOL_DEVIATION"], reviewerPriority: 3 };
+        }
+      }
+    }
+
+    newClaim.clinicalValidation = clinicalValidation;
+    newClaim.stpCompliance = stpCompliance;
+    newClaim.riskScoring = riskScoring;
+
+    // Automatically auto-approve low-risk claims (Score 0-30)
+    if (riskScoring.overallRiskScore <= 30) {
+      newClaim.status = "APPROVED";
+    }
+
+    saveClaim(newClaim);
+
+    return Response.json(newClaim);
+  } catch (error) {
+    console.error("Error creating claim:", error);
+    return Response.json({ error: "Internal Server Error", details: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(request) {
+  try {
+    const { claimId, status, comments } = await request.json();
+    if (!claimId || !status) {
+      return Response.json({ error: "Missing claimId or status" }, { status: 400 });
+    }
+
+    const updated = updateClaimStatus(claimId, status, comments);
+    if (!updated) return Response.json({ error: "Claim not found" }, { status: 404 });
+
+    return Response.json(updated);
+  } catch (error) {
+    console.error("Error updating claim:", error);
+    return Response.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+```
+
+------------------------------------------------------------------------
+MILESTONE 2: CLAIM BUILDER FRONTEND MODULE (components/ClaimBuilder.jsx)
+------------------------------------------------------------------------
+Goal: Make a modular React component that holds the state of the claim 
+      under development and helps the doctor build the list of steps 
+      in the care pathway.
+
+Files to create/modify:
+- [NEW] src/components/ClaimBuilder.jsx
+
+Skeleton Code Structure:
+```jsx
+"use client";
+import React, { useState } from 'react';
+
+export default function ClaimBuilder({ diagnoses, setDiagnoses, carePathway, setCarePathway, onSubmit, isSubmitting }) {
+  const [patient, setPatient] = useState({ name: '', age: '', gender: 'Male' });
+  const [stepType, setStepType] = useState('symptom');
+  const [stepCode, setStepCode] = useState('');
+  const [stepName, setStepName] = useState('');
+  const [stepDetails, setStepDetails] = useState('');
+  const [stepCost, setStepCost] = useState('0.00');
+
+  // Dictionary quick-selectors to help doctors easily add valid services
+  const clinicalItems = {
+    symptom: [
+      { name: "Fever & Chills", code: "" },
+      { name: "Headache & Dizziness", code: "" },
+      { name: "Cough & Dyspnea", code: "" },
+      { name: "Polyuria & Polydipsia", code: "" }
+    ],
+    diagnostic_test: [
+      { name: "Malaria Rapid Diagnostic Test (RDT)", code: "TEST-MAL-RDT", cost: 15 },
+      { name: "Malaria Blood Smear", code: "TEST-MAL-MIC", cost: 20 },
+      { name: "Blood Pressure Monitoring", code: "TEST-BP-CHECK", cost: 10 },
+      { name: "Fasting Plasma Glucose (FPG)", code: "TEST-GLU-FPG", cost: 25 },
+      { name: "Glycated Hemoglobin (HbA1c)", code: "TEST-GLU-HBA1C", cost: 45 },
+      { name: "Dengue RDT", code: "TEST-DEN-RDT", cost: 30 },
+      { name: "Complete Blood Count", code: "TEST-CBC", cost: 15 }
+    ],
+    medications: [
+      { name: "Artemether-Lumefantrine (ACT)", code: "MED-AL-ACT", cost: 35 },
+      { name: "Amlodipine 5mg", code: "MED-AML-5", cost: 12 },
+      { name: "Losartan 25mg", code: "MED-LOS-25", cost: 18 },
+      { name: "Metformin 500mg", code: "MED-MET-500", cost: 15 },
+      { name: "Paracetamol 500mg", code: "MED-PAR-500", cost: 5 },
+      { name: "Amoxicillin 500mg", code: "MED-AMOX-500", cost: 22 }
+    ]
+  };
+
+  const handleAddStep = (e) => {
+    e.preventDefault();
+    if (!stepName.trim()) return;
+
+    const newStep = {
+      stepNumber: carePathway.length + 1,
+      type: stepType,
+      code: stepCode || undefined,
+      name: stepName,
+      details: stepDetails,
+      cost: parseFloat(stepCost) || 0,
+      timestamp: new Date().toISOString()
+    };
+
+    setCarePathway([...carePathway, newStep]);
+    setStepName('');
+    setStepCode('');
+    setStepDetails('');
+    setStepCost('0.00');
+  };
+
+  const removeStep = (index) => {
+    const updated = carePathway.filter((_, i) => i !== index).map((step, idx) => ({
+      ...step,
+      stepNumber: idx + 1
+    }));
+    setCarePathway(updated);
+  };
+
+  const handleQuickSelect = (item) => {
+    setStepName(item.name);
+    setStepCode(item.code);
+    if (item.cost) setStepCost(item.cost.toFixed(2));
+  };
+
+  const totalClaimed = carePathway.reduce((sum, step) => sum + (step.cost || 0), 0);
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    if (diagnoses.length === 0) {
+      alert("Please select at least one primary diagnosis.");
+      return;
+    }
+    if (!patient.name || !patient.age) {
+      alert("Please fill in patient name and age.");
+      return;
+    }
+
+    const payload = {
+      providerId: "PROV-9082",
+      providerName: "Dr. Sarah Jenkins",
+      patient: {
+        ...patient,
+        age: parseInt(patient.age)
+      },
+      diagnoses,
+      carePathway,
+      billing: {
+        totalClaimedAmount: totalClaimed
+      }
+    };
+    onSubmit(payload);
+  };
+
+  return (
+    <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xl space-y-6">
+      <h2 className="text-xl font-bold text-slate-800 dark:text-zinc-100 border-b border-slate-100 dark:border-zinc-800 pb-3">
+        📋 Claim Submission Builder
+      </h2>
+
+      {/* Patient Information */}
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Patient Name</label>
+          <input 
+            type="text" 
+            placeholder="John Doe" 
+            value={patient.name} 
+            onChange={e => setPatient({ ...patient, name: e.target.value })}
+            className="w-full mt-1 px-3 py-2 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Age</label>
+          <input 
+            type="number" 
+            placeholder="45" 
+            value={patient.age} 
+            onChange={e => setPatient({ ...patient, age: e.target.value })}
+            className="w-full mt-1 px-3 py-2 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Gender</label>
+          <select 
+            value={patient.gender} 
+            onChange={e => setPatient({ ...patient, gender: e.target.value })}
+            className="w-full mt-1 px-3 py-2 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          >
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Current Diagnoses Panel */}
+      <div className="space-y-2">
+        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Selected Diagnoses</span>
+        {diagnoses.length === 0 ? (
+          <p className="text-xs text-slate-400 italic">Select ICD codes from search on the left side to add diagnoses.</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {diagnoses.map((diag, idx) => (
+              <div key={idx} className="flex items-center gap-2 bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-200 border border-teal-100 dark:border-teal-900 px-3 py-1 rounded-full text-xs font-semibold">
+                <span>[{diag.code}] {diag.name} {diag.isPrimary && "⭐"}</span>
+                <button 
+                  onClick={() => setDiagnoses(diagnoses.filter((_, i) => i !== idx))} 
+                  className="hover:text-red-500 font-bold transition-colors cursor-pointer"
+                >
+                  &times;
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Add Step Form */}
+      <form onSubmit={handleAddStep} className="border border-dashed border-slate-200 dark:border-zinc-800 rounded-xl p-4 bg-slate-50/50 dark:bg-zinc-950/20 space-y-4">
+        <h3 className="text-xs font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider">Add Care Pathway Event</h3>
+        
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xxs font-semibold text-slate-500">Event Type</label>
+            <select 
+              value={stepType} 
+              onChange={e => setStepType(e.target.value)}
+              className="w-full mt-1 px-3 py-1.5 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500"
+            >
+              <option value="symptom">Symptom / Chief Complaint</option>
+              <option value="diagnostic_test">Diagnostic Test / Investigation</option>
+              <option value="medication">Medication / Prescription</option>
+              <option value="procedure">Clinical Procedure</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xxs font-semibold text-slate-500">Item Cost ($)</label>
+            <input 
+              type="number" 
+              step="0.01" 
+              value={stepCost} 
+              onChange={e => setStepCost(e.target.value)}
+              className="w-full mt-1 px-3 py-1.5 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none"
+            />
+          </div>
+        </div>
+
+        {/* Quick Selections */}
+        {stepType !== 'procedure' && (
+          <div className="space-y-1">
+            <span className="text-xxs font-semibold text-slate-400">Quick Select templates:</span>
+            <div className="flex flex-wrap gap-1.5">
+              {clinicalItems[stepType === 'medication' ? 'medications' : stepType].map((item, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => handleQuickSelect(item)}
+                  className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 rounded text-xxs hover:bg-teal-50 dark:hover:bg-teal-950 text-slate-600 dark:text-zinc-300 transition-colors"
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xxs font-semibold text-slate-500">Service Name</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Amoxicillin 500mg" 
+              value={stepName} 
+              onChange={e => setStepName(e.target.value)}
+              className="w-full mt-1 px-3 py-1.5 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label className="text-xxs font-semibold text-slate-500">Service Code (optional)</label>
+            <input 
+              type="text" 
+              placeholder="e.g. MED-AMOX-500" 
+              value={stepCode} 
+              onChange={e => setStepCode(e.target.value)}
+              className="w-full mt-1 px-3 py-1.5 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xxs font-semibold text-slate-500">Additional Details / Notes</label>
+          <input 
+            type="text" 
+            placeholder="e.g. 1 tab thrice daily for 7 days" 
+            value={stepDetails} 
+            onChange={e => setStepDetails(e.target.value)}
+            className="w-full mt-1 px-3 py-1.5 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none"
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          className="w-full py-2 bg-slate-800 text-white rounded-lg text-xs font-bold hover:bg-slate-700 dark:bg-zinc-700 dark:hover:bg-zinc-650 transition-colors cursor-pointer"
+        >
+          ➕ Insert Step into Pathway
+        </button>
+      </form>
+
+      {/* Pathway List Display */}
+      <div className="space-y-2">
+        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Care Pathway Timeline</span>
+        {carePathway.length === 0 ? (
+          <p className="text-xs text-slate-400 italic">No events added yet. Construct the chronological pathway above.</p>
+        ) : (
+          <div className="border border-slate-100 dark:border-zinc-800 rounded-xl divide-y divide-slate-100 dark:divide-zinc-800 overflow-hidden">
+            {carePathway.map((step, idx) => (
+              <div key={idx} className="flex justify-between items-center p-3 text-xs bg-slate-50/20 dark:bg-zinc-950/10">
+                <div className="flex items-start gap-3">
+                  <span className="flex items-center justify-center bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 w-5 h-5 rounded-full font-bold text-[10px]">
+                    {step.stepNumber}
+                  </span>
+                  <div>
+                    <span className="font-bold uppercase text-[10px] tracking-wider text-slate-400 dark:text-zinc-500 mr-2">{step.type}</span>
+                    <span className="font-semibold text-slate-800 dark:text-zinc-200">{step.name}</span>
+                    {step.code && <span className="ml-1 text-[10px] text-teal-600 dark:text-teal-400 font-mono">({step.code})</span>}
+                    {step.details && <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">{step.details}</p>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold text-slate-700 dark:text-zinc-300">${step.cost.toFixed(2)}</span>
+                  <button 
+                    onClick={() => removeStep(idx)}
+                    className="text-red-500 hover:text-red-700 text-lg transition-colors cursor-pointer"
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Billing Summary & Submit */}
+      <div className="border-t border-slate-200 dark:border-zinc-800 pt-4 flex justify-between items-center">
+        <div>
+          <span className="text-xs font-semibold text-slate-500">Total Claimed Amount</span>
+          <p className="text-2xl font-black text-slate-800 dark:text-zinc-100">${totalClaimed.toFixed(2)}</p>
+        </div>
+        <button
+          onClick={handleFormSubmit}
+          disabled={isSubmitting}
+          className="px-6 py-3 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+        >
+          {isSubmitting ? "Submitting..." : "Submit Claim to openIMIS"}
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+------------------------------------------------------------------------
+MILESTONE 3: PROVIDER WORKSPACE VIEW (doctor/page.jsx)
+------------------------------------------------------------------------
+Goal: Implement the core route `src/app/doctor/page.jsx`. This page contains
+      the unstructured clinical note text area, autocomplete suggestions fetched 
+      from `/api/suggest-icd`, and the ClaimBuilder module. 
+      It features a detailed real-time clinical compliance report immediately 
+      after submitting.
+
+Files to create/modify:
+- [NEW] src/app/doctor/page.jsx
+
+Skeleton Code Structure:
+```jsx
+"use client";
+import React, { useState } from 'react';
+import ClaimBuilder from '@/components/ClaimBuilder';
+
+export default function DoctorPortal() {
+  const [noteText, setNoteText] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  
+  // ClaimBuilder state passed down
+  const [diagnoses, setDiagnoses] = useState([]);
+  const [carePathway, setCarePathway] = useState([]);
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
+
+  // Suggest ICD Codes
+  const handleSuggestCodes = async () => {
+    if (!noteText.trim()) return;
+    setIsSearching(true);
+    try {
+      const res = await fetch(`/api/suggest-icd?query=${encodeURIComponent(noteText)}`);
+      const data = await res.json();
+      setSuggestions(data.results || []);
+    } catch (error) {
+      console.error("Failed to suggest ICD codes:", error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleAddDiagnosis = (suggestion) => {
+    // Avoid duplicates
+    if (diagnoses.some(d => d.code === suggestion.code)) return;
+    
+    const isFirst = diagnoses.length === 0;
+    const newDiag = {
+      code: suggestion.code,
+      name: suggestion.title,
+      isPrimary: isFirst
+    };
+    
+    setDiagnoses([...diagnoses, newDiag]);
+  };
+
+  // Submit claim handler
+  const handleSubmitClaim = async (payload) => {
+    setIsSubmitting(true);
+    setAnalysisResult(null);
+    try {
+      const res = await fetch('/api/openimis/claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      setAnalysisResult(data);
+      
+      // If success, clear form fields
+      if (res.ok) {
+        setCarePathway([]);
+        setDiagnoses([]);
+        setNoteText('');
+        setSuggestions([]);
+      }
+    } catch (error) {
+      alert("Failed to submit claim.");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-black font-sans py-10 px-6 sm:px-12">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Header Section */}
+        <div className="flex justify-between items-center bg-white/40 dark:bg-zinc-900/40 backdrop-blur border border-slate-200 dark:border-zinc-800 p-6 rounded-2xl">
+          <div>
+            <h1 className="text-2xl font-black text-slate-800 dark:text-zinc-50 tracking-tight">
+              👨‍⚕️ Provider Workspace
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-zinc-400">
+              Prepare, validate, and submit clinical claims to openIMIS.
+            </p>
+          </div>
+          <div className="text-right text-xs bg-teal-100 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-900 text-teal-800 dark:text-teal-200 px-3 py-1.5 rounded-xl font-bold">
+            👤 Dr. Sarah Jenkins (PROV-9082)
+          </div>
+        </div>
+
+        {/* Dashboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* LEFT: Clinical Notes & Suggestions (5 cols) */}
+          <div className="lg:col-span-5 space-y-6">
+            
+            <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-zinc-200">
+                📝 Clinical Notes
+              </h2>
+              
+              <textarea
+                value={noteText}
+                onChange={e => setNoteText(e.target.value)}
+                placeholder="Write or paste your patient summary notes here... (e.g., Patient presented with fever, chills, and muscle aches for three days. Suspect malaria.)"
+                rows={6}
+                className="w-full px-4 py-3 border rounded-xl dark:bg-zinc-800 dark:border-zinc-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+              
+              <button
+                onClick={handleSuggestCodes}
+                disabled={isSearching || !noteText.trim()}
+                className="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg disabled:opacity-50 transition-all cursor-pointer"
+              >
+                {isSearching ? "Analyzing symptoms..." : "✨ Suggest ICD Diagnoses"}
+              </button>
+            </div>
+
+            {/* ICD Suggestions Output */}
+            <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4">
+              <h3 className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                Recommended Diagnoses
+              </h3>
+              
+              {suggestions.length === 0 ? (
+                <p className="text-xs text-slate-400 italic">No recommendations yet. Run note analysis above.</p>
+              ) : (
+                <div className="space-y-3">
+                  {suggestions.map((item, idx) => (
+                    <div 
+                      key={idx} 
+                      onClick={() => handleAddDiagnosis(item)}
+                      className="group border border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/20 p-3 rounded-xl hover:border-teal-500 hover:bg-teal-50/10 transition-all cursor-pointer flex justify-between items-center"
+                    >
+                      <div className="space-y-1 pr-4">
+                        <span className="inline-block bg-slate-200 dark:bg-zinc-800 font-mono text-[10px] font-black px-1.5 py-0.5 rounded text-slate-700 dark:text-zinc-300">
+                          {item.code}
+                        </span>
+                        <h4 className="text-xs font-bold text-slate-800 dark:text-zinc-200 group-hover:text-teal-600 dark:group-hover:text-teal-400">
+                          {item.title}
+                        </h4>
+                      </div>
+                      <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                        Match: {Math.round(item.confidence * 100)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
+
+          {/* RIGHT: Claim Builder Form (7 cols) */}
+          <div className="lg:col-span-7">
+            <ClaimBuilder
+              diagnoses={diagnoses}
+              setDiagnoses={setDiagnoses}
+              carePathway={carePathway}
+              setCarePathway={setCarePathway}
+              onSubmit={handleSubmitClaim}
+              isSubmitting={isSubmitting}
+            />
+          </div>
+
+        </div>
+
+        {/* Real-time Validation Report Dashboard Overlay */}
+        {analysisResult && (
+          <div className="border border-slate-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl p-6 space-y-6">
+            <div className="flex justify-between items-start border-b border-slate-100 dark:border-zinc-800 pb-4">
+              <div>
+                <span className="text-xxs font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400">Real-time Claims Auditing</span>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100">
+                  Submission Status: <span className={analysisResult.status === 'APPROVED' ? 'text-emerald-500' : 'text-amber-500'}>{analysisResult.status}</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 font-mono">Claim Reference: {analysisResult.claimId}</p>
+              </div>
+              <div className="text-right">
+                <span className="text-xxs font-semibold text-slate-500">Risk Assessment</span>
+                <p className={`text-lg font-black ${
+                  analysisResult.riskScoring.riskCategory === 'HIGH' ? 'text-red-500' : 
+                  analysisResult.riskScoring.riskCategory === 'MEDIUM' ? 'text-amber-500' : 'text-emerald-500'
+                }`}>{analysisResult.riskScoring.riskCategory} RISK ({analysisResult.riskScoring.overallRiskScore}/100)</p>
+              </div>
+            </div>
+
+            {/* STP Compliance progress */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              <div className="border border-slate-100 dark:border-zinc-800 rounded-xl p-4 space-y-3">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-slate-700 dark:text-zinc-300">STP Adherence Score</span>
+                  <span className="font-extrabold text-teal-600 dark:text-teal-400">{analysisResult.stpCompliance.complianceScore}%</span>
+                </div>
+                
+                <div className="h-2 bg-slate-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 transition-all"
+                    style={{ width: `${analysisResult.stpCompliance.complianceScore}%` }}
+                  />
+                </div>
+                
+                <p className="text-xxs text-slate-400 italic">
+                  Matched protocol: {analysisResult.stpCompliance.protocolName}
+                </p>
+
+                {analysisResult.stpCompliance.deviations.length > 0 ? (
+                  <div className="space-y-1.5 pt-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Protocol Deviations:</span>
+                    {analysisResult.stpCompliance.deviations.map((dev, i) => (
+                      <div key={i} className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/10 border border-amber-100 dark:border-amber-900 p-2 rounded-lg">
+                        ⚠️ <strong>[{dev.type}]</strong> {dev.message} (Penalty: -{dev.penalty})
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900 p-2 rounded-lg">
+                    ✅ Adheres perfectly to the Standard Treatment Protocol.
+                  </p>
+                )}
+              </div>
+
+              {/* Service Mapping Mismatch Warnings */}
+              <div className="border border-slate-100 dark:border-zinc-800 rounded-xl p-4 space-y-3">
+                <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">Clinical Mismatch Audits</span>
+                
+                {!analysisResult.clinicalValidation.isValid ? (
+                  <div className="space-y-2">
+                    {analysisResult.clinicalValidation.issues.map((issue, i) => (
+                      <div key={i} className="text-xs text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-950/10 border border-red-100 dark:border-red-900 p-2.5 rounded-lg flex items-start gap-2">
+                        <span>❌</span>
+                        <div>
+                          <strong>{issue.severity} Warning:</strong> {issue.message}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900 p-2.5 rounded-lg">
+                    ✅ All billed medications and procedures are clinically justified by your diagnoses.
+                  </p>
+                )}
+              </div>
+
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button 
+                onClick={() => setAnalysisResult(null)}
+                className="px-4 py-2 border border-slate-200 dark:border-zinc-800 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 transition-all cursor-pointer"
+              >
+                Dismiss Audit
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+```
+
+------------------------------------------------------------------------
+COLLABORATION & BOUNDARIES REMINDER
+------------------------------------------------------------------------
+1. Align with Dev 2: The payload format you submit to `/api/openimis/claims` must
+   match their expected structure in `CLAIM_SCHEMA.txt`. Note that their clinical
+   validation will map selected diagnoses (ICD-11 prefixes like "1F4" or "5A11") 
+   against the clinicalDictionary.json guidelines.
+2. Align with Dev 3: Since you share the database, writing your mock claims 
+   into `claims_db.json` will immediately populate the queue on the Insurance 
+   Dashboard and let them test their status update (Approved / Rejected) logic.
+========================================================================
