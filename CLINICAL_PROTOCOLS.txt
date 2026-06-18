@@ -15,30 +15,29 @@ The system will recognize and support the following mappings:
     - [B54]     Unspecified malaria (Malaria)
     - [I10]     Essential (primary) hypertension (Hypertension)
     - [E11]     Type 2 diabetes mellitus (Type 2 Diabetes)
-    - [K35.8]   Acute appendicitis (Acute Appendicitis)
     - [A15.0]   Tuberculosis of lung (Pulmonary Tuberculosis)
-    - [D50.9]   Iron deficiency anemia (Iron Deficiency Anemia)
-    - [J03.90]  Acute tonsillitis, unspecified (Acute Tonsillitis)
     - [J45.909] Unspecified asthma, uncomplicated (Bronchial Asthma)
-    - [K81.0]   Acute cholecystitis (Acute Cholecystitis)
     - [N39.0]   Urinary tract infection, site not specified (UTI)
+    - [A90]     Dengue fever, unspecified (Dengue)
+    - [E03.9]   Hypothyroidism, unspecified (Hypothyroidism)
+    - [E05.9]   Thyrotoxicosis, unspecified (Hyperthyroidism)
 
 *   DIAGNOSTIC TESTS (Mock Codes)
-    - [TEST-MAL-RDT]   Malaria Rapid Diagnostic Test (RDT)
+    - [TEST-MAL-RDT]    Malaria Rapid Diagnostic Test (RDT)
     - [TEST-MAL-SMEAR]  Malaria Blood Smear
     - [TEST-BP-CHECK]   Blood Pressure Monitoring
     - [TEST-GLU-FPG]    Fasting Plasma Glucose (FPG)
     - [TEST-GLU-HBA1C]  Glycated Hemoglobin (HbA1c)
-    - [TEST-IMG-US]     Abdominal Ultrasound
-    - [TEST-IMG-CT]     Abdominal CT Scan
     - [TEST-TB-AFB]     Sputum Acid-Fast Bacilli (AFB) Smear
     - [TEST-TB-GENEX]   GeneXpert MTB/RIF Assay
     - [TEST-CBC]        Complete Blood Count (CBC)
-    - [TEST-FERRITIN]   Serum Ferritin Test
-    - [TEST-THROAT-SWB] Throat Swab Culture
     - [TEST-SPIROMETRY] Spirometry Lung Function Test
     - [TEST-URINALYSIS] Urinalysis (Dipstick/Microscopic)
     - [TEST-URINE-CUL]  Urine Culture & Sensitivity
+    - [TEST-DEN-NS1]    Dengue NS1 Antigen Test
+    - [TEST-DEN-IGM]    Dengue IgM Antibody Test
+    - [TEST-THY-TSH]    Thyroid Stimulating Hormone (TSH) Test
+    - [TEST-THY-FT4]    Free Thyroxine (FT4) Test
 
 *   TREATMENTS & PROCEDURES (Mock CPT / RxNorm Codes)
     - [MED-AL-ACT]      Artemether-Lumefantrine (ACT) (Anti-malarial)
@@ -46,15 +45,18 @@ The system will recognize and support the following mappings:
     - [MED-LIS-10]      Lisinopril 10mg (Anti-hypertensive)
     - [MED-MET-500]     Metformin 500mg (Anti-diabetic)
     - [MED-INS-GLAR]    Insulin Glargine (Anti-diabetic)
-    - [PROC-APPEND]     Appendectomy (Procedure) (CPT: 44950)
     - [MED-TB-HRZE]     Rifampicin/Isoniazid/Pyrazinamide/Ethambutol (Anti-TB)
-    - [MED-IRON-SULF]   Ferrous Sulfate (Iron supplement)
-    - [MED-AMO-500]     Amoxicillin 500mg (Antibiotic)
     - [MED-SAL-INH]     Salbutamol Inhaler (Bronchodilator)
     - [MED-FLU-INH]     Fluticasone Inhaler (Inhaled Corticosteroid)
-    - [PROC-CHOLE]      Cholecystectomy (Procedure) (CPT: 47562)
     - [MED-NIT-100]     Nitrofurantoin 100mg (Antibiotic)
     - [MED-CIP-500]     Ciprofloxacin 500mg (Antibiotic)
+    - [MED-PAR-500]     Paracetamol 500mg (Analgesic/Antipyretic)
+    - [MED-IBU-400]     Ibuprofen 400mg (NSAID - Contraindicated for Dengue)
+    - [MED-LEV-50]      Levothyroxine Sodium 50mcg (Thyroid Replacement)
+    - [MED-LEV-100]     Levothyroxine Sodium 100mcg (Thyroid Replacement)
+    - [MED-CARB-10]     Carbimazole 10mg (Antithyroid)
+    - [MED-METH-5]      Methimazole 5mg (Antithyroid)
+    - [MED-PROP-40]     Propranolol 40mg (Beta-Blocker)
 
 ------------------------------------------------------------------------
 2. STANDARD TREATMENT PROTOCOL (STP) RULES
@@ -107,28 +109,14 @@ Each claim's chronological `carePathway` must follow these rules:
 
 ---
 
-### PROTOCOL 4: Acute Appendicitis Protocol
-*   **Target Diagnosis**: K35.8 (Acute Appendicitis)
-*   **Rule 4.1: Confirmatory Imaging (Mandatory)**
-    - *Condition*: Appendectomy (`PROC-APPEND`) requires a prior imaging study 
-      (`TEST-IMG-US` or `TEST-IMG-CT`).
-    - *Deviation*: Appendectomy performed without ultrasound or CT confirmation.
-    - *Severity*: CRITICAL (Penalty: 45 points)
-*   **Rule 4.2: Appropriate Procedure Match**
-    - *Condition*: Claim must include CPT code `44950` (`PROC-APPEND`).
-    - *Deviation*: Mismatched billing code for appendectomy.
-    - *Severity*: CRITICAL (Penalty: 40 points)
-
----
-
-### PROTOCOL 5: Pulmonary Tuberculosis Protocol
+### PROTOCOL 4: Pulmonary Tuberculosis Protocol
 *   **Target Diagnosis**: A15.0 (Pulmonary Tuberculosis)
-*   **Rule 5.1: Microbiological Confirmation (Mandatory)**
+*   **Rule 4.1: Microbiological Confirmation (Mandatory)**
     - *Condition*: Prescribing anti-TB therapy (`MED-TB-HRZE`) requires positive 
       `TEST-TB-AFB` (Sputum smear) or `TEST-TB-GENEX` (GeneXpert) results.
     - *Deviation*: TB therapy initiated without lab confirmation.
     - *Severity*: CRITICAL (Penalty: 40 points)
-*   **Rule 5.2: Multi-Drug Regimen Adherence**
+*   **Rule 4.2: Multi-Drug Regimen Adherence**
     - *Condition*: Prescription must consist of combined `MED-TB-HRZE` formulation. 
       Single-drug treatment is contraindicated for active TB.
     - *Deviation*: Sub-standard monotherapy regimen for active tuberculosis.
@@ -136,42 +124,14 @@ Each claim's chronological `carePathway` must follow these rules:
 
 ---
 
-### PROTOCOL 6: Iron Deficiency Anemia Protocol
-*   **Target Diagnosis**: D50.9 (Iron Deficiency Anemia)
-*   **Rule 6.1: Lab Verification (Mandatory)**
-    - *Condition*: Prescribing `MED-IRON-SULF` requires a prior blood check 
-      (`TEST-CBC` or `TEST-FERRITIN`) confirming low hemoglobin/ferritin.
-    - *Deviation*: Iron supplements prescribed without diagnostic anemia proof.
-    - *Severity*: MAJOR (Penalty: 30 points)
-*   **Rule 6.2: Therapy Selection**
-    - *Condition*: Billed drug must be `MED-IRON-SULF`.
-    - *Deviation*: Unapproved medication for iron deficiency.
-    - *Severity*: MINOR (Penalty: 10 points)
-
----
-
-### PROTOCOL 7: Acute Tonsillitis Protocol
-*   **Target Diagnosis**: J03.90 (Acute Tonsillitis)
-*   **Rule 7.1: Antibiotic Stewardship (Bacterial Verification)**
-    - *Condition*: Prescribing antibiotic `MED-AMO-500` requires positive 
-      `TEST-THROAT-SWB` throat culture or documentation of high Centor score.
-    - *Deviation*: Antibiotics prescribed for viral/unspecified tonsillitis.
-    - *Severity*: MAJOR (Penalty: 25 points)
-*   **Rule 7.2: First-Line Choice**
-    - *Condition*: Billed antibiotic must be Penicillin/Amoxicillin (`MED-AMO-500`).
-    - *Deviation*: Broad-spectrum antibiotic used unnecessarily as first-line.
-    - *Severity*: MINOR (Penalty: 15 points)
-
----
-
-### PROTOCOL 8: Bronchial Asthma Protocol
+### PROTOCOL 5: Bronchial Asthma Protocol
 *   **Target Diagnosis**: J45.909 (Bronchial Asthma)
-*   **Rule 8.1: Airflow Assessment**
+*   **Rule 5.1: Airflow Assessment**
     - *Condition*: First-time asthma diagnosis and prescription (`MED-SAL-INH` 
       or `MED-FLU-INH`) requires a `TEST-SPIROMETRY` or peak expiratory flow test.
     - *Deviation*: Asthma therapy started without baseline lung function test.
     - *Severity*: MAJOR (Penalty: 20 points)
-*   **Rule 8.2: Controller-Reliever Logic**
+*   **Rule 5.2: Controller-Reliever Logic**
     - *Condition*: Chronic/daily therapy must include controller inhaler 
       (`MED-FLU-INH`) alongside rescue inhaler (`MED-SAL-INH`).
     - *Deviation*: Reliever inhaler monotherapy for persistent asthma.
@@ -179,32 +139,67 @@ Each claim's chronological `carePathway` must follow these rules:
 
 ---
 
-### PROTOCOL 9: Acute Cholecystitis Protocol
-*   **Target Diagnosis**: K81.0 (Acute Cholecystitis)
-*   **Rule 9.1: Confirmatory Imaging (Mandatory)**
-    - *Condition*: Performing a cholecystectomy (`PROC-CHOLE`) requires prior 
-      imaging confirmation (`TEST-IMG-US`).
-    - *Deviation*: Cholecystectomy performed without confirmatory ultrasound.
-    - *Severity*: CRITICAL (Penalty: 45 points)
-*   **Rule 9.2: Appropriate Procedure Match**
-    - *Condition*: Claim must include CPT code `47562` (`PROC-CHOLE`).
-    - *Deviation*: Mismatched billing code for cholecystectomy.
-    - *Severity*: CRITICAL (Penalty: 40 points)
-
----
-
-### PROTOCOL 10: Urinary Tract Infection (UTI) Protocol
+### PROTOCOL 6: Urinary Tract Infection (UTI) Protocol
 *   **Target Diagnosis**: N39.0 (UTI)
-*   **Rule 10.1: Lab Verification (Mandatory)**
+*   **Rule 6.1: Lab Verification (Mandatory)**
     - *Condition*: Prescribing `MED-NIT-100` or `MED-CIP-500` requires a prior 
       positive test (`TEST-URINALYSIS` or `TEST-URINE-CUL`).
     - *Deviation*: Antibiotics prescribed for UTI without lab confirmation.
     - *Severity*: CRITICAL (Penalty: 35 points)
-*   **Rule 10.2: First-line Selection**
+*   **Rule 6.2: First-line Selection**
     - *Condition*: Billed antibiotic must be `MED-NIT-100`. Broad-spectrum 
       `MED-CIP-500` should only be billed if there is a documented urine culture 
       indicating resistance or pyelonephritis.
     - *Deviation*: Broad-spectrum fluoroquinolone used without resistance evidence.
+    - *Severity*: MAJOR (Penalty: 20 points)
+
+---
+
+### PROTOCOL 7: Dengue Fever Protocol
+*   **Target Diagnosis**: A90 (Dengue)
+*   **Rule 7.1: Confirmatory Test (Mandatory)**
+    - *Condition*: Dengue diagnosis or treatment requires prior positive 
+      `TEST-DEN-NS1` or `TEST-DEN-IGM` record.
+    - *Deviation*: Dengue claim submitted without confirmatory laboratory testing.
+    - *Severity*: CRITICAL (Penalty: 35 points)
+*   **Rule 7.2: NSAID Contraindication (Stewardship)**
+    - *Condition*: Claim must not prescribe NSAIDs like Ibuprofen (`MED-IBU-400`) 
+      or Aspirin due to risk of hemorrhagic complications.
+    - *Deviation*: Prescribed contraindicated NSAID for Dengue, increasing hemorrhage risk.
+    - *Severity*: CRITICAL (Penalty: 50 points)
+*   **Rule 7.3: Platelet Monitoring (Recommended)**
+    - *Condition*: Dengue claim must include a Complete Blood Count (`TEST-CBC`) 
+      to monitor platelet count and hematocrit.
+    - *Deviation*: Missing platelet count/hematocrit monitoring for Dengue.
+    - *Severity*: MAJOR (Penalty: 25 points)
+
+---
+
+### PROTOCOL 8: Hypothyroidism Protocol
+*   **Target Diagnosis**: E03.9 (Hypothyroidism)
+*   **Rule 8.1: Thyroid Function Testing (Mandatory)**
+    - *Condition*: Prescribing Levothyroxine (`MED-LEV-50` or `MED-LEV-100`) 
+      requires a prior elevated `TEST-THY-TSH` record.
+    - *Deviation*: Thyroid hormone replacement initiated without TSH verification.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+*   **Rule 8.2: Approved Therapy Alignment**
+    - *Condition*: Billed medication must be Levothyroxine (`MED-LEV-50` or `MED-LEV-100`).
+    - *Deviation*: Non-approved medication for hypothyroidism.
+    - *Severity*: MAJOR (Penalty: 20 points)
+
+---
+
+### PROTOCOL 9: Hyperthyroidism Protocol
+*   **Target Diagnosis**: E05.9 (Hyperthyroidism)
+*   **Rule 9.1: Thyroid Function Testing (Mandatory)**
+    - *Condition*: Prescribing Carbimazole (`MED-CARB-10`) or Methimazole (`MED-METH-5`) 
+      requires a prior suppressed `TEST-THY-TSH` record.
+    - *Deviation*: Antithyroid therapy initiated without TSH verification.
+    - *Severity*: CRITICAL (Penalty: 40 points)
+*   **Rule 9.2: First-Line Antithyroid Choice**
+    - *Condition*: Billed antithyroid drug must be Carbimazole (`MED-CARB-10`) 
+      or Methimazole (`MED-METH-5`).
+    - *Deviation*: Non-approved antithyroid medication used as first-line therapy.
     - *Severity*: MAJOR (Penalty: 20 points)
 
 ------------------------------------------------------------------------

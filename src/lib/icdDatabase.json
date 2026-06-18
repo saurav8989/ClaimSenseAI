@@ -1,13 +1,13 @@
 [
   {
     "code": "1F45",
-    "icd10Code": "B54",
     "title": "Malaria without parasitological confirmation",
     "synonyms": [
       "fever",
       "chills",
       "plasmodium",
       "shivering",
+      "malaria",
       "malaria nos",
       "recurrent malaria",
       "remittent malaria",
@@ -19,141 +19,2187 @@
     ]
   },
   {
+    "code": "1F4Z",
+    "title": "Malaria, unspecified",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1F42.Z",
+    "title": "Plasmodium malariae malaria without complication",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "malariae malaria",
+      "malaria due to plasmodium malariae",
+      "plasmodium malariae malaria nos",
+      "malaria by plasmodium malariae",
+      "quartan malaria",
+      "quartan malarial"
+    ]
+  },
+  {
+    "code": "1F44",
+    "title": "Other parasitologically confirmed malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "malaria confirmed",
+      "monkey malaria",
+      "simian malaria",
+      "parasitologically confirmed malaria nos",
+      "simian plasmodium malaria",
+      "malaria due to plasmodium knowlesi",
+      "malaria due to plasmodium cynomolgi",
+      "malaria due to simian plasmodia"
+    ]
+  },
+  {
+    "code": "KA64.Y",
+    "title": "Other specified parasitic diseases in the fetus or newborn",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "other congenital malaria"
+    ]
+  },
+  {
+    "code": "1F40.Z",
+    "title": "Malaria due to Plasmodium falciparum, unspecified",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "tropical malaria",
+      "pernicious malaria",
+      "malignant malaria",
+      "haemoglobinuric malaria",
+      "malaria tropica",
+      "quotidian malaria",
+      "malarial quotidian",
+      "algid malaria",
+      "severe malarial falciparum",
+      "malaria due to plasmodium falciparum",
+      "st - [subtertian malaria]",
+      "malarial shock",
+      "malignant tertian malaria",
+      "continued malaria fever",
+      "aestivo autumnal malaria",
+      "estivo-autumnal malaria",
+      "severe plasmodium falciparum malaria",
+      "malarial haematuria",
+      "tm -[malignant tertian malaria]",
+      "subtertian malaria fever",
+      "malarial blackwater fever",
+      "malarial haemoglobinuria",
+      "falciparum malaria [malignant tertian]",
+      "subtertian malignant tertian malaria",
+      "mtm - [malignant tertian malaria]",
+      "malarial haematinuria",
+      "estivo-autumnal malarial fever"
+    ]
+  },
+  {
+    "code": "1F43",
+    "title": "Malaria due to Plasmodium ovale",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "ovale malaria",
+      "malarial ovale",
+      "malaria by plasmodium ovale",
+      "ovale tertian malaria",
+      "malaria fever by plasmodium ovale"
+    ]
+  },
+  {
+    "code": "1F41.Z",
+    "title": "Plasmodium vivax malaria without complication",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "tertian malaria",
+      "vivax malaria",
+      "benign tertian malaria",
+      "malaria due to plasmodium vivax",
+      "plasmodium vivax malaria nos",
+      "benign tertian vivax malaria",
+      "bt - [benign tertian malaria]",
+      "btm - [benign tertian malaria]"
+    ]
+  },
+  {
+    "code": "QC42.Y",
+    "title": "Other specified personal history of infectious or parasitic diseases",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "personal history of malaria"
+    ]
+  },
+  {
+    "code": "KA64.1",
+    "title": "Congenital falciparum malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1F42.Y",
+    "title": "Malaria due to Plasmodium malariae with other complications",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1F40.0",
+    "title": "Plasmodium falciparum malaria with cerebral complications",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "cerebral malaria nos",
+      "cerebral malaria",
+      "encephalitis due to malaria"
+    ]
+  },
+  {
+    "code": "1F40.Y",
+    "title": "Other severe and complicated Plasmodium falciparum malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "myelitis due to malaria"
+    ]
+  },
+  {
+    "code": "QA08.6",
+    "title": "Special screening examination for other protozoal diseases or helminthiases",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "malaria screening"
+    ]
+  },
+  {
+    "code": "1F42.0",
+    "title": "Plasmodium malariae malaria with nephropathy",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "malaria nephrosis",
+      "malarial nephrosis",
+      "nephrotic syndrome in malaria",
+      "nephrotic syndrome of quartan malaria"
+    ]
+  },
+  {
+    "code": "1F42.0/GB4Z",
+    "title": "Glomerular disorders in plasmodium malariae malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "MG55.0",
+    "title": "Artemisinin resistant Plasmodium falciparum",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "multidrug-resistant falciparum malaria"
+    ]
+  },
+  {
+    "code": "1F41.Y",
+    "title": "Malaria due to Plasmodium vivax with other complications",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "MG55.Y",
+    "title": "Other specified finding of parasite resistant to antimicrobial drugs",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "antimicrobial resistant plasmodium malariae"
+    ]
+  },
+  {
+    "code": "1C61.Z",
+    "title": "Human immunodeficiency virus disease associated with malaria, clinical stage unspecified",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "hiv disease associated with malaria",
+      "human immunodeficiency virus disease associated with malaria"
+    ]
+  },
+  {
+    "code": "1F41.0",
+    "title": "Plasmodium vivax malaria with rupture of spleen",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "DB90.Y&XN5FW",
+    "title": "Malarial hepatopathy",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "JB63.60",
+    "title": "Malaria complicating pregnancy, childbirth, or the puerperium",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1C61.1",
+    "title": "HIV disease clinical stage 2 associated with malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1C61.0",
+    "title": "HIV disease clinical stage 1 associated with malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1C61.2",
+    "title": "HIV disease clinical stage 3 associated with malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1C61.3Z",
+    "title": "HIV disease clinical stage 4 associated with malaria, unspecified",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "hiv disease clinical stage 4 associated with malaria"
+    ]
+  },
+  {
+    "code": "1C61.3Y",
+    "title": "Other specified HIV disease clinical stage 4 associated with malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "cytomegaloviral disease associated with human immunodeficiency virus disease associated with malaria",
+      "herpes simplex virus associated with human immunodeficiency disease associated with malaria",
+      "pneumonia due to pneumocystis associated with human immunodeficiency virus disease associated with malaria",
+      "leishmaniasis associated with human immunodeficiency virus disease associated with malaria",
+      "neoplasms of haematopoietic or lymphoid tissues associated with human immunodeficiency virus disease associated with malaria",
+      "cystoisosporiasis associated with human immunodeficiency virus disease associated with malaria",
+      "disseminated cryptococcosis associated with human immunodeficiency virus disease associated with malaria",
+      "cryptosporidiosis associated with human immunodeficiency virus disease associated with malaria",
+      "infections due to non-tuberculous mycobacteria associated with human immunodeficiency virus disease associated with malaria",
+      "toxoplasmosis associated with human immunodeficiency virus disease associated with malaria",
+      "progressive leukoencephalopathy associated with human immunodeficiency virus disease associated with malaria",
+      "candidosis of gastrointestinal tract associated with human immunodeficiency virus disease associated with malaria"
+    ]
+  },
+  {
+    "code": "1C62.1",
+    "title": "HIV disease clinical stage 2 without mention of tuberculosis or malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "hiv disease clinical stage 2 without tuberculosis or malaria"
+    ]
+  },
+  {
+    "code": "1C62.2",
+    "title": "HIV disease clinical stage 3 without mention of tuberculosis or malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "hiv disease clinical stage 3 without tuberculosis or malaria"
+    ]
+  },
+  {
+    "code": "1C62.3Z",
+    "title": "HIV disease clinical stage 4 without mention of tuberculosis or malaria, unspecified",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "hiv disease clinical stage 4 without tuberculosis or malaria",
+      "hiv disease clinical stage 4 without mention of tuberculosis or malaria"
+    ]
+  },
+  {
+    "code": "1C62.Z",
+    "title": "Human immunodeficiency virus disease without mention of associated disease or condition, clinical stage unspecified",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria",
+      "human immunodeficiency virus disease without mention of tuberculosis or malaria"
+    ]
+  },
+  {
+    "code": "1C62.0",
+    "title": "HIV disease clinical stage 1 without mention of tuberculosis or malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1C61.30",
+    "title": "Kaposi sarcoma associated with human immunodeficiency virus disease associated with malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1C62.3Y",
+    "title": "Other specified HIV disease clinical stage 4 without mention of tuberculosis or malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
+    "code": "1C62.30",
+    "title": "Kaposi sarcoma associated with human immunodeficiency virus disease without mention of tuberculosis or malaria",
+    "synonyms": [
+      "fever",
+      "chills",
+      "plasmodium",
+      "shivering",
+      "malaria"
+    ]
+  },
+  {
     "code": "BA00.Z",
-    "icd10Code": "I10",
     "title": "Essential hypertension, unspecified",
     "synonyms": [
       "high blood pressure",
       "elevated bp",
       "headache",
       "dizziness",
+      "hypertension",
       "essential hypertension",
       "essential (primary) hypertension, unspecified, without mention of hypertensive crisis"
     ]
   },
   {
+    "code": "BA00.Y",
+    "title": "Other specified essential hypertension",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension",
+      "accelerated essential hypertension"
+    ]
+  },
+  {
+    "code": "BA03/BA00.Z",
+    "title": "Hypertensive crisis [Essential hypertension, unspecified]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension"
+    ]
+  },
+  {
+    "code": "BA03/BA00.Y",
+    "title": "Hypertensive crisis [Other specified essential hypertension]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension"
+    ]
+  },
+  {
+    "code": "BA03/BA00.Z/BA03",
+    "title": "Hypertensive crisis [Essential (primary) hypertension, unspecified, with mention of hypertensive crisis]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension"
+    ]
+  },
+  {
+    "code": "KB45",
+    "title": "Neonatal hypertension",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension",
+      "newborn essential hypertension",
+      "newborn benign essential hypertension"
+    ]
+  },
+  {
+    "code": "BA00.Z/BA03",
+    "title": "Essential (primary) hypertension, unspecified, with mention of hypertensive crisis",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension"
+    ]
+  },
+  {
+    "code": "9B71.1/BA00.Z",
+    "title": "Hypertensive retinopathy [Essential hypertension, unspecified]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension"
+    ]
+  },
+  {
+    "code": "9B71.1/BA00.Y",
+    "title": "Hypertensive retinopathy [Other specified essential hypertension]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension"
+    ]
+  },
+  {
+    "code": "BA01",
+    "title": "Hypertensive heart disease",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension",
+      "essential hypertensive cardiovascular disease"
+    ]
+  },
+  {
+    "code": "9B71.1/BA00.Z/BA03",
+    "title": "Hypertensive retinopathy [Essential (primary) hypertension, unspecified, with mention of hypertensive crisis]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension"
+    ]
+  },
+  {
+    "code": "8B00.Z/BA00.Z",
+    "title": "Intracerebral haemorrhage, site unspecified [Essential hypertension, unspecified]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension",
+      "intracerebral hypertensive haemorrhage [essential hypertension, unspecified]",
+      "intracerebral hypertensive haemorrhage [essential (primary) hypertension, unspecified, without mention of hypertensive crisis]"
+    ]
+  },
+  {
+    "code": "8B00.Z/BA00.Y",
+    "title": "Intracerebral haemorrhage, site unspecified [Other specified essential hypertension]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension",
+      "intracerebral hypertensive haemorrhage [other specified essential hypertension]"
+    ]
+  },
+  {
+    "code": "8B00.Z/BA00.Z/BA03",
+    "title": "Intracerebral haemorrhage, site unspecified [Essential (primary) hypertension, unspecified, with mention of hypertensive crisis]",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension",
+      "intracerebral hypertensive haemorrhage [essential (primary) hypertension, unspecified, with mention of hypertensive crisis]"
+    ]
+  },
+  {
+    "code": "JA20.0",
+    "title": "Pre-existing essential hypertension complicating pregnancy, childbirth or the puerperium",
+    "synonyms": [
+      "high blood pressure",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hypertension",
+      "essential hypertension specified as a reason for obstetric care during pregnancy, childbirth or the puerperium"
+    ]
+  },
+  {
     "code": "5A11",
-    "icd10Code": "E11",
     "title": "Type 2 diabetes mellitus",
     "synonyms": [
       "diabetes",
       "sugar",
       "high glucose",
       "thirst",
+      "t2dm",
       "diabetes mellitus type 2",
       "t2dm - [type 2 diabetes mellitus]"
     ]
   },
   {
-    "code": "DB10.02",
-    "icd10Code": "K35.8",
-    "title": "Acute appendicitis without localised or generalised peritonitis",
+    "code": "BD54/5A11",
+    "title": "Diabetic foot ulcer [Type 2 diabetes mellitus]",
     "synonyms": [
-      "abdominal pain",
-      "nausea",
-      "vomiting",
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic foot [type 2 diabetes mellitus]",
+      "neuropathic ulceration of foot due to diabetes [type 2 diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "5A24/5A11",
+    "title": "Uncontrolled or unstable diabetes mellitus [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "uncontrolled diabetes [type 2 diabetes mellitus]",
+      "brittle diabetes [type 2 diabetes mellitus]",
+      "inadequate control of diabetes [type 2 diabetes mellitus]",
+      "poorly controlled diabetes [type 2 diabetes mellitus]",
+      "uncontrolled or unstable diabetes mellitus [type 2 diabetes]",
+      "uncontrolled or unstable diabetes mellitus [insulin requiring type 2 diabetes]"
+    ]
+  },
+  {
+    "code": "5A13",
+    "title": "Diabetes mellitus, other specified type",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "other specified diabetes mellitus, not type 1 and not type 2"
+    ]
+  },
+  {
+    "code": "5A2Y/5A11",
+    "title": "Other specified acute complications of diabetes mellitus [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "other specified acute complications of diabetes mellitus [type 2 diabetes]",
+      "other specified acute complications of diabetes mellitus [insulin requiring type 2 diabetes]"
+    ]
+  },
+  {
+    "code": "MF83/5A11",
+    "title": "Diabetic glomerular changes [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic glomerulopathy [type 2 diabetes mellitus]",
+      "glomerular disorders in diabetes mellitus [type 2 diabetes]",
+      "glomerular disorders in diabetes mellitus [type 2 diabetes mellitus]",
+      "glomerular disorders in diabetes mellitus [insulin requiring type 2 diabetes]"
+    ]
+  },
+  {
+    "code": "EB90.0/5A11",
+    "title": "Diabetic skin lesions [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "BD54/5A13",
+    "title": "Diabetic foot ulcer [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic foot [other specified diabetes mellitus, not type 1 and not type 2]",
+      "diabetic foot ulcer [other specified diabetes mellitus, not type 1 and not type 2]",
+      "neuropathic ulceration of foot due to diabetes [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "FA38.10/5A11",
+    "title": "Diabetic Charcot arthropathy [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic charcot foot [type 2 diabetes mellitus]",
+      "neuropathic arthropathy due to diabetes mellitus [type 2 diabetes]",
+      "neuropathic arthropathy due to diabetes mellitus [type 2 diabetes mellitus]",
+      "diabetic neuropathic arthropathy [type 2 diabetes mellitus]",
+      "neuropathic arthropathy due to diabetes mellitus [insulin requiring type 2 diabetes]"
+    ]
+  },
+  {
+    "code": "GB61.1/5A11",
+    "title": "Chronic kidney disease, stage 2 [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "ckd - [chronic kidney disease] stage 2 [type 2 diabetes mellitus]",
+      "ckd - [chronic kidney disease] stage 2 [type ii diabetes mellitus]",
+      "chronic renal failure, stage 2 [type 2 diabetes mellitus]",
+      "chronic kidney disease, stage 2 [type ii diabetes mellitus]",
+      "chronic renal failure, stage 2 [type ii diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "GB61.1/5A14",
+    "title": "Chronic kidney disease, stage 2 [Diabetes mellitus, type unspecified]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "ckd - [chronic kidney disease] stage 2 [diabetes mellitus, type unspecified]",
+      "chronic renal failure, stage 2 [diabetes mellitus, type unspecified]",
+      "ckd - [chronic kidney disease] stage 2 [diabetes mellitus, type unspecified without complications]",
+      "ckd - [chronic kidney disease] stage 2 [diabetes without mention of type of diabetes mellitus]",
+      "chronic kidney disease, stage 2 [diabetes mellitus, type unspecified without complications]",
+      "chronic kidney disease, stage 2 [diabetes without mention of type of diabetes mellitus]",
+      "chronic renal failure, stage 2 [diabetes mellitus, type unspecified without complications]",
+      "chronic renal failure, stage 2 [diabetes without mention of type of diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "5A24/5A13",
+    "title": "Uncontrolled or unstable diabetes mellitus [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "uncontrolled diabetes [other specified diabetes mellitus, not type 1 and not type 2]",
+      "brittle diabetes [other specified diabetes mellitus, not type 1 and not type 2]",
+      "inadequate control of diabetes [other specified diabetes mellitus, not type 1 and not type 2]",
+      "poorly controlled diabetes [other specified diabetes mellitus, not type 1 and not type 2]",
+      "uncontrolled or unstable diabetes mellitus [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "8C03.0/5A11",
+    "title": "Diabetic polyneuropathy [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic neuropathy nos [type 2 diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "5A2Y/5A13",
+    "title": "Other specified acute complications of diabetes mellitus [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "other specified acute complications of diabetes mellitus [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "GB61.1/5A13",
+    "title": "Chronic kidney disease, stage 2 [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "ckd - [chronic kidney disease] stage 2 [diabetes mellitus, other specified type]",
+      "chronic renal failure, stage 2 [diabetes mellitus, other specified type]",
+      "ckd - [chronic kidney disease] stage 2 [other specified diabetes mellitus, not type 1 and not type 2]",
+      "chronic kidney disease, stage 2 [other specified diabetes mellitus, not type 1 and not type 2]",
+      "chronic renal failure, stage 2 [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "GB61.1/5A10",
+    "title": "Chronic kidney disease, stage 2 [Type 1 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "ckd - [chronic kidney disease] stage 2 [type 1 diabetes mellitus]",
+      "chronic renal failure, stage 2 [type 1 diabetes mellitus]",
+      "ckd - [chronic kidney disease] stage 2 [juvenile-onset-type diabetes mellitus without complications]",
+      "chronic kidney disease, stage 2 [juvenile-onset-type diabetes mellitus without complications]",
+      "chronic renal failure, stage 2 [juvenile-onset-type diabetes mellitus without complications]"
+    ]
+  },
+  {
+    "code": "FA38.0/5A11",
+    "title": "Diabetic arthropathy [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "MF83/5A13",
+    "title": "Diabetic glomerular changes [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic glomerulopathy [other specified diabetes mellitus, not type 1 and not type 2]",
+      "glomerular disorders in diabetes mellitus [other specified diabetes mellitus, not type 1 and not type 2]",
+      "diabetic glomerular changes [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "EB90.0/5A13",
+    "title": "Diabetic skin lesions [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic skin lesions [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "9B10.21/5A11",
+    "title": "Diabetic cataract [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "5A23/5A11",
+    "title": "Diabetic coma [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "9B71.0Z/5A11",
+    "title": "Diabetic retinopathy, unspecified [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic retinopathy [type 2 diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "5A22.Z/5A11",
+    "title": "Diabetic acidosis, unspecified [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic acidosis [type 2 diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "8D88.1/5A11",
+    "title": "Autonomic neuropathy due to diabetes mellitus [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "autonomic neuropathy due to diabetes mellitus [type 2 diabetes]",
+      "diabetic autonomic neuropathy [type 2 diabetes mellitus]",
+      "autonomic neuropathy due to diabetes mellitus [insulin requiring type 2 diabetes]"
+    ]
+  },
+  {
+    "code": "FA38.10/5A13",
+    "title": "Diabetic Charcot arthropathy [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic charcot foot [other specified diabetes mellitus, not type 1 and not type 2]",
+      "diabetic charcot arthropathy [other specified diabetes mellitus, not type 1 and not type 2]",
+      "neuropathic arthropathy due to diabetes mellitus [other specified diabetes mellitus, not type 1 and not type 2]",
+      "diabetic neuropathic arthropathy [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "8C03.0/5A13",
+    "title": "Diabetic polyneuropathy [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic neuropathy nos [other specified diabetes mellitus, not type 1 and not type 2]",
+      "diabetic polyneuropathy [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "9B71.02/5A11",
+    "title": "Diabetic macular oedema [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "8B92.2/5A11",
+    "title": "Diabetic lumbosacral plexopathy [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "5A22.Y/5A11",
+    "title": "Other specified diabetic acidosis [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "FA38.0/5A13",
+    "title": "Diabetic arthropathy [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic arthropathy [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "JA63.1",
+    "title": "Pre-existing type 2 diabetes mellitus in pregnancy",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "5A24/JA63.1",
+    "title": "Uncontrolled or unstable diabetes mellitus [Pre-existing type 2 diabetes mellitus in pregnancy]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "uncontrolled diabetes [pre-existing type 2 diabetes mellitus in pregnancy]",
+      "brittle diabetes [pre-existing type 2 diabetes mellitus in pregnancy]",
+      "inadequate control of diabetes [pre-existing type 2 diabetes mellitus in pregnancy]",
+      "poorly controlled diabetes [pre-existing type 2 diabetes mellitus in pregnancy]"
+    ]
+  },
+  {
+    "code": "9B10.21/5A13",
+    "title": "Diabetic cataract [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic cataract [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "5A22.2/5A11",
+    "title": "Diabetic metabolic acidosis [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "9B71.01/5A11",
+    "title": "Proliferative diabetic retinopathy [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetes mellitus, independent of type with proliferative retinopathy [type 2 diabetes]",
+      "diabetes mellitus, independent of type with proliferative retinopathy [type 2 diabetes mellitus]",
+      "diabetes mellitus, independent of type with proliferative retinopathy [dm2]",
+      "diabetes mellitus, independent of type with proliferative retinopathy [insulin requiring type 2 diabetes]",
+      "diabetes mellitus, independent of type with proliferative retinopathy [t2dm - [type 2 diabetes mellitus]]"
+    ]
+  },
+  {
+    "code": "5A23/5A13",
+    "title": "Diabetic coma [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic coma [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "9B71.0Z/5A13",
+    "title": "Diabetic retinopathy, unspecified [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic retinopathy [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "5A22.Z/5A13",
+    "title": "Diabetic acidosis, unspecified [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic acidosis [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "8D88.1/5A13",
+    "title": "Autonomic neuropathy due to diabetes mellitus [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "autonomic neuropathy due to diabetes mellitus [other specified diabetes mellitus, not type 1 and not type 2]",
+      "diabetic autonomic neuropathy [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "5A22.Y/5A13",
+    "title": "Other specified diabetic acidosis [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "other specified diabetic acidosis [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "9B71.00/5A11",
+    "title": "Nonproliferative diabetic retinopathy [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "5A22.1/5A11",
+    "title": "Diabetic lactic acidosis [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "5A21.Z/5A11",
+    "title": "Hypoglycaemia in the context of diabetes, unspecified [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "hypoglycaemia in the context of diabetes mellitus [type 2 diabetes]",
+      "hypoglycaemia in the context of diabetes mellitus [type 2 diabetes mellitus]",
+      "hypoglycaemia in the context of diabetes mellitus [insulin requiring type 2 diabetes]"
+    ]
+  },
+  {
+    "code": "5A22.0/5A11",
+    "title": "Diabetic ketoacidosis without coma [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic ketoacidosis nos [type 2 diabetes mellitus]",
+      "dka - [diabetic ketoacidosis] nos [type 2 diabetes mellitus]",
+      "dka - [diabetic ketoacidosis] without coma [type 2 diabetes mellitus]"
+    ]
+  },
+  {
+    "code": "9B71.02/5A13",
+    "title": "Diabetic macular oedema [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic macular oedema [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "BC43.7/5A11",
+    "title": "Diabetic cardiomyopathy [Type 2 diabetes mellitus]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm"
+    ]
+  },
+  {
+    "code": "8B92.2/5A13",
+    "title": "Diabetic lumbosacral plexopathy [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic lumbosacral plexopathy [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "GB61.1/5A13.7",
+    "title": "Chronic kidney disease, stage 2 [Diabetes mellitus due to clinically defined subtypes or syndromes]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "ckd - [chronic kidney disease] stage 2 [diabetes mellitus due to clinically defined subtypes or syndromes]",
+      "chronic renal failure, stage 2 [diabetes mellitus due to clinically defined subtypes or syndromes]"
+    ]
+  },
+  {
+    "code": "5A22.2/5A13",
+    "title": "Diabetic metabolic acidosis [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "diabetic metabolic acidosis [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "9B71.01/5A13",
+    "title": "Proliferative diabetic retinopathy [Diabetes mellitus, other specified type]",
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "thirst",
+      "t2dm",
+      "proliferative diabetic retinopathy [other specified diabetes mellitus, not type 1 and not type 2]",
+      "diabetes mellitus, independent of type with proliferative retinopathy [other specified diabetes mellitus, not type 1 and not type 2]"
+    ]
+  },
+  {
+    "code": "1D2Z",
+    "title": "Dengue fever, unspecified",
+    "synonyms": [
       "fever",
-      "acute appendicitis nos",
-      "acute appendicitis with phlegmone",
-      "acute appendicitis with no specification if perforated or not",
-      "acute appendicitis with no perforation or abscess and no visible pus"
+      "chills",
+      "mosquito",
+      "platelets",
+      "headache",
+      "joint pain",
+      "dengue",
+      "classical dengue fever",
+      "df - [dengue fever]",
+      "seven-day dengue fever"
+    ]
+  },
+  {
+    "code": "1D22",
+    "title": "Severe dengue",
+    "synonyms": [
+      "fever",
+      "chills",
+      "mosquito",
+      "platelets",
+      "headache",
+      "joint pain",
+      "dengue",
+      "severe dengue fever",
+      "encephalitis due to dengue fever",
+      "severe dengue haemorrhagic fever"
+    ]
+  },
+  {
+    "code": "1D21",
+    "title": "Dengue with warning signs",
+    "synonyms": [
+      "fever",
+      "chills",
+      "mosquito",
+      "platelets",
+      "headache",
+      "joint pain",
+      "dengue",
+      "dengue fever with warning signs",
+      "dengue haemorrhagic fever grade 2",
+      "dhf -[dengue haemorrhagic fever]",
+      "dengue haemorrhagic fever with warning signs"
+    ]
+  },
+  {
+    "code": "1D20",
+    "title": "Dengue without warning signs",
+    "synonyms": [
+      "fever",
+      "chills",
+      "mosquito",
+      "platelets",
+      "headache",
+      "joint pain",
+      "dengue",
+      "dengue fever without warning signs",
+      "dengue haemorrhagic fever grade 1",
+      "dengue haemorrhagic fever without warning signs"
+    ]
+  },
+  {
+    "code": "QA08.5",
+    "title": "Special screening examination for other viral diseases",
+    "synonyms": [
+      "fever",
+      "chills",
+      "mosquito",
+      "platelets",
+      "headache",
+      "joint pain",
+      "dengue",
+      "screening for dengue fever"
+    ]
+  },
+  {
+    "code": "CA40.Z",
+    "title": "Pneumonia, organism unspecified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "pneumonia nos",
+      "pneumonia, unspecified",
+      "acute pneumonia",
+      "chronic pneumonia nos",
+      "bilateral pneumonia",
+      "atypical pneumonia",
+      "purulent pneumonia",
+      "double pneumonia",
+      "lobar pneumonia nos",
+      "passive pneumonia",
+      "orthostatic pneumonia",
+      "bronchial pneumonia",
+      "infectious pneumonia",
+      "pn - [pneumonia]",
+      "hypostatic pneumonia",
+      "adynamic pneumonia",
+      "hypostasis pneumonia",
+      "multifocal pneumonia",
+      "bronchostatic pneumonia",
+      "interstitial lobar pneumonia",
+      "bronchopneumonia",
+      "catarrhal pneumonia",
+      "orthostatic bronchopneumonia",
+      "hypostatic bronchopneumonia"
+    ]
+  },
+  {
+    "code": "CA40.Y",
+    "title": "Other specified pneumonia",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "late acquired pneumonia",
+      "pneumonia in parasitic diseases",
+      "late-onset pneumonia due to other organisms",
+      "pleuropneumonia"
+    ]
+  },
+  {
+    "code": "KB24",
+    "title": "Congenital pneumonia",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "fetal pneumonia",
+      "acute congenital pneumonia",
+      "congenital pneumonia due to staphylococcus",
+      "congenital purulent pneumonia",
+      "congenital double pneumonia",
+      "congenital pneumonia due to chlamydia",
+      "congenital chlamydial pneumonia",
+      "congenital infective pneumonia",
+      "intrauterine pneumonia",
+      "neonatal chlamydial pneumonia",
+      "congenital pneumonia due to streptococcus, group b",
+      "infective pneumonia acquired in utero or during birth",
+      "congenital pneumonia due to escherichia coli",
+      "infective pneumonia acquired prenatally",
+      "congenital pneumonia due to pseudomonas aeruginosa"
+    ]
+  },
+  {
+    "code": "CA40.1Z",
+    "title": "Viral pneumonia, unspecified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "viral pneumonia",
+      "acute viral pneumonia",
+      "interstitial viral pneumonia",
+      "virus interstitial pneumonia",
+      "viral purulent pneumonia",
+      "viral double pneumonia",
+      "viral lobar pneumonia",
+      "virus lobar pneumonia",
+      "viral bronchopneumonia",
+      "bronchopneumonia due to viruses other than influenza viruses"
+    ]
+  },
+  {
+    "code": "CA40.0Z",
+    "title": "Bacterial pneumonia, unspecified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "bacterial pneumonia",
+      "bacteria pneumonia",
+      "bacillus pneumonia",
+      "acute bacterial pneumonia",
+      "acute bacillus pneumonia",
+      "bacterial purulent pneumonia",
+      "bacterial double pneumonia",
+      "bacterial lobar pneumonia",
+      "bacillus double pneumonia",
+      "bronchopneumonia due to bacteria other than s. pneumoniae and h. influenzae"
+    ]
+  },
+  {
+    "code": "NF0A.Y",
+    "title": "Other early complication of trauma, not elsewhere classified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "traumatic pneumonia",
+      "acute traumatic pneumonia",
+      "traumatic purulent pneumonia",
+      "traumatic double pneumonia"
+    ]
+  },
+  {
+    "code": "CA82.0",
+    "title": "Acute pulmonary manifestations due to radiation",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "radiation pneumonia"
+    ]
+  },
+  {
+    "code": "CB03.Z",
+    "title": "Idiopathic interstitial pneumonitis, unspecified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "interstitial pneumonia nos",
+      "idiopathic interstitial pneumonia"
+    ]
+  },
+  {
+    "code": "CA40.07",
+    "title": "Pneumonia due to Streptococcus pneumoniae",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "streptococcal pneumoniae pneumonia",
+      "pneumococcal pneumonia",
+      "pneumococcus pneumonia",
+      "streptococcus pneumoniae lobar pneumonia",
+      "pneumococcal lobar pneumonia",
+      "early-onset pneumonia due to streptococcus pneumoniae",
+      "pyemic pneumococcal embolism with pneumonia",
+      "bronchopneumonia due to s. pneumoniae",
+      "bronchopneumonia due to streptococcus pneumoniae"
+    ]
+  },
+  {
+    "code": "CA40.0Y",
+    "title": "Pneumonia due to other specified bacteria",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "streptococcal pneumonia",
+      "pneumonia due to streptococcus nos",
+      "pneumonia due to other streptococci",
+      "streptococcal purulent pneumonia",
+      "pneumonia in spirochaetal, not elsewhere classified",
+      "late-onset pneumonia due to other bacteria",
+      "pneumonia due to other aerobic gram-negative bacteria",
+      "streptococcal bronchopneumonia nos"
+    ]
+  },
+  {
+    "code": "CA40.2Z",
+    "title": "Fungal pneumonia, unspecified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "fungal pneumonia",
+      "pneumonia in mycoses"
+    ]
+  },
+  {
+    "code": "CA40.06",
+    "title": "Pneumonia due to Staphylococcus",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "staphylococcal pneumonia",
+      "staphylococcus pneumonia",
+      "acute staphylococcal pneumonia",
+      "staphylococcal purulent pneumonia",
+      "staphylococcal double pneumonia",
+      "staphylococcal lobar pneumonia",
+      "staphylococcal bronchopneumonia",
+      "late-onset pneumonia due to staphylococcus aureus",
+      "late acquired pneumonia due to coagulase negative staphylococci methicillin sensitive"
+    ]
+  },
+  {
+    "code": "CA40.1Y",
+    "title": "Pneumonia due to other specified virus",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "late acquired pneumonia due to other viruses"
+    ]
+  },
+  {
+    "code": "CA43.0",
+    "title": "Gangrene or necrosis of lung",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "necrotising pneumonia",
+      "necrotic pneumonia",
+      "gangrenous pneumonia",
+      "acute necrotic pneumonia"
+    ]
+  },
+  {
+    "code": "1A09.Y/CA40.0Z",
+    "title": "Salmonella pneumonia",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "pneumonia due to salmonella infection"
+    ]
+  },
+  {
+    "code": "CA41.Z",
+    "title": "Acute bronchiolitis, unspecified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "capillary pneumonia"
+    ]
+  },
+  {
+    "code": "1A72.Y/CA40.0Y",
+    "title": "Pneumonia due to Neisseria gonorrhoeae",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "gonococcal pneumonia",
+      "pneumonia due to gonorrhoea"
+    ]
+  },
+  {
+    "code": "CA40.00",
+    "title": "Pneumonia due to Chlamydophila pneumoniae",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "pneumonia due to chlamydia",
+      "pneumonia due to chlamydia pneumoniae",
+      "late-onset pneumonia due to chlamydia"
+    ]
+  },
+  {
+    "code": "1F23.31",
+    "title": "Pulmonary candidosis",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "candida pneumonia",
+      "early-onset pneumonia due to candida",
+      "late acquired pneumonia due to candida"
+    ]
+  },
+  {
+    "code": "CA71.3",
+    "title": "Lipoid pneumonitis",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "lipoid pneumonia",
+      "hydrocarbon pneumonia",
+      "endogenous lipoid pneumonia",
+      "exogenous lipoid pneumonia",
+      "acute endogenous lipoid pneumonia",
+      "chronic endogenous lipoid pneumonia",
+      "acute exogenous lipoid pneumonia",
+      "chronic exogenous lipoid pneumonia"
+    ]
+  },
+  {
+    "code": "CA71.1",
+    "title": "Pneumonitis due to oils or essences",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "lipid pneumonia"
+    ]
+  },
+  {
+    "code": "1F20.0Y",
+    "title": "Invasive aspergillosis of other specified site",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "aspergillus pneumonia"
+    ]
+  },
+  {
+    "code": "CA40.04",
+    "title": "Pneumonia due to Mycoplasma pneumoniae",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "endemic pneumonia",
+      "pneumonia due to pplo - [pleuro-pneumonia-like-organism]",
+      "mycoplasmal pneumonia",
+      "eaton agent pneumonia",
+      "primary atypical pneumonia due to mycoplasma pneumoniae",
+      "pleuro-pneumonia-like-organism",
+      "infection by pplo - [pleuro-pneumonia-like-organism]"
+    ]
+  },
+  {
+    "code": "CA7Z",
+    "title": "Pneumonitis, unspecified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "noninfectious pneumonia"
+    ]
+  },
+  {
+    "code": "CA40.03",
+    "title": "Pneumonia due to Klebsiella pneumoniae",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "klebsiella lobar pneumonia"
+    ]
+  },
+  {
+    "code": "1E32",
+    "title": "Influenza, virus not identified",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "influenzal pneumonia",
+      "influenzal lobar pneumonia",
+      "influenza with pneumonia nos",
+      "influenzal pneumonia, unspecified or specific virus not identified",
+      "influenza with pneumonia, any form",
+      "influenza with pneumonia, virus not identified",
+      "influenzal bronchopneumonia, unspecified or specific virus not identified"
+    ]
+  },
+  {
+    "code": "1C19.1",
+    "title": "Legionnaires disease",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "legionella pneumonia",
+      "legionnaires pneumonia"
+    ]
+  },
+  {
+    "code": "CA40.20",
+    "title": "Pneumonia due to pneumocystis",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "pneumocystis pneumonia",
+      "pneumonia due to pneumocystis jirovecii",
+      "pneumonia due to pneumocystis carinii",
+      "plasma cells pneumonia"
+    ]
+  },
+  {
+    "code": "CA40.0Y&XN25B",
+    "title": "Pneumonia due to Acinetobacter",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia"
+    ]
+  },
+  {
+    "code": "1D82.Y/CA40.1Z",
+    "title": "Pneumonia due to Cytomegalovirus",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "cmv - [cytomegalovirus] pneumonia",
+      "cytomegaloviral pneumonia",
+      "pneumonia in cytomegalovirus disease",
+      "pneumonia in cytomegalic inclusion disease",
+      "cytomegalic inclusion virus pneumonia"
+    ]
+  },
+  {
+    "code": "CA40.2Y",
+    "title": "Other specified fungal pneumonia",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "pneumonia in aspergillosis",
+      "late-onset pneumonia due to other fungi"
+    ]
+  },
+  {
+    "code": "CA40.0Y&XN3BS",
+    "title": "Pneumonia due to proteus",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "acute proteus pneumonia",
+      "proteus purulent pneumonia",
+      "proteus double pneumonia",
+      "proteus lobar pneumonia"
+    ]
+  },
+  {
+    "code": "CA40.0Y&XN9W5",
+    "title": "Pneumonia due to Enterobacter",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "enterobacter pneumonia"
+    ]
+  },
+  {
+    "code": "CB03.0",
+    "title": "Acute interstitial pneumonitis",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "acute interstitial pneumonia"
+    ]
+  },
+  {
+    "code": "1F25.01",
+    "title": "Chronic pulmonary coccidioidomycosis",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "coccidioidal pneumonia",
+      "chronic coccidioidal pneumonia",
+      "pneumonia with coccidioidomycosis"
     ]
   },
   {
     "code": "1B10.Z",
-    "icd10Code": "A15.0",
     "title": "Respiratory tuberculosis, without mention of bacteriological or histological confirmation",
     "synonyms": [
-      "chronic cough",
-      "coughing blood",
-      "night sweats",
-      "weight loss",
-      "pulmonary tuberculosis",
-      "tuberculosis of lung",
-      "primary pulmonary tuberculosis",
-      "tuberculous lung ulcer",
-      "tuberculous pulmonary fistula",
-      "tuberculous pulmonary fibrosis",
-      "lung tb - [tuberculosis]",
-      "lung tbc - [tuberculosis]",
-      "primary complex pulmonary tuberculosis",
-      "tuberculous mycobacterial pulmonary infection",
-      "pulmonary tuberculosis, childhood type or first infection",
-      "tuberculous atypical mycobacterial pulmonary infection",
-      "tuberculosis of lung, without mention of bacteriological or histological confirmation",
-      "pulmonary tuberculosis without mention of bacteriological or histological confirmation",
-      "tuberculosis of lung, nos (without mention of bacteriological or histological confirmation)",
-      "bronchopulmonary tb - [tuberculosis]",
-      "tuberculous fibrosis of lung, without mention of bacteriological or histological confirmation",
-      "tuberculous fibrosis of lung, nos without mention of bacteriological or histological confirmation"
-    ]
-  },
-  {
-    "code": "3A00.Z",
-    "icd10Code": "D50.9",
-    "title": "Iron deficiency anaemia, unspecified",
-    "synonyms": [
-      "fatigue",
-      "weakness",
-      "pale skin",
+      "cough",
+      "fever",
       "shortness of breath",
-      "iron deficiency anaemia",
-      "acquired iron deficiency anaemia",
-      "fe - [iron] deficiency anemia nos",
-      "ida - [iron deficiency anemia]"
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "caseous pneumonia",
+      "tuberculous pneumonia",
+      "tuberculous pneumonia, any form",
+      "tuberculous pneumonia, without mention of bacteriological or histological confirmation",
+      "tuberculous pneumonia, nos without mention of bacteriological or histological confirmation"
     ]
   },
   {
-    "code": "CA03.Z",
-    "icd10Code": "J03.90",
-    "title": "Acute tonsillitis, unspecified",
+    "code": "1F27.0",
+    "title": "Pulmonary cryptococcosis",
     "synonyms": [
-      "sore throat",
-      "painful swallowing",
-      "swollen tonsils",
-      "throat pain",
-      "acute tonsillitis",
-      "acute tonsillitis nos"
-    ]
-  },
-  {
-    "code": "CA23.32",
-    "icd10Code": "J45.909",
-    "title": "Unspecified asthma, uncomplicated",
-    "synonyms": [
-      "wheezing",
-      "coughing",
-      "chest tightness",
+      "cough",
+      "fever",
       "shortness of breath",
-      "bronchial asthma nos"
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "cryptococcal pneumonia"
     ]
   },
   {
-    "code": "DC12.0Z",
-    "icd10Code": "K81.0",
-    "title": "Acute cholecystitis, unspecified",
+    "code": "CA71.0",
+    "title": "Pneumonitis due to inhalation of food or vomit",
     "synonyms": [
-      "upper right abdominal pain",
-      "gallstones",
-      "gallbladder pain",
-      "acute cholecystitis",
-      "acute cholecystitis infection",
-      "acute acalculous cholecystitis"
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "deglutition pneumonia",
+      "aspiration pneumonia nos",
+      "inhalation pneumonia (pneumonitis)",
+      "recurrent aspiration pneumonia",
+      "aspiration pneumonia due to food",
+      "double aspiration pneumonia",
+      "aspiration pneumonia due to milk",
+      "aspiration pn - [pneumonia]",
+      "aspiration pneumonia due to regurgitated food",
+      "aspiration pneumonia due to gastric secretions",
+      "aspiration pneumonia due to vomit"
     ]
   },
   {
-    "code": "GC08.Z",
-    "icd10Code": "N39.0",
-    "title": "Urinary tract infection, site and agent not specified",
+    "code": "CA40.11",
+    "title": "Pneumonia due to Respiratory syncytial virus",
     "synonyms": [
-      "burning urination",
-      "painful pee",
-      "frequent urination",
-      "urine infection",
-      "urinary tract infection nos",
-      "urinary tract infection, site not specified",
-      "uti - [urinary tract infection]",
-      "uti nos - [urinary tract infection nos]"
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "rsv pneumonia",
+      "pneumonia respiratory syncytial viral"
+    ]
+  },
+  {
+    "code": "CA40.Z&XB22",
+    "title": "Community acquired pneumonia",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia"
+    ]
+  },
+  {
+    "code": "CB02.11",
+    "title": "Idiopathic chronic eosinophilic pneumonitis",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "löffler pneumonia",
+      "idiopathic chronic eosinophilic pneumonia"
+    ]
+  },
+  {
+    "code": "PK81.0",
+    "title": "Ventilation associated with injury or harm in therapeutic use",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "respirator associated pneumonia",
+      "ventilator associated pneumonia",
+      "vap - [ventilator associated pneumonia]"
+    ]
+  },
+  {
+    "code": "CA40.Z&XB25",
+    "title": "Nosocomially acquired pneumonia",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "nosocomial pneumonia"
+    ]
+  },
+  {
+    "code": "1B94.Y",
+    "title": "Other specified tularaemia",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "tularemic pneumonia",
+      "pneumonia in tularaemia",
+      "pneumonia with tularaemia",
+      "tularaemia pneumonia",
+      "pneumonia due to tularaemia"
+    ]
+  },
+  {
+    "code": "CA40.0Y/1C22",
+    "title": "Pneumonia in chlamydia psittaci infection",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "louisiana pneumonia",
+      "pneumonia in chlamydophila psittaci infection",
+      "ornithosis with pneumonia"
+    ]
+  },
+  {
+    "code": "1C1B.0",
+    "title": "Pulmonary nocardiosis",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "nocardial pneumonia",
+      "pneumonia with nocardiasis",
+      "nocardiosis pneumonia",
+      "pneumonia due to nocardiosis",
+      "pneumonia in nocardiosis"
+    ]
+  },
+  {
+    "code": "CA40.05",
+    "title": "Pneumonia due to Pseudomonas aeruginosa",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "pseudomonal pneumonia",
+      "pseudomonas pneumonia",
+      "pseudomonas lobar pneumonia",
+      "early-onset pneumonia due to pseudomonas aeruginosa",
+      "late-onset pneumonia due to pseudomonas aeruginosa"
+    ]
+  },
+  {
+    "code": "CA81.0",
+    "title": "Bronchitis or pneumonitis due to chemicals, gases, fumes or vapours",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "pneumonia due to fumes or vapours"
+    ]
+  },
+  {
+    "code": "CB03.5",
+    "title": "Lymphoid interstitial pneumonia",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "lymphocytic interstitial pneumonia"
+    ]
+  },
+  {
+    "code": "CB03.3",
+    "title": "Desquamative interstitial pneumonitis",
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "desquamative interstitial pneumonia"
     ]
   }
 ]

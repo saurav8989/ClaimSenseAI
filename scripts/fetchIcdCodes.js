@@ -33,16 +33,16 @@ const CLIENT_SECRET = process.env.WHO_CLIENT_SECRET;
 
 // Target clinical conditions we want to index
 const TARGET_CONDITIONS = [
-  { term: 'Malaria', defaultCode: '1F40', defaultIcd10: 'B54', defaultSynonyms: ['fever', 'chills', 'plasmodium', 'shivering'] },
-  { term: 'Essential Hypertension', defaultCode: 'BA00', defaultIcd10: 'I10', defaultSynonyms: ['high blood pressure', 'elevated bp', 'headache', 'dizziness'] },
-  { term: 'Type 2 Diabetes Mellitus', defaultCode: '5A11', defaultIcd10: 'E11', defaultSynonyms: ['diabetes', 'sugar', 'high glucose', 'thirst'] },
-  { term: 'Acute Appendicitis', defaultCode: 'KB20', defaultIcd10: 'K35.8', defaultSynonyms: ['abdominal pain', 'nausea', 'vomiting', 'fever'] },
-  { term: 'Pulmonary Tuberculosis', defaultCode: '1B10', defaultIcd10: 'A15.0', defaultSynonyms: ['chronic cough', 'coughing blood', 'night sweats', 'weight loss'] },
-  { term: 'Iron Deficiency Anemia', defaultCode: '3A00', defaultIcd10: 'D50.9', defaultSynonyms: ['fatigue', 'weakness', 'pale skin', 'shortness of breath'] },
-  { term: 'Acute Tonsillitis', defaultCode: 'CA03', defaultIcd10: 'J03.90', defaultSynonyms: ['sore throat', 'painful swallowing', 'swollen tonsils', 'throat pain'] },
-  { term: 'Bronchial Asthma', defaultCode: 'CA23', defaultIcd10: 'J45.909', defaultSynonyms: ['wheezing', 'coughing', 'chest tightness', 'shortness of breath'] },
-  { term: 'Acute Cholecystitis', defaultCode: 'KB81', defaultIcd10: 'K81.0', defaultSynonyms: ['upper right abdominal pain', 'gallstones', 'gallbladder pain'] },
-  { term: 'Urinary Tract Infection', defaultCode: 'GC00', defaultIcd10: 'N39.0', defaultSynonyms: ['burning urination', 'painful pee', 'frequent urination', 'urine infection'] }
+  { term: 'Malaria', defaultCode: '1F45', defaultIcd10: 'B54', defaultSynonyms: ['fever', 'chills', 'plasmodium', 'shivering', 'malaria'] },
+  { term: 'Plasmodium falciparum', defaultCode: '1F40', defaultIcd10: 'B54', defaultSynonyms: ['falciparum', 'malaria'] },
+  { term: 'Plasmodium vivax', defaultCode: '1F41', defaultIcd10: 'B54', defaultSynonyms: ['vivax', 'malaria'] },
+  { term: 'Plasmodium malariae', defaultCode: '1F42', defaultIcd10: 'B54', defaultSynonyms: ['malariae', 'malaria'] },
+  { term: 'Plasmodium ovale', defaultCode: '1F43', defaultIcd10: 'B54', defaultSynonyms: ['ovale', 'malaria'] },
+  { term: 'Congenital malaria', defaultCode: 'KA64.2', defaultIcd10: 'B54', defaultSynonyms: ['congenital', 'baby', 'malaria'] },
+  { term: 'Essential Hypertension', defaultCode: 'BA00.Z', defaultIcd10: 'I10', defaultSynonyms: ['high blood pressure', 'elevated bp', 'headache', 'dizziness', 'hypertension'] },
+  { term: 'Type 2 Diabetes Mellitus', defaultCode: '5A11', defaultIcd10: 'E11', defaultSynonyms: ['diabetes', 'sugar', 'high glucose', 'thirst', 't2dm'] },
+  { term: 'Dengue Fever', defaultCode: '1D2Z', defaultIcd10: 'A90', defaultSynonyms: ['fever', 'chills', 'mosquito', 'platelets', 'headache', 'joint pain', 'dengue'] },
+  { term: 'Pneumonia', defaultCode: 'CA40.Z', defaultIcd10: 'J18.9', defaultSynonyms: ['cough', 'fever', 'shortness of breath', 'difficulty breathing', 'chest pain', 'pneumonia'] }
 ];
 
 async function getAccessToken() {
@@ -77,6 +77,7 @@ async function getAccessToken() {
 async function fetchFromWhoApi(token) {
   console.log('📡 Connected to WHO ICD-11 API. Fetching target codes...');
   const database = [];
+  const addedCodes = new Set();
 
   for (const condition of TARGET_CONDITIONS) {
     const searchUrl = `https://id.who.int/icd/release/11/2024-01/mms/search?q=${encodeURIComponent(condition.term)}`;
@@ -100,39 +101,47 @@ async function fetchFromWhoApi(token) {
       
       // Parse search results
       if (searchResult.destinationEntities && searchResult.destinationEntities.length > 0) {
-        const topMatch = searchResult.destinationEntities[0];
-        const title = topMatch.title.replace(/<[^>]*>/g, ''); // strip HTML tags
-        const code = topMatch.theCode || condition.defaultCode;
-        
-        // Parse synonyms from search highlight PVs
-        const synonymsSet = new Set(condition.defaultSynonyms);
-        if (topMatch.matchingPVs) {
-          topMatch.matchingPVs.forEach(pv => {
-            if (pv.label) {
-              const cleanPv = pv.label.replace(/<[^>]*>/g, '').toLowerCase().trim();
-              if (cleanPv.length > 2) synonymsSet.add(cleanPv);
-            }
-          });
-        }
+        console.log(`  Found ${searchResult.destinationEntities.length} matching entities for "${condition.term}"`);
+        searchResult.destinationEntities.forEach(match => {
+          const code = match.theCode;
+          if (!code) return; // skip intermediate node entries without a specific code
 
-        database.push({
-          code: code,
-          icd10Code: condition.defaultIcd10,
-          title: title,
-          synonyms: Array.from(synonymsSet)
+          const title = match.title.replace(/<[^>]*>/g, ''); // strip HTML tags
+          
+          // Parse synonyms from search highlight PVs
+          const synonymsSet = new Set(condition.defaultSynonyms);
+          if (match.matchingPVs) {
+            match.matchingPVs.forEach(pv => {
+              if (pv.label) {
+                const cleanPv = pv.label.replace(/<[^>]*>/g, '').toLowerCase().trim();
+                if (cleanPv.length > 2) synonymsSet.add(cleanPv);
+              }
+            });
+          }
+
+          if (!addedCodes.has(code)) {
+            addedCodes.add(code);
+            database.push({
+              code: code,
+              title: title,
+              synonyms: Array.from(synonymsSet)
+            });
+            console.log(`  ✅ Indexed: ${code} - ${title}`);
+          }
         });
-        console.log(`✅ Found: ${code} - ${title}`);
       } else {
         throw new Error(`No entities found for "${condition.term}"`);
       }
     } catch (err) {
       console.warn(`⚠️ Warning: Failed to fetch "${condition.term}" from WHO API: ${err.message}. Using default local seeds.`);
-      database.push({
-        code: condition.defaultCode,
-        icd10Code: condition.defaultIcd10,
-        title: condition.term,
-        synonyms: condition.defaultSynonyms
-      });
+      if (!addedCodes.has(condition.defaultCode)) {
+        addedCodes.add(condition.defaultCode);
+        database.push({
+          code: condition.defaultCode,
+          title: condition.term,
+          synonyms: condition.defaultSynonyms
+        });
+      }
     }
   }
 
@@ -143,7 +152,6 @@ function useFallbackSeeding() {
   console.log('📦 Seeding local database with pre-configured default values (Offline Mode)...');
   return TARGET_CONDITIONS.map(condition => ({
     code: condition.defaultCode,
-    icd10Code: condition.defaultIcd10,
     title: condition.term,
     synonyms: condition.defaultSynonyms
   }));
