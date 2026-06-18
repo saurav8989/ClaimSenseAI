@@ -1,11 +1,21 @@
 import fs from 'fs';
 import path from 'path';
 
+function resolveProtocolKey(diagCode, protocols) {
+  if (!diagCode) return null;
+  const normalizedCode = diagCode.toUpperCase().trim();
+  
+  return Object.keys(protocols).find(key => {
+    const prefixes = protocols[key].icd11Prefixes || [key];
+    return prefixes.some(prefix => normalizedCode.startsWith(prefix.toUpperCase().trim()));
+  });
+}
+
 export async function GET(request) {
   try {
     // 1. Get code parameter from URL query string
     const { searchParams } = new URL(request.url);
-    const code = searchParams.get('code')?.toUpperCase().trim();
+    const code = searchParams.get('code');
 
     // 2. Read the local clinicalDictionary.json file
     const dictionaryPath = path.resolve(process.cwd(), 'src/lib/clinicalDictionary.json');
@@ -22,14 +32,14 @@ export async function GET(request) {
 
     // 3. If a specific ICD code is requested, return that condition's protocol
     if (code) {
-      const protocol = dictionaryData[code];
-      if (!protocol) {
+      const resolvedKey = resolveProtocolKey(code, dictionaryData);
+      if (!resolvedKey) {
         return Response.json(
           { error: `No clinical protocol found for ICD code: "${code}"` },
           { status: 404 }
         );
       }
-      return Response.json(protocol);
+      return Response.json(dictionaryData[resolvedKey]);
     }
 
     // 4. Otherwise, return the entire dictionary of protocols
