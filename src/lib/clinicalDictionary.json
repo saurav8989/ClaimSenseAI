@@ -1,14 +1,32 @@
 {
-  "B54": {
+  "1F4": {
     "id": "malaria",
     "name": "Malaria",
-    "synonyms": ["fever", "chills", "sweating", "shivering", "headache", "malaria", "mosquito bite", "plasmodium"],
+    "icd11Prefixes": ["1F4", "KA64.2"],
+    "synonyms": [
+      "fever",
+      "chills",
+      "shivering",
+      "headache",
+      "joint pain",
+      "malaria",
+      "mosquito",
+      "plasmodium",
+      "falciparum",
+      "vivax",
+      "congenital malaria"
+    ],
     "diagnosticTests": [
       { "code": "TEST-MAL-RDT", "name": "Malaria Rapid Diagnostic Test (RDT)", "mandatory": true },
-      { "code": "TEST-MAL-SMEAR", "name": "Malaria Blood Smear", "mandatory": true }
+      { "code": "TEST-MAL-MIC", "name": "Malaria Blood Smear / Microscopy", "mandatory": true }
     ],
     "medications": [
-      { "code": "MED-AL-ACT", "name": "Artemether-Lumefantrine (ACT)", "firstLine": true }
+      { "code": "MED-CQ-150", "name": "Chloroquine 150mg", "firstLine": true },
+      { "code": "MED-PQ-7.5", "name": "Primaquine 7.5mg", "firstLine": true },
+      { "code": "MED-PQ-2.5", "name": "Primaquine 2.5mg", "firstLine": true },
+      { "code": "MED-AL-ACT", "name": "Artemether-Lumefantrine (ACT)", "firstLine": true },
+      { "code": "MED-DHAP", "name": "Dihydroartemisinin-Piperaquine (DHAP)", "secondLine": true },
+      { "code": "MED-ART-INJ", "name": "Inj Artesunate (IV/IM)", "preReferral": true }
     ],
     "procedures": [],
     "rules": [
@@ -18,60 +36,123 @@
         "type": "test_required",
         "severity": "CRITICAL",
         "penalty": 40,
-        "description": "Prescribing anti-malarial (ACT) requires a prior diagnostic verification (RDT or Blood Smear)."
+        "description": "Prescribing antimalarials requires a prior diagnostic verification (RDT or Microscopy)."
       },
       {
         "id": "RULE-MAL-2",
-        "name": "Malaria Treatment Match",
+        "name": "Malaria Treatment Alignment",
         "type": "medication_match",
         "severity": "MAJOR",
-        "penalty": 20,
-        "description": "Primary diagnosis Malaria must list Artemether-Lumefantrine (ACT) as the primary prescribed medication."
+        "penalty": 30,
+        "description": "Malaria diagnosis must be treated with approved first-line antimalarials (Chloroquine/Primaquine or Artemether-Lumefantrine)."
+      },
+      {
+        "id": "RULE-MAL-3",
+        "name": "Primaquine Contraindication Check",
+        "type": "contraindication_check",
+        "severity": "CRITICAL",
+        "penalty": 50,
+        "description": "Primaquine is contraindicated during pregnancy, lactation (for infants < 6 months), or in infants under 6 months."
+      },
+      {
+        "id": "RULE-MAL-4",
+        "name": "Severe Malaria Referral Required",
+        "type": "referral_check",
+        "severity": "CRITICAL",
+        "penalty": 40,
+        "description": "Severe malaria clinical features require pre-referral Inj Artesunate and immediate referral."
+      },
+      {
+        "id": "RULE-MAL-5",
+        "name": "Second-line (DHAP) Restriction",
+        "type": "treatment_sequence",
+        "severity": "MAJOR",
+        "penalty": 25,
+        "description": "DHAP second-line therapy requires documented drug failure or intolerance, and immediate referral."
       }
     ]
   },
-  "I10": {
+  "BA00": {
     "id": "hypertension",
     "name": "Essential Hypertension",
-    "synonyms": ["high blood pressure", "hypertension", "elevated bp", "headache", "dizziness", "hbp"],
+    "icd11Prefixes": ["BA00"],
+    "synonyms": [
+      "high blood pressure",
+      "hypertension",
+      "elevated bp",
+      "headache",
+      "dizziness",
+      "hbp",
+      "elevated blood pressure"
+    ],
     "diagnosticTests": [
-      { "code": "TEST-BP-CHECK", "name": "Blood Pressure Monitoring", "mandatory": true }
+      { "code": "TEST-BP-CHECK", "name": "Blood Pressure Monitoring", "mandatory": true },
+      { "code": "TEST-ECG", "name": "Electrocardiogram (ECG)", "mandatory": false },
+      { "code": "TEST-RENAL", "name": "Serum Urea & Creatinine", "mandatory": false },
+      { "code": "TEST-UA", "name": "Urine Analysis", "mandatory": false },
+      { "code": "TEST-LIPID", "name": "Lipid Profile", "mandatory": false }
     ],
     "medications": [
       { "code": "MED-AML-5", "name": "Amlodipine 5mg", "firstLine": true },
-      { "code": "MED-LIS-10", "name": "Lisinopril 10mg", "firstLine": true }
+      { "code": "MED-LOS-25", "name": "Losartan 25mg", "firstLine": true },
+      { "code": "MED-AML-10", "name": "Amlodipine 10mg", "emergency": true },
+      { "code": "MED-LOS-50", "name": "Losartan 50mg", "emergency": true }
     ],
     "procedures": [],
     "rules": [
       {
-        "id": "RULE-HT-1",
+        "id": "RULE-HTN-1",
         "name": "Hypertension BP Check",
         "type": "test_required",
         "severity": "CRITICAL",
         "penalty": 40,
-        "description": "Prescribing anti-hypertensives requires a recorded Blood Pressure Check."
+        "description": "Prescribing anti-hypertensive medication requires a recorded Blood Pressure check."
       },
       {
-        "id": "RULE-HT-2",
+        "id": "RULE-HTN-2",
         "name": "Hypertension Treatment Match",
         "type": "medication_match",
         "severity": "MAJOR",
         "penalty": 20,
-        "description": "Primary diagnosis Hypertension requires first-line therapy (Amlodipine or Lisinopril)."
+        "description": "Primary diagnosis Hypertension requires starting first-line monotherapy (Amlodipine 5mg or Losartan 25mg)."
+      },
+      {
+        "id": "RULE-HTN-3",
+        "name": "Hypertensive Crisis Emergency Protocol",
+        "type": "referral_check",
+        "severity": "MAJOR",
+        "penalty": 35,
+        "description": "Severe blood pressure (>=180/120) or target organ damage requires stat Amlodipine 10mg / Losartan 50mg and immediate referral."
       }
     ]
   },
-  "E11": {
+  "5A11": {
     "id": "diabetes",
     "name": "Type 2 Diabetes Mellitus",
-    "synonyms": ["diabetes", "sugar", "high glucose", "frequent urination", "thirst", "t2dm"],
+    "icd11Prefixes": ["5A11"],
+    "synonyms": [
+      "diabetes",
+      "sugar",
+      "high glucose",
+      "frequent urination",
+      "thirst",
+      "t2dm",
+      "polydipsia",
+      "polyuria",
+      "polyphagia",
+      "weight loss"
+    ],
     "diagnosticTests": [
       { "code": "TEST-GLU-FPG", "name": "Fasting Plasma Glucose (FPG)", "mandatory": true },
-      { "code": "TEST-GLU-HBA1C", "name": "Glycated Hemoglobin (HbA1c)", "mandatory": true }
+      { "code": "TEST-GLU-PPG", "name": "2-Hour Post-Prandial Glucose (PPG)", "mandatory": true },
+      { "code": "TEST-GLU-RBS", "name": "Random Blood Sugar (RBS)", "mandatory": true },
+      { "code": "TEST-GLU-HBA1C", "name": "Glycated Hemoglobin (HbA1c)", "mandatory": true },
+      { "code": "TEST-UA-PROT", "name": "Urine Protein Test", "mandatory": false },
+      { "code": "TEST-UA-KET", "name": "Urine Ketone Test", "mandatory": false }
     ],
     "medications": [
       { "code": "MED-MET-500", "name": "Metformin 500mg", "firstLine": true },
-      { "code": "MED-INS-GLAR", "name": "Insulin Glargine", "firstLine": false }
+      { "code": "MED-GLI-1", "name": "Glimepiride 1mg", "firstLine": true }
     ],
     "procedures": [],
     "rules": [
@@ -81,230 +162,141 @@
         "type": "test_required",
         "severity": "CRITICAL",
         "penalty": 40,
-        "description": "Prescribing anti-diabetic medication requires prior FPG or HbA1c testing."
+        "description": "Prescribing anti-diabetic medication requires prior FPG, PPG, RBS, or HbA1c testing."
       },
       {
         "id": "RULE-DB-2",
-        "name": "Diabetes Insulin Sequence",
-        "type": "treatment_sequence",
+        "name": "Diabetes Treatment Choice",
+        "type": "medication_match",
         "severity": "MAJOR",
         "penalty": 25,
-        "description": "Insulin Glargine should only be prescribed if there is a documented Metformin trial or HbA1c result > 10%."
-      }
-    ]
-  },
-  "K35.8": {
-    "id": "appendicitis",
-    "name": "Acute Appendicitis",
-    "synonyms": ["right lower quadrant pain", "abdominal pain", "appendicitis", "vomiting", "nausea", "fever"],
-    "diagnosticTests": [
-      { "code": "TEST-IMG-US", "name": "Abdominal Ultrasound", "mandatory": true },
-      { "code": "TEST-IMG-CT", "name": "Abdominal CT Scan", "mandatory": true }
-    ],
-    "medications": [],
-    "procedures": [
-      { "code": "PROC-APPEND", "name": "Appendectomy", "mandatory": true }
-    ],
-    "rules": [
-      {
-        "id": "RULE-APP-1",
-        "name": "Appendicitis Imaging Check",
-        "type": "test_required",
-        "severity": "CRITICAL",
-        "penalty": 45,
-        "description": "Performing an appendectomy requires prior ultrasound or CT confirmation."
+        "description": "Type 2 Diabetes requires starting Metformin 500mg (or Glimepiride 1mg for lean/thin patients)."
       },
       {
-        "id": "RULE-APP-2",
-        "name": "Appendicitis Surgery Match",
-        "type": "procedure_match",
-        "severity": "CRITICAL",
-        "penalty": 40,
-        "description": "Primary diagnosis Acute Appendicitis must include CPT code for Appendectomy."
-      }
-    ]
-  },
-  "A15.0": {
-    "id": "tuberculosis",
-    "name": "Pulmonary Tuberculosis",
-    "synonyms": ["chronic cough", "coughing blood", "night sweats", "weight loss", "tb", "tuberculosis", "lung infection"],
-    "diagnosticTests": [
-      { "code": "TEST-TB-AFB", "name": "Sputum Acid-Fast Bacilli (AFB) Smear", "mandatory": true },
-      { "code": "TEST-TB-GENEX", "name": "GeneXpert MTB/RIF Assay", "mandatory": true }
-    ],
-    "medications": [
-      { "code": "MED-TB-HRZE", "name": "Rifampicin/Isoniazid/Pyrazinamide/Ethambutol (HRZE)", "firstLine": true }
-    ],
-    "procedures": [],
-    "rules": [
-      {
-        "id": "RULE-TB-1",
-        "name": "Tuberculosis Micro Lab Check",
-        "type": "test_required",
-        "severity": "CRITICAL",
-        "penalty": 40,
-        "description": "Anti-TB therapy must be verified by sputum smear or GeneXpert lab tests."
-      },
-      {
-        "id": "RULE-TB-2",
-        "name": "Tuberculosis Regimen Match",
-        "type": "medication_match",
-        "severity": "CRITICAL",
-        "penalty": 40,
-        "description": "Active TB requires multi-drug combined (HRZE) therapy; single-drug monotherapy is contraindicated."
-      }
-    ]
-  },
-  "D50.9": {
-    "id": "anemia",
-    "name": "Iron Deficiency Anemia",
-    "synonyms": ["fatigue", "weakness", "pale skin", "dizziness", "shortness of breath", "cold hands", "low hemoglobin", "anemia"],
-    "diagnosticTests": [
-      { "code": "TEST-CBC", "name": "Complete Blood Count (CBC)", "mandatory": true },
-      { "code": "TEST-FERRITIN", "name": "Serum Ferritin Test", "mandatory": true }
-    ],
-    "medications": [
-      { "code": "MED-IRON-SULF", "name": "Ferrous Sulfate", "firstLine": true }
-    ],
-    "procedures": [],
-    "rules": [
-      {
-        "id": "RULE-ANM-1",
-        "name": "Anemia Lab Verification",
-        "type": "test_required",
-        "severity": "MAJOR",
-        "penalty": 30,
-        "description": "Prescribing iron supplements requires blood panel verification (CBC or Ferritin) proving anemia."
-      },
-      {
-        "id": "RULE-ANM-2",
-        "name": "Anemia Treatment Match",
-        "type": "medication_match",
-        "severity": "MINOR",
-        "penalty": 10,
-        "description": "Primary diagnosis Iron Anemia should list Ferrous Sulfate as the approved therapy."
-      }
-    ]
-  },
-  "J03.90": {
-    "id": "tonsillitis",
-    "name": "Acute Tonsillitis",
-    "synonyms": ["sore throat", "painful swallowing", "swollen tonsils", "tonsillitis", "fever", "throat pain"],
-    "diagnosticTests": [
-      { "code": "TEST-THROAT-SWB", "name": "Throat Swab Culture", "mandatory": true }
-    ],
-    "medications": [
-      { "code": "MED-AMO-500", "name": "Amoxicillin 500mg", "firstLine": true }
-    ],
-    "procedures": [],
-    "rules": [
-      {
-        "id": "RULE-TON-1",
-        "name": "Tonsillitis Bacterial Verification",
-        "type": "test_required",
-        "severity": "MAJOR",
-        "penalty": 25,
-        "description": "Prescribing antibiotic Amoxicillin for tonsillitis requires a positive throat culture to prevent viral overprescription."
-      },
-      {
-        "id": "RULE-TON-2",
-        "name": "Tonsillitis Antibiotic Choice",
-        "type": "medication_match",
+        "id": "RULE-DB-3",
+        "name": "New Diagnosis Evaluation Referral",
+        "type": "referral_check",
         "severity": "MINOR",
         "penalty": 15,
-        "description": "First-line bacterial tonsillitis antibiotic must be Amoxicillin; broad-spectrum options are restricted."
+        "description": "Newly diagnosed diabetes cases must be referred to a higher center for complete evaluation."
       }
     ]
   },
-  "J45.909": {
-    "id": "asthma",
-    "name": "Bronchial Asthma",
-    "synonyms": ["wheezing", "coughing", "chest tightness", "shortness of breath", "asthma attack", "difficulty breathing"],
+  "1D2": {
+    "id": "dengue",
+    "name": "Dengue Fever",
+    "icd11Prefixes": ["1D2"],
+    "synonyms": [
+      "fever",
+      "chills",
+      "mosquito",
+      "platelets",
+      "headache",
+      "joint pain",
+      "dengue",
+      "dengue fever",
+      "retro-orbital pain",
+      "rash",
+      "myalgia"
+    ],
     "diagnosticTests": [
-      { "code": "TEST-SPIROMETRY", "name": "Spirometry Lung Function Test", "mandatory": true }
+      { "code": "TEST-DEN-RDT", "name": "Dengue Rapid Diagnostic Test (RDT)", "mandatory": true },
+      { "code": "TEST-CBC", "name": "Complete Blood Count", "mandatory": true },
+      { "code": "TEST-LFT", "name": "Liver Function Test", "mandatory": false }
     ],
     "medications": [
-      { "code": "MED-SAL-INH", "name": "Salbutamol Inhaler (Rescue)", "firstLine": true },
-      { "code": "MED-FLU-INH", "name": "Fluticasone Inhaler (Controller)", "firstLine": true }
+      { "code": "MED-PAR-500", "name": "Paracetamol 500mg", "firstLine": true },
+      { "code": "MED-ORS", "name": "Oral Rehydration Salts (ORS)", "firstLine": true },
+      { "code": "MED-IBU-400", "name": "Ibuprofen 400mg", "firstLine": false }
     ],
     "procedures": [],
     "rules": [
       {
-        "id": "RULE-AST-1",
-        "name": "Asthma Lung Function Check",
-        "type": "test_required",
-        "severity": "MAJOR",
-        "penalty": 20,
-        "description": "First-time bronchial asthma diagnosis and therapy requires spirometry verification."
-      },
-      {
-        "id": "RULE-AST-2",
-        "name": "Asthma Controller Adherence",
-        "type": "treatment_sequence",
-        "severity": "MAJOR",
-        "penalty": 20,
-        "description": "Persistent asthma requires controller inhalers (Fluticasone) alongside rescue inhalers (Salbutamol)."
-      }
-    ]
-  },
-  "K81.0": {
-    "id": "cholecystitis",
-    "name": "Acute Cholecystitis",
-    "synonyms": ["upper right abdominal pain", "gallstones", "gallbladder pain", "nausea", "vomiting", "fever", "cholecystitis"],
-    "diagnosticTests": [
-      { "code": "TEST-IMG-US", "name": "Abdominal Ultrasound", "mandatory": true }
-    ],
-    "procedures": [
-      { "code": "PROC-CHOLE", "name": "Cholecystectomy", "mandatory": true }
-    ],
-    "rules": [
-      {
-        "id": "RULE-CHO-1",
-        "name": "Cholecystitis Ultrasound Check",
-        "type": "test_required",
-        "severity": "CRITICAL",
-        "penalty": 45,
-        "description": "Performing cholecystectomy requires a prior abdominal ultrasound showing gallstones or gallbladder wall thickening."
-      },
-      {
-        "id": "RULE-CHO-2",
-        "name": "Cholecystitis Surgery Match",
-        "type": "procedure_match",
-        "severity": "CRITICAL",
-        "penalty": 40,
-        "description": "Primary diagnosis Acute Cholecystitis must include CPT code for Cholecystectomy."
-      }
-    ]
-  },
-  "N39.0": {
-    "id": "uti",
-    "name": "Urinary Tract Infection (UTI)",
-    "synonyms": ["burning urination", "painful pee", "frequent urination", "cloudy urine", "smelly urine", "pelvic pain", "uti", "urine infection"],
-    "diagnosticTests": [
-      { "code": "TEST-URINALYSIS", "name": "Urinalysis (Dipstick/Microscopic)", "mandatory": true },
-      { "code": "TEST-URINE-CUL", "name": "Urine Culture & Sensitivity", "mandatory": false }
-    ],
-    "medications": [
-      { "code": "MED-NIT-100", "name": "Nitrofurantoin 100mg", "firstLine": true },
-      { "code": "MED-CIP-500", "name": "Ciprofloxacin 500mg", "firstLine": false }
-    ],
-    "procedures": [],
-    "rules": [
-      {
-        "id": "RULE-UTI-1",
-        "name": "UTI Urinalysis Verification",
+        "id": "RULE-DEN-1",
+        "name": "Dengue Diagnostic RDT Check",
         "type": "test_required",
         "severity": "CRITICAL",
         "penalty": 35,
-        "description": "Antibiotics for UTI require verification from a urinalysis dipstick or microscopy."
+        "description": "Dengue diagnosis requires antigen/antibody confirmation via Dengue RDT."
       },
       {
-        "id": "RULE-UTI-2",
-        "name": "UTI Antibiotic Choice",
-        "type": "medication_match",
+        "id": "RULE-DEN-2",
+        "name": "Dengue Platelet / Hematocrit Monitoring",
+        "type": "test_required",
+        "severity": "MAJOR",
+        "penalty": 25,
+        "description": "Dengue fever requires Complete Blood Count (CBC) monitoring for hematocrit and platelet count."
+      },
+      {
+        "id": "RULE-DEN-3",
+        "name": "NSAID & Antibiotic Contraindication Check",
+        "type": "contraindication_check",
+        "severity": "CRITICAL",
+        "penalty": 50,
+        "description": "NSAIDs (e.g., Ibuprofen, Aspirin), steroids, and antibiotics are contraindicated in Dengue due to bleeding risk."
+      },
+      {
+        "id": "RULE-DEN-4",
+        "name": "Supportive Therapy & Hospital Referral",
+        "type": "referral_check",
         "severity": "MAJOR",
         "penalty": 20,
-        "description": "First-line UTI antibiotic must be Nitrofurantoin; broad-spectrum Ciprofloxacin is restricted unless pyelonephritis or resistance is shown."
+        "description": "Dengue claims must document supportive care (Paracetamol/ORS) and hospital referral."
+      }
+    ]
+  },
+  "CA40": {
+    "id": "pneumonia",
+    "name": "Pneumonia",
+    "icd11Prefixes": ["CA40"],
+    "synonyms": [
+      "cough",
+      "fever",
+      "shortness of breath",
+      "difficulty breathing",
+      "chest pain",
+      "pneumonia",
+      "sputum",
+      "tachypnoea",
+      "crackles",
+      "crepitations"
+    ],
+    "diagnosticTests": [
+      { "code": "TEST-RR-CHECK", "name": "Respiratory Rate check", "mandatory": true },
+      { "code": "TEST-LUNG-AUS", "name": "Chest Auscultation", "mandatory": true }
+    ],
+    "medications": [
+      { "code": "MED-AMOX-500", "name": "Amoxicillin 500mg", "firstLine": true },
+      { "code": "MED-AZITH-500", "name": "Azithromycin 500mg", "firstLine": true },
+      { "code": "MED-DOXY-100", "name": "Doxycycline 100mg", "firstLine": true },
+      { "code": "MED-PAR-500", "name": "Paracetamol 500mg", "firstLine": true },
+      { "code": "MED-SAL-INH", "name": "Salbutamol Inhaler", "firstLine": true }
+    ],
+    "procedures": [],
+    "rules": [
+      {
+        "id": "RULE-PNE-1",
+        "name": "Pneumonia Antibiotic Alignment",
+        "type": "medication_match",
+        "severity": "MAJOR",
+        "penalty": 25,
+        "description": "First-line pneumonia therapy must consist of Amoxicillin, Azithromycin, or Doxycycline."
+      },
+      {
+        "id": "RULE-PNE-2",
+        "name": "Doxycycline Pregnancy & Age Contraindication Check",
+        "type": "contraindication_check",
+        "severity": "CRITICAL",
+        "penalty": 45,
+        "description": "Doxycycline is strictly contraindicated in children under 12 years of age and in pregnant/lactating women."
+      },
+      {
+        "id": "RULE-PNE-3",
+        "name": "Severe Pneumonia Referral Check",
+        "type": "referral_check",
+        "severity": "MAJOR",
+        "penalty": 30,
+        "description": "Pneumonia cases with severe dyspnea, cyanosis, stridor, or failing treatment must be immediately referred."
       }
     ]
   }
