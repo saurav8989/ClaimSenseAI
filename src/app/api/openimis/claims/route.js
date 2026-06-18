@@ -1,128 +1,7 @@
 import { NextResponse } from 'next/server';
-
-// In-memory mock claims data
-const mockClaims = [
-  {
-    claimId: "CLM-10023",
-    providerId: "PROV-9082",
-    providerName: "Dr. Sarah Jenkins",
-    submittedAt: "2026-06-16T14:30:00Z",
-    patient: {
-      id: "PAT-5542",
-      name: "John Doe",
-      age: 45,
-      gender: "Male"
-    },
-    diagnoses: [
-      {
-        code: "K35.8",
-        name: "Acute appendicitis",
-        isPrimary: true
-      }
-    ],
-    carePathway: [
-      {
-        stepNumber: 1,
-        type: "symptom",
-        name: "Severe abdominal pain",
-        details: "Patient reports sudden onset of sharp pain in lower right abdomen.",
-        timestamp: "2026-06-16T14:05:00Z"
-      },
-      {
-        stepNumber: 2,
-        type: "medication",
-        code: "RX-AML-5",
-        name: "Amlodipine 5mg",
-        details: "Oral, once daily",
-        cost: 45.00,
-        timestamp: "2026-06-16T14:15:00Z"
-      }
-    ],
-    billing: {
-      totalClaimedAmount: 45.00
-    },
-    status: "PENDING_REVIEW",
-    clinicalValidation: {
-      isValid: false,
-      issues: [
-        {
-          severity: "CRITICAL",
-          type: "MISMATCHED_SERVICE",
-          message: "Medication Amlodipine (anti-hypertensive) does not match diagnosis of Acute Appendicitis."
-        }
-      ]
-    },
-    stpCompliance: {
-      isCompliant: false,
-      complianceScore: 20,
-      protocolName: "Acute Abdomen Standard Treatment Protocol",
-      deviations: [
-        {
-          type: "MISSING_MANDATORY_TEST",
-          message: "No ultrasound or CT scan recorded before treatment for acute abdomen.",
-          penalty: 40
-        }
-      ]
-    },
-    riskScoring: {
-      overallRiskScore: 92,
-      riskCategory: "HIGH",
-      reviewerPriority: 1
-    }
-  },
-  {
-    claimId: "CLM-10024",
-    providerId: "PROV-1022",
-    providerName: "Dr. Alan Grant",
-    submittedAt: "2026-06-17T09:15:00Z",
-    patient: {
-      id: "PAT-1123",
-      name: "Ellie Sattler",
-      age: 32,
-      gender: "Female"
-    },
-    diagnoses: [
-      {
-        code: "E11.9",
-        name: "Type 2 diabetes mellitus without complications",
-        isPrimary: true
-      }
-    ],
-    carePathway: [
-      {
-        stepNumber: 1,
-        type: "diagnostic_test",
-        code: "LAB-A1C",
-        name: "HbA1c Test",
-        details: "Result: 7.2%",
-        cost: 25.00,
-        timestamp: "2026-06-17T09:10:00Z"
-      }
-    ],
-    billing: {
-      totalClaimedAmount: 25.00
-    },
-    status: "PENDING_REVIEW",
-    clinicalValidation: {
-      isValid: true,
-      issues: []
-    },
-    stpCompliance: {
-      isCompliant: true,
-      complianceScore: 100,
-      protocolName: "Type 2 Diabetes Management Protocol",
-      deviations: []
-    },
-    riskScoring: {
-      overallRiskScore: 15,
-      riskCategory: "LOW",
-      reviewerPriority: 5
-    }
-  }
-];
+import { getClaims, getClaimById, saveClaim, updateClaimStatus } from '@/lib/mockDb';
 
 // Attempt to dynamically load Developer 2's validation engines.
-// If they are not yet created, we fall back gracefully to stub logic.
 let validateClinicalServices = null;
 let evaluateStpCompliance = null;
 let calculateRiskScore = null;
@@ -148,14 +27,14 @@ export async function GET(request) {
     const claimId = searchParams.get('claimId');
 
     if (claimId) {
-      const claim = mockClaims.find(c => c.claimId === claimId);
+      const claim = getClaimById(claimId);
       if (!claim) {
         return NextResponse.json({ error: "Claim not found" }, { status: 404 });
       }
       return NextResponse.json(claim);
     }
 
-    return NextResponse.json(mockClaims);
+    return NextResponse.json(getClaims());
   } catch (error) {
     console.error("GET claims error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -169,26 +48,17 @@ export async function POST(request) {
 
     // A. Adjudication Flow (Invoked by Reviewer Dashboard)
     if (claimId && action) {
-      const idx = mockClaims.findIndex(c => c.claimId === claimId);
-      if (idx === -1) {
+      const updated = updateClaimStatus(claimId, action, comments);
+      if (!updated) {
         return NextResponse.json({ error: `Claim ${claimId} not found` }, { status: 404 });
       }
-
-      let status = action.toUpperCase();
-      if (status === 'APPROVE') status = 'APPROVED';
-      if (status === 'REJECT') status = 'REJECTED';
-      if (status === 'MODIFY') status = 'MODIFIED';
-
-      mockClaims[idx].status = status;
-      mockClaims[idx].reviewerComments = comments || `Claim ${action.toLowerCase()}ed`;
-      mockClaims[idx].reviewedAt = new Date().toISOString();
 
       return NextResponse.json({
         success: true,
         message: `Claim ${claimId} successfully ${action.toLowerCase()}ed.`,
         claimId,
         action,
-        claim: mockClaims[idx]
+        claim: updated
       });
     }
 
@@ -255,7 +125,7 @@ export async function POST(request) {
       newClaim.status = "APPROVED";
     }
 
-    mockClaims.push(newClaim);
+    saveClaim(newClaim);
 
     return NextResponse.json(newClaim);
   } catch (error) {

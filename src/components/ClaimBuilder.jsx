@@ -75,6 +75,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   useEffect(() => {
     const primaryDiag = diagnoses.find(d => d.isPrimary) || diagnoses[0];
     if (!primaryDiag) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedProtocol(null);
       setSelectedServices([]);
       setSelectedMeds([]);
