@@ -24,14 +24,14 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#1e2330]/80 backdrop-blur-md rounded-xl border border-gray-700/50 overflow-hidden shadow-2xl">
+    <div className="flex flex-col h-full bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
       
       {/* Adjudication Status Banner */}
       {isAdjudicated && (
         <div className={`px-6 py-3 text-xs font-semibold flex items-center justify-between border-b ${
-          claim.status === 'APPROVED' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
-          claim.status === 'REJECTED' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-          'bg-purple-500/20 text-purple-400 border-purple-500/30'
+          claim.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
+          claim.status === 'REJECTED' ? 'bg-red-50 text-red-600 border-red-200' :
+          'bg-amber-50 text-amber-600 border-amber-200'
         }`}>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
@@ -46,136 +46,131 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
       )}
 
       {/* Top Header Section: Patient & High-Level Info */}
-      <div className={`p-6 border-b ${isCritical ? 'border-red-500/30 bg-red-500/5' : 'border-gray-700/50 bg-[#161a24]'}`}>
-        <div className="flex justify-between items-start mb-4">
+      <div className={`p-4 border-b ${isCritical ? 'border-red-200 bg-red-50/50' : 'border-slate-100 bg-slate-50/50'}`}>
+        <div className="flex justify-between items-start mb-2">
           <div>
-            <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-3">
+            <h2 className="text-2xl font-black text-slate-800 flex items-center gap-3">
               {claim.claimId}
             </h2>
-          </div>
-          <div className={`px-4 py-2 rounded-lg border ${getRiskColor(claim.riskScoring.riskCategory)}`}>
-            <div className="text-xs uppercase font-bold opacity-80">Risk Score</div>
-            <div className="text-2xl font-bold text-center">{claim.riskScoring.overallRiskScore}</div>
-          </div>
-        </div>
-        
-        {/* Quick Summary Data Grid */}
-        <div className="grid grid-cols-2 gap-4 mt-6">
-          <div className="bg-gray-800/40 p-3 rounded-md border border-gray-700/30">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Provider</div>
-            <div className="text-sm text-gray-200">{claim.providerName}</div>
-          </div>
-          <div className="bg-gray-800/40 p-3 rounded-md border border-gray-700/30">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Primary Diagnosis</div>
-            <div className="text-sm text-gray-200">
-              {claim.diagnoses && claim.diagnoses[0] ? `${claim.diagnoses[0].code} - ${claim.diagnoses[0].name}` : 'N/A'}
-            </div>
-          </div>
-          <div className="bg-gray-800/40 p-3 rounded-md border border-gray-700/30">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Protocol Standard</div>
-            <div className="text-sm text-gray-200">{claim.stpCompliance?.protocolName || 'Unknown'}</div>
-          </div>
-          <div className="bg-gray-800/40 p-3 rounded-md border border-gray-700/30">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Patient</div>
-            <div className="text-sm text-gray-200 flex flex-col gap-1.5">
-              <span>{claim.patient?.name ? claim.patient.name + " • " : ""}{claim.patient?.gender || 'Unknown'}, {claim.patient?.age || '?'} y/o</span>
+            <div className="text-sm text-slate-500 mt-1 font-mono flex items-center gap-3">
+              <span>{claim.patient?.id} • {claim.patient?.gender || 'Unknown'}, {claim.patient?.age || '?'} y/o</span>
               {(claim.patient?.isPregnant || claim.patient?.isLactating) && (
-                <div className="flex gap-2 mt-1">
+                <div className="flex gap-2">
                   {claim.patient?.isPregnant && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 rounded">⚠️ Pregnant</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded">⚠️ Pregnant</span>
                   )}
                   {claim.patient?.isLactating && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 rounded">🍼 Lactating</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded">🍼 Lactating</span>
                   )}
                 </div>
               )}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Middle Section: AI Analysis Breakdown */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#161a24]/50">
-        {/* Reviewer Audit Comments */}
-        {isAdjudicated && (
-          <div className={`p-4 rounded-lg border text-sm ${
-            claim.status === 'APPROVED' ? 'bg-green-950/20 border-green-500/20 text-green-300' :
-            claim.status === 'REJECTED' ? 'bg-red-950/20 border-red-500/20 text-red-300' :
-            'bg-purple-950/20 border-purple-500/20 text-purple-300'
-          }`}>
-            <h4 className="font-semibold mb-1.5 uppercase text-xs tracking-wider opacity-90">Reviewer Audit Logs</h4>
-            <div className="space-y-1.5 font-mono text-xs">
-              <div><span className="opacity-70">Decision:</span> <span className="font-bold">{claim.status}</span></div>
-              <div><span className="opacity-70">Comments:</span> <span className="italic">"{claim.reviewerComments || 'No comments left.'}"</span></div>
+        
+        {/* Quick Summary Data Grid */}
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+            <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Provider</div>
+            <div className="text-sm font-semibold text-slate-800">{claim.providerName}</div>
+          </div>
+          <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+            <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Primary Diagnosis</div>
+            <div className="text-sm font-semibold text-slate-800">
+              {claim.diagnoses && claim.diagnoses[0] ? `${claim.diagnoses[0].code} - ${claim.diagnoses[0].name}` : 'N/A'}
             </div>
           </div>
-        )}
-
-        <div>
-          <h3 className="text-base font-semibold text-gray-200 mb-3 border-b border-gray-700/50 pb-2">AI Analysis Summary</h3>
-          <ul className="space-y-3">
-            {/* Map over any clinical violations the AI found */}
-            {claim.clinicalValidation?.isValid === false && claim.clinicalValidation.issues.map((iss, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm text-red-400 bg-red-500/10 p-3 rounded border border-red-500/20">
-                <span>{iss.message}</span>
-              </li>
-            ))}
-            {/* Warn if there are STP deviations */}
-            {claim.stpCompliance?.deviations?.length > 0 ? (
-               claim.stpCompliance.deviations.map((dev, idx) => {
-                 let colorClasses = "text-yellow-400 bg-yellow-500/10 border-yellow-500/20"; // default
-                 if (dev.type === 'CONTRAINDICATION_CHECK') {
-                   colorClasses = "text-red-400 bg-red-500/10 border-red-500/30";
-                 } else if (dev.type === 'INCORRECT_DOSING') {
-                   colorClasses = "text-orange-400 bg-orange-500/10 border-orange-500/30";
-                 }
-                 
-                 return (
-                   <li key={`dev-${idx}`} className={`flex flex-col items-start gap-1 text-sm p-3 rounded border ${colorClasses}`}>
-                     <span className="font-bold text-[10px] uppercase opacity-90">{dev.type.replace(/_/g, ' ')}</span>
-                     <span>{dev.message}</span>
-                   </li>
-                 );
-               })
-            ) : (
-              claim.stpCompliance?.isCompliant === false && (
-                <li className="flex items-start gap-2 text-sm text-yellow-400 bg-yellow-500/10 p-3 rounded border border-yellow-500/20">
-                  <span>STP Deviations Found (Score: {claim.stpCompliance.complianceScore}/100)</span>
-                </li>
-              )
-            )}
-            {/* Show success if everything is clean */}
-            {claim.clinicalValidation?.isValid && claim.stpCompliance?.isCompliant && (
-              <li className="flex items-start gap-2 text-sm text-green-400 bg-green-500/10 p-3 rounded border border-green-500/20">
-                <span>Fully compliant with standard treatment protocols. No critical issues found.</span>
-              </li>
-            )}
-          </ul>
+          <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm col-span-2">
+            <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Protocol Standard</div>
+            <div className="text-sm font-semibold text-slate-800">{claim.stpCompliance?.protocolName || 'Unknown'}</div>
+          </div>
         </div>
       </div>
 
-      {/* Bottom Section: Adjudication Action Buttons */}
-      <div className="p-4 border-t border-gray-700/50 bg-[#161a24] flex gap-3">
-        {isAdjudicated ? (
-          <div className="w-full text-center py-2 text-xs text-gray-500 font-mono italic">
-            This claim has been finalized and cannot be re-adjudicated.
+      {/* Middle Section: AI Analysis Breakdown */}
+      <div className="flex-1 p-4 space-y-4 flex flex-col justify-between">
+        <div className="space-y-4">
+          {/* Reviewer Audit Comments */}
+          {isAdjudicated && (
+            <div className={`p-3 rounded-xl border text-sm shadow-sm ${
+              claim.status === 'APPROVED' ? 'bg-emerald-50 border-emerald-100 text-emerald-800' :
+              claim.status === 'REJECTED' ? 'bg-red-50 border-red-100 text-red-800' :
+              'bg-amber-50 border-amber-100 text-amber-800'
+            }`}>
+              <h4 className="font-bold mb-1 uppercase text-[10px] tracking-wider opacity-90">Reviewer Audit Logs</h4>
+              <div className="space-y-1 font-mono text-xs">
+                <div><span className="opacity-70">Decision:</span> <span className="font-bold">{claim.status}</span></div>
+                <div><span className="opacity-70">Comments:</span> <span className="italic">"{claim.reviewerComments || 'No comments left.'}"</span></div>
+              </div>
+            </div>
+          )}
+
+          <div className="bg-white border border-slate-100 shadow-sm rounded-xl p-4">
+            <h3 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">AI Analysis Summary</h3>
+            <ul className="space-y-2.5">
+              {/* Map over any clinical violations the AI found */}
+              {claim.clinicalValidation?.isValid === false && claim.clinicalValidation.issues.map((iss, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-sm text-red-700 bg-red-50/50 p-2.5 rounded-lg border border-red-100 leading-tight">
+                  <span>❌ {iss.message}</span>
+                </li>
+              ))}
+              {/* Warn if there are STP deviations */}
+              {claim.stpCompliance?.deviations?.length > 0 ? (
+                 claim.stpCompliance.deviations.map((dev, idx) => {
+                   let colorClasses = "text-amber-700 bg-amber-50/50 border-amber-200"; // default
+                   if (dev.type === 'CONTRAINDICATION_CHECK') {
+                     colorClasses = "text-red-700 bg-red-50/50 border-red-200";
+                   } else if (dev.type === 'INCORRECT_DOSING') {
+                     colorClasses = "text-orange-700 bg-orange-50/50 border-orange-200";
+                   }
+                   
+                   return (
+                     <li key={`dev-${idx}`} className={`flex flex-col items-start gap-1 text-sm p-2.5 rounded-lg border leading-tight ${colorClasses}`}>
+                       <span className="font-bold text-[10px] uppercase opacity-90">⚠️ {dev.type.replace(/_/g, ' ')}</span>
+                       <span>{dev.message}</span>
+                     </li>
+                   );
+                 })
+              ) : (
+                claim.stpCompliance?.isCompliant === false && (
+                  <li className="flex items-start gap-2 text-sm text-amber-700 bg-amber-50/50 p-3 rounded-lg border border-amber-200">
+                    <span>⚠️ STP Deviations Found (Score: {claim.stpCompliance.complianceScore}/100)</span>
+                  </li>
+                )
+              )}
+              {/* Show success if everything is clean */}
+              {claim.clinicalValidation?.isValid && claim.stpCompliance?.isCompliant && (
+                <li className="flex items-start gap-2 text-sm text-emerald-700 bg-emerald-50/50 p-2.5 rounded-lg border border-emerald-100 leading-tight">
+                  <span>✅ Fully compliant with standard treatment protocols. No critical issues found.</span>
+                </li>
+              )}
+            </ul>
           </div>
-        ) : (
-          <>
-            <button 
-              onClick={() => onAction(claim.claimId, 'Approve')}
-              className="flex-1 bg-green-600 hover:bg-green-500 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer shadow-[0_0_15px_rgba(22,163,74,0.3)]"
-            >
-              Approve
-            </button>
-            <button 
-              onClick={() => onAction(claim.claimId, 'Reject')}
-              className="flex-1 bg-red-600 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer shadow-[0_0_15px_rgba(220,38,38,0.3)]"
-            >
-              Reject
-            </button>
-          </>
-        )}
+        </div>
+
+        {/* Adjudication Action Buttons */}
+        <div className="pt-2 flex gap-3 mt-auto">
+          {isAdjudicated ? (
+            <div className="w-full text-center py-2 text-xs text-slate-400 font-mono italic">
+              This claim has been finalized and cannot be re-adjudicated.
+            </div>
+          ) : (
+            <>
+              <button 
+                onClick={() => onAction(claim.claimId, 'Approve')}
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl transition-all cursor-pointer shadow-md hover:shadow-lg"
+              >
+                Approve
+              </button>
+              <button 
+                onClick={() => onAction(claim.claimId, 'Reject')}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl transition-all cursor-pointer shadow-md hover:shadow-lg"
+              >
+                Reject
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -5,8 +5,8 @@ import React from 'react';
 export default function DeviationTimeline({ claim }) {
   if (!claim || !claim.carePathway || claim.carePathway.length === 0) {
     return (
-      <div className="h-full flex flex-col bg-[#1e2330]/50 backdrop-blur-md rounded-xl border border-gray-700/50 items-center justify-center text-gray-500 p-6 text-center">
-        <p className="text-lg">No care pathway data available for this claim.</p>
+      <div className="h-full flex flex-col bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200 items-center justify-center text-slate-400 p-6 text-center shadow-sm">
+        <p className="text-lg font-medium">No care pathway data available for this claim.</p>
       </div>
     );
   }
@@ -29,45 +29,45 @@ export default function DeviationTimeline({ claim }) {
   const hasDeviations = claim.stpCompliance && !claim.stpCompliance.isCompliant;
 
   return (
-    <div className="flex flex-col h-full bg-[#1e2330]/80 backdrop-blur-md rounded-xl border border-gray-700/50 overflow-hidden shadow-2xl">
-      <div className="p-4 border-b border-gray-700/50 bg-[#161a24]">
-        <h2 className="text-xl font-semibold text-gray-100 flex items-center justify-between">
+    <div className="flex flex-col h-full bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+        <h2 className="text-sm font-black text-slate-800 flex items-center justify-between uppercase tracking-wider">
           <span>Patient Care Pathway</span>
           {hasDeviations && (
-             <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-md border border-yellow-500/50">
+             <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded-md border border-amber-200 font-bold uppercase tracking-wider">
                STP Deviations Detected
              </span>
           )}
         </h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 relative">
+      <div className="flex-1 overflow-y-auto p-6 relative bg-slate-50/30">
         {/* The vertical timeline connecting line */}
-        <div className="absolute left-10 top-10 bottom-10 w-0.5 bg-gray-700/50"></div>
+        <div className="absolute left-10 top-10 bottom-10 w-0.5 bg-slate-200"></div>
 
         <div className="space-y-8 relative z-10">
           {claim.carePathway.map((step, index) => (
             <div key={index} className="flex gap-4">
               
               {/* Timeline Icon Node */}
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-800 border-2 border-gray-600 flex items-center justify-center shadow-lg mt-1 relative z-10">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-white border-2 border-slate-200 flex items-center justify-center shadow-sm mt-1 relative z-10">
                 {getStepIcon(step.type)}
               </div>
               
               {/* Timeline Content Card */}
-              <div className="flex-1 bg-gray-800/40 rounded-lg border border-gray-700/50 p-4 hover:bg-gray-800/60 transition-colors">
+              <div className="flex-1 bg-white rounded-xl border border-slate-200 p-4 hover:border-teal-300 hover:bg-slate-50 transition-colors shadow-sm">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-gray-100 font-medium">{step.name}</h3>
-                  <span className="text-xs text-gray-500 font-mono" suppressHydrationWarning>
+                  <h3 className="text-slate-800 font-bold">{step.name}</h3>
+                  <span className="text-xs text-slate-400 font-mono" suppressHydrationWarning>
                     {new Date(step.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                   </span>
                 </div>
                 
-                <p className="text-sm text-gray-400 mb-2">{step.details}</p>
+                <p className="text-sm text-slate-500 mb-2">{step.details}</p>
                 
                 {/* Specific tags based on type */}
                 <div className="flex flex-wrap gap-2 mt-3">
-                  <span className="text-[10px] uppercase tracking-wider bg-gray-700/50 text-gray-300 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
                     {step.type.replace('_', ' ')}
                   </span>
                 </div>
@@ -78,17 +78,14 @@ export default function DeviationTimeline({ claim }) {
           {/* Deviation Alert Card (Appended to the timeline if STP rules were broken) */}
           {hasDeviations && claim.stpCompliance.deviations.map((dev, idx) => (
             <div key={`dev-${idx}`} className="flex gap-4 mt-8">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-500/20 border-2 border-yellow-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.2)] mt-1 relative z-10">
-                <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-50 border-2 border-red-200 flex items-center justify-center shadow-sm mt-1 relative z-10">
+                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               </div>
-              <div className="flex-1 bg-yellow-500/10 rounded-lg border border-yellow-500/30 p-4">
-                <div className="flex justify-between items-start mb-1">
-                   <h3 className="text-yellow-400 font-semibold">Protocol Deviation</h3>
-                   <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30">
-                     Penalty: -{dev.penalty} pts
-                   </span>
+              <div className="flex-1 bg-red-50/50 rounded-xl border border-red-100 p-4 shadow-sm">
+                <div className="flex justify-between items-start mb-2">
+                   <h3 className="text-red-700 font-bold">Protocol Deviation</h3>
                 </div>
-                <p className="text-sm text-yellow-200/80">{dev.message}</p>
+                <p className="text-sm text-red-600 leading-relaxed font-medium">{dev.message}</p>
               </div>
             </div>
           ))}

@@ -98,31 +98,31 @@ export default function ReviewerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d1117] text-gray-200 font-sans p-6">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans p-6">
       {/* Dashboard Header */}
-      <header className="mb-6 flex justify-between items-end border-b border-gray-800 pb-4">
+      <header className="mb-6 flex justify-between items-center bg-white/60 backdrop-blur-md border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">
-            Medical Reviewer Dashboard
+          <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+            🩺 Medical Reviewer Dashboard
           </h1>
-          <p className="text-gray-400 mt-1">ClaimSense AI Adjudication Portal</p>
+          <p className="text-sm text-slate-500 mt-1">ClaimSense AI Adjudication Portal</p>
         </div>
-        <div className="flex items-center gap-3 bg-gray-800/50 px-4 py-2 rounded-lg border border-gray-700">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span className="text-sm font-medium text-gray-300">Live Queue Synced</span>
+        <div className="flex items-center gap-2 text-xs bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-xl font-bold shadow-sm">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span>Live Queue Synced</span>
         </div>
       </header>
 
       {/* Main Layout Grid */}
       {loading ? (
         <div className="flex items-center justify-center h-[70vh]">
-          <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-teal-500/30 border-t-teal-500 rounded-full animate-spin"></div>
         </div>
       ) : (
         <div className="grid grid-cols-12 gap-6 h-[calc(100vh-140px)]">
           
           {/* Left Column: Prioritized Queue (STEP B) */}
-          <div className="col-span-3 h-full">
+          <div className="col-span-3 h-full min-h-0">
             <ReviewerQueue 
               claims={claims} 
               onSelectClaim={setSelectedClaim}
@@ -131,7 +131,7 @@ export default function ReviewerDashboard() {
           </div>
 
           {/* Middle Column: ClaimDetailsPanel */}
-          <div className="col-span-4 h-full">
+          <div className="col-span-4 h-full min-h-0">
             <ClaimDetailsPanel 
               claim={selectedClaim} 
               onAction={handleAction} 
@@ -139,7 +139,7 @@ export default function ReviewerDashboard() {
           </div>
 
           {/* Right Column: DeviationTimeline */}
-          <div className="col-span-5 h-full">
+          <div className="col-span-5 h-full min-h-0">
             <DeviationTimeline claim={selectedClaim} />
           </div>
 
