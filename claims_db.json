@@ -1,1 +1,131 @@
-[]
+[
+  {
+    "providerId": "PROV-9082",
+    "providerName": "Dr. Sarah Jenkins",
+    "patient": {
+      "id": "PAT-0001",
+      "name": "Patient Alpha",
+      "age": 45,
+      "gender": "Male",
+      "isPregnant": false,
+      "isLactating": false
+    },
+    "diagnoses": [
+      {
+        "code": "1F4Z",
+        "name": "Malaria, unspecified",
+        "isPrimary": true
+      }
+    ],
+    "carePathway": [
+      {
+        "stepNumber": 1,
+        "type": "diagnostic_test",
+        "code": "TEST-MAL-RDT",
+        "name": "Malaria Rapid Diagnostic Test (RDT)",
+        "cost": 15,
+        "details": "Billed diagnostic protocol test",
+        "timestamp": "2026-06-19T03:54:23.605Z"
+      },
+      {
+        "stepNumber": 2,
+        "type": "diagnostic_test",
+        "code": "TEST-MAL-MIC",
+        "name": "Malaria Blood Smear / Microscopy",
+        "cost": 15,
+        "details": "Billed diagnostic protocol test",
+        "timestamp": "2026-06-19T03:54:23.605Z"
+      },
+      {
+        "stepNumber": 3,
+        "type": "medication",
+        "code": "MED-CQ-150",
+        "name": "Chloroquine 150mg",
+        "cost": 0,
+        "details": "Prescribed 4 tabs daily for 3 days (Total: 12 tabs, HIB cap: N/A)",
+        "timestamp": "2026-06-19T03:54:23.605Z"
+      },
+      {
+        "stepNumber": 4,
+        "type": "medication",
+        "code": "MED-PQ-7.5",
+        "name": "Primaquine 7.5mg",
+        "cost": 0,
+        "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
+        "timestamp": "2026-06-19T03:54:23.605Z"
+      },
+      {
+        "stepNumber": 5,
+        "type": "medication",
+        "code": "MED-PQ-2.5",
+        "name": "Primaquine 2.5mg",
+        "cost": 0,
+        "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
+        "timestamp": "2026-06-19T03:54:23.605Z"
+      },
+      {
+        "stepNumber": 6,
+        "type": "medication",
+        "code": "MED-AL-ACT",
+        "name": "Artemether-Lumefantrine (ACT)",
+        "cost": 0,
+        "details": "Prescribed 4 tabs daily for 3 days (Total: 12 tabs, HIB cap: N/A)",
+        "timestamp": "2026-06-19T03:54:23.605Z"
+      },
+      {
+        "stepNumber": 7,
+        "type": "medication",
+        "code": "MED-DHAP",
+        "name": "Dihydroartemisinin-Piperaquine (DHAP)",
+        "cost": 0,
+        "details": "Prescribed 1 tabs daily for 30 days (Total: 30 tabs, HIB cap: N/A)",
+        "timestamp": "2026-06-19T03:54:23.605Z"
+      },
+      {
+        "stepNumber": 8,
+        "type": "medication",
+        "code": "MED-ART-INJ",
+        "name": "Inj Artesunate (IV/IM)",
+        "cost": 0,
+        "details": "Prescribed 1 tabs daily for 30 days (Total: 30 tabs, HIB cap: N/A)",
+        "timestamp": "2026-06-19T03:54:23.605Z"
+      }
+    ],
+    "billing": {
+      "totalClaimedAmount": 30
+    },
+    "claimId": "CLM-40875",
+    "submittedAt": "2026-06-19T03:54:23.617Z",
+    "status": "PENDING_REVIEW",
+    "clinicalValidation": {
+      "isValid": true,
+      "issues": []
+    },
+    "stpCompliance": {
+      "isCompliant": false,
+      "complianceScore": 45,
+      "protocolName": "Malaria Standard Treatment Protocol",
+      "deviations": [
+        {
+          "type": "INCORRECT_DOSING",
+          "message": "Patients aged 1 year or older require standard-dose Primaquine 7.5mg (MED-PQ-7.5) instead of 2.5mg.",
+          "penalty": 30
+        },
+        {
+          "type": "RESTRICTED_MEDICATION_DEVIATION",
+          "message": "Second-line Dihydroartemisinin-Piperaquine (DHAP) therapy requires referral to a higher center.",
+          "penalty": 25
+        }
+      ]
+    },
+    "riskScoring": {
+      "overallRiskScore": 38,
+      "riskCategory": "MEDIUM",
+      "riskFlags": [
+        "HIGH_PROTOCOL_DEVIATION",
+        "POLYPHARMACY_FLAG"
+      ],
+      "reviewerPriority": 3
+    }
+  }
+]
