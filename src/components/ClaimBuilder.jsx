@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubmitting }) {
   const [selectedProtocol, setSelectedProtocol] = useState(null);
@@ -12,6 +12,29 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   const [customName, setCustomName] = useState('');
   const [customCode, setCustomCode] = useState('');
   const [customCost, setCustomCost] = useState('10.00');
+
+  // Disease search autocomplete states (Option B)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  
+  // Patient details state variables
+  const [patientId, setPatientId] = useState('PAT-5542');
+  const [patientAge, setPatientAge] = useState(45);
+  const [patientGender, setPatientGender] = useState('Male');
+  const [isPregnant, setIsPregnant] = useState(false);
+  const [isLactating, setIsLactating] = useState(false);
+
+  // Reset pregnancy and lactation checks when gender changes away from Female
+  useEffect(() => {
+    if (patientGender !== 'Female') {
+      setIsPregnant(false);
+      setIsLactating(false);
+    }
+  }, [patientGender]);
+
+  // Ref to prevent resetting checklists when selection auto-prefills standard services
+  const isPrefillingRef = useRef(false);
 
   // Hardcoded price catalog for standard protocol services
   const priceCatalog = {
@@ -71,6 +94,31 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
     return null;
   };
 
+  // Autocomplete debouncing search logic
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const delayDebounceFn = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/suggest-icd?query=${encodeURIComponent(searchQuery)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSearchResults(data.results || []);
+        }
+      } catch (err) {
+        console.error("Error searching diseases:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
   // Fetch protocol guidelines when diagnoses change
   useEffect(() => {
     const primaryDiag = diagnoses.find(d => d.isPrimary) || diagnoses[0];
@@ -96,9 +144,14 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
         if (res.ok) {
           const data = await res.json();
           setSelectedProtocol(data);
-          // Reset check lists when switching protocols
-          setSelectedServices([]);
-          setSelectedMeds([]);
+          // Reset check lists when switching protocols ONLY if we are NOT prefilling
+          if (!isPrefillingRef.current) {
+            setSelectedServices([]);
+            setSelectedMeds([]);
+          } else {
+            // Consume the prefill flag
+            isPrefillingRef.current = false;
+          }
         } else {
           setSelectedProtocol(null);
         }
@@ -112,6 +165,75 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
 
     fetchProtocol();
   }, [diagnoses]);
+
+  // Selection handler for the search suggestion card
+  const handleSelectSuggestion = (suggestion) => {
+    isPrefillingRef.current = true;
+
+    // 1. Add diagnosis code
+    const isFirst = diagnoses.length === 0;
+    const newDiag = {
+      code: suggestion.code,
+      name: suggestion.title,
+      isPrimary: isFirst
+    };
+    
+    // Avoid duplicate selection
+    if (!diagnoses.some(d => d.code === suggestion.code)) {
+      setDiagnoses([...diagnoses, newDiag]);
+    }
+
+    // 2. Pre-fill standard tests and medications (doctor can uncheck them later)
+    if (suggestion.protocolSummary) {
+      const defaultServices = [];
+      const defaultMeds = [];
+
+      suggestion.protocolSummary.diagnosticTests?.forEach(test => {
+        const cost = priceCatalog[test.code] || 15.00;
+        defaultServices.push({
+          code: test.code,
+          name: test.name,
+          type: 'diagnostic_test',
+          cost: cost
+        });
+      });
+
+      suggestion.protocolSummary.medications?.forEach(med => {
+        const cost = priceCatalog[med.code] || 20.00;
+        defaultMeds.push({
+          code: med.code,
+          name: med.name,
+          type: 'medication',
+          cost: cost
+        });
+      });
+
+      // Merge with already selected items if any
+      setSelectedServices(prev => {
+        const combined = [...prev];
+        defaultServices.forEach(s => {
+          if (!combined.some(existing => existing.code === s.code)) {
+            combined.push(s);
+          }
+        });
+        return combined;
+      });
+
+      setSelectedMeds(prev => {
+        const combined = [...prev];
+        defaultMeds.forEach(m => {
+          if (!combined.some(existing => existing.code === m.code)) {
+            combined.push(m);
+          }
+        });
+        return combined;
+      });
+    }
+
+    // Clear search query and results
+    setSearchQuery('');
+    setSearchResults([]);
+  };
 
   // Handle checking/unchecking a standard diagnostic test
   const handleServiceCheck = (test, isChecked) => {
@@ -222,15 +344,17 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
       });
     });
 
-    // 2. Compile claim payload with MOCK patient info to satisfy schema compatibility
+    // 2. Compile claim payload with patient details
     const claimPayload = {
       providerId: "PROV-9082",
       providerName: "Dr. Sarah Jenkins",
       patient: {
-        id: "PAT-5542",
-        name: "John Doe",
-        age: 45,       // Static fallback, skipped from UI inputs as requested
-        gender: "Male"  // Static fallback, skipped from UI inputs as requested
+        id: patientId || "PAT-5542",
+        name: `Patient ${patientId || "PAT-5542"}`,
+        age: parseFloat(patientAge) || 45.0,
+        gender: patientGender,
+        isPregnant: isPregnant,
+        isLactating: isLactating
       },
       diagnoses: diagnoses.map((d, index) => ({
         code: d.code,
@@ -259,12 +383,152 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
         </span>
       </div>
 
+      {/* Patient Info Section */}
+      <div className="border border-slate-150 dark:border-zinc-800 rounded-2xl p-4 bg-slate-50/40 dark:bg-zinc-950/10 space-y-4">
+        <h3 className="text-xs font-black text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+          👤 Patient Info
+        </h3>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="text-[10px] font-bold text-slate-400 uppercase">Patient ID</label>
+            <input 
+              type="text" 
+              placeholder="e.g. PAT-5542" 
+              value={patientId} 
+              onChange={e => setPatientId(e.target.value)}
+              className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-bold text-slate-400 uppercase">Age (years / float)</label>
+            <input 
+              type="number" 
+              step="0.01" 
+              placeholder="45" 
+              value={patientAge} 
+              onChange={e => setPatientAge(e.target.value)}
+              className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-bold text-slate-405 uppercase">Gender</label>
+            <select 
+              value={patientGender} 
+              onChange={e => setPatientGender(e.target.value)}
+              className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100 font-sans cursor-pointer"
+            >
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Conditional Checkboxes for Females */}
+        {patientGender === 'Female' && (
+          <div className="flex gap-6 pt-1">
+            <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 cursor-pointer">
+              <input 
+                type="checkbox"
+                checked={isPregnant}
+                onChange={e => setIsPregnant(e.target.checked)}
+                className="text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 rounded cursor-pointer"
+              />
+              <span>Is Patient Pregnant?</span>
+            </label>
+
+            <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 cursor-pointer">
+              <input 
+                type="checkbox"
+                checked={isLactating}
+                onChange={e => setIsLactating(e.target.checked)}
+                className="text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 rounded cursor-pointer"
+              />
+              <span>Is Patient Lactating?</span>
+            </label>
+          </div>
+        )}
+      </div>
+
+      {/* Autocomplete Disease Search Input (Option B) */}
+      <div className="space-y-2 relative">
+        <label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+          🔍 Search Disease or ICD-11 Code
+        </label>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Type disease to search... (e.g. Malaria, Diabetes, Hypertension)"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-3 pl-10 border rounded-2xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium text-slate-800 dark:text-zinc-100"
+          />
+          <div className="absolute left-3.5 top-3.5 text-slate-400">
+            {isSearching ? (
+              <span className="inline-block animate-spin h-4 w-4 border-2 border-teal-500 border-t-transparent rounded-full" />
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            )}
+          </div>
+        </div>
+
+        {/* Search Results Dropdown Dropdown */}
+        {searchResults.length > 0 && (
+          <div className="absolute z-50 left-0 right-0 mt-1 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden max-h-[350px] overflow-y-auto divide-y divide-slate-100 dark:divide-zinc-800/80 transition-all">
+            {searchResults.map((item, idx) => (
+              <div
+                key={idx}
+                onClick={() => handleSelectSuggestion(item)}
+                className="p-3 hover:bg-teal-50/20 dark:hover:bg-teal-950/15 cursor-pointer transition-all flex flex-col space-y-1.5"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="inline-block bg-teal-50 dark:bg-teal-950/60 text-teal-850 dark:text-teal-300 font-mono text-[10px] font-black px-2 py-0.5 rounded-lg mr-2 border border-teal-100 dark:border-teal-900/40">
+                      {item.code}
+                    </span>
+                    <span className="font-bold text-xs text-slate-800 dark:text-zinc-150">
+                      {item.title}
+                    </span>
+                  </div>
+                  <span className="text-[10px] bg-emerald-100/60 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                    {Math.round(item.confidence * 100)}% Match
+                  </span>
+                </div>
+
+                {/* STP Summary Preview */}
+                {item.protocolSummary && (
+                  <div className="pl-2.5 border-l-2 border-teal-500/40 text-[10px] text-slate-500 dark:text-zinc-400 space-y-1 bg-slate-50/40 dark:bg-zinc-950/10 p-2 rounded-lg">
+                    <div>
+                      <strong className="text-teal-700 dark:text-teal-400">🔬 STP Investigations:</strong>{" "}
+                      {item.protocolSummary.diagnosticTests?.length > 0
+                        ? item.protocolSummary.diagnosticTests.map(t => t.name).join(', ')
+                        : 'None'}
+                    </div>
+                    <div>
+                      <strong className="text-teal-700 dark:text-teal-400">💊 STP Drugs/Treatment:</strong>{" "}
+                      {item.protocolSummary.medications?.length > 0
+                        ? item.protocolSummary.medications.map(m => m.name).join(', ')
+                        : 'None'}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Selected Diagnoses displays */}
       <div className="space-y-2">
         <span className="text-xs font-bold text-slate-500 dark:text-zinc-400">Selected Conditions</span>
         {diagnoses.length === 0 ? (
           <p className="text-xs text-slate-400 italic bg-slate-50 dark:bg-zinc-950/20 p-3 rounded-xl border border-dashed border-slate-200 dark:border-zinc-800">
-            🔍 Please search and click a recommended ICD code on the left sidebar to add a diagnosis.
+            🔍 Please search a disease/condition above to begin building a claim.
           </p>
         ) : (
           <div className="flex flex-wrap gap-2">

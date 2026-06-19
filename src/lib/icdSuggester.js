@@ -10,6 +10,19 @@ const STOP_WORDS = new Set([
 ]);
 
 /**
+ * Resolves the primary dictionary key for a given diagnosis ICD-11 code using prefix/family matching.
+ */
+function resolveProtocolKey(diagCode, protocols) {
+  if (!diagCode) return null;
+  const normalizedCode = diagCode.toUpperCase().trim();
+  
+  return Object.keys(protocols).find(key => {
+    const prefixes = protocols[key].icd11Prefixes || [key];
+    return prefixes.some(prefix => normalizedCode.startsWith(prefix.toUpperCase().trim()));
+  });
+}
+
+/**
  * Suggests top matching ICD-11 codes from the indexed database based on a clinical note.
  * Uses a cumulative synonym and title matching score.
  * 
@@ -20,9 +33,31 @@ export function suggestIcdCodes(noteText) {
   const dbPath = path.resolve(process.cwd(), 'src/lib/icdDatabase.json');
   const icdData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
 
+  const dictionaryPath = path.resolve(process.cwd(), 'src/lib/clinicalDictionary.json');
+  let clinicalDict = {};
+  try {
+    clinicalDict = JSON.parse(fs.readFileSync(dictionaryPath, 'utf8'));
+  } catch (e) {
+    console.error("Failed to load clinicalDictionary.json", e);
+  }
+
   if (!noteText || noteText.trim() === '') {
     // Return default first few entries if query is empty
-    return icdData.slice(0, 3).map(item => ({ ...item, confidence: 1.0 }));
+    return icdData.slice(0, 3).map(item => {
+      const resolvedKey = resolveProtocolKey(item.code, clinicalDict);
+      const protocol = resolvedKey ? clinicalDict[resolvedKey] : null;
+      const protocolSummary = protocol ? {
+        name: protocol.name,
+        diagnosticTests: protocol.diagnosticTests?.map(t => ({ code: t.code, name: t.name, mandatory: t.mandatory || false })) || [],
+        medications: protocol.medications?.map(m => ({ code: m.code, name: m.name, firstLine: m.firstLine || false })) || []
+      } : null;
+
+      return {
+        ...item,
+        confidence: 1.0,
+        protocolSummary
+      };
+    });
   }
 
   // Normalize, lowercase and remove punctuation
@@ -66,9 +101,18 @@ export function suggestIcdCodes(noteText) {
       }
     }
 
+    const resolvedKey = resolveProtocolKey(condition.code, clinicalDict);
+    const protocol = resolvedKey ? clinicalDict[resolvedKey] : null;
+    const protocolSummary = protocol ? {
+      name: protocol.name,
+      diagnosticTests: protocol.diagnosticTests?.map(t => ({ code: t.code, name: t.name, mandatory: t.mandatory || false })) || [],
+      medications: protocol.medications?.map(m => ({ code: m.code, name: m.name, firstLine: m.firstLine || false })) || []
+    } : null;
+
     return {
       ...condition,
-      confidence: Math.round(score * 100) / 100
+      confidence: Math.round(score * 100) / 100,
+      protocolSummary
     };
   })
   .filter(item => item.confidence > 0)
@@ -76,3 +120,4 @@ export function suggestIcdCodes(noteText) {
 
   return results.slice(0, 3); // Return top 3 suggestions
 }
+
