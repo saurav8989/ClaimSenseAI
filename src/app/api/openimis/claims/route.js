@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getClaims, getClaimById, saveClaim, updateClaimStatus } from '@/lib/mockDb';
+import { getClaims, getClaimById, saveClaim, updateClaimStatus, clearClaims } from '@/lib/mockDb';
 
 // Attempt to dynamically load Developer 2's validation engines.
 let validateClinicalServices = null;
@@ -129,5 +129,15 @@ export async function POST(request) {
   } catch (error) {
     console.error("POST claims error:", error);
     return NextResponse.json({ error: "Invalid request body or server error" }, { status: 400 });
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    clearClaims();
+    return NextResponse.json({ success: true, message: "All claims successfully deleted." });
+  } catch (error) {
+    console.error("DELETE claims error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

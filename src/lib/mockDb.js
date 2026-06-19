@@ -62,3 +62,10 @@ export function updateClaimStatus(claimId, status, comments = "") {
   }
   return null;
 }
+
+export function clearClaims() {
+  initDb();
+  fs.writeFileSync(dbPath, JSON.stringify([], null, 2), 'utf8');
+  return [];
+}
+
