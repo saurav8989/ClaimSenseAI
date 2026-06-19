@@ -519,7 +519,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   };
 
   return (
-    <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200 dark:border-zinc-800 rounded-3xl p-6 shadow-xl space-y-6">
+    <div className="relative z-10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200 dark:border-zinc-800 rounded-3xl p-6 shadow-xl space-y-6">
       
       {/* Block Title */}
       <div className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800 pb-3">
