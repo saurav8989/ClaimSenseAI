@@ -24,6 +24,8 @@ In modern healthcare systems (like Nepal's Health Insurance Board), claims audit
 
 The application is built on a modern **Next.js & React** stack with a fast-performing, localized validation layer:
 
+![System Architecture Diagram](./public/screenshots/system_architecture.png)
+
 ```mermaid
 graph TD
     A[Doctor Portal / Claim Builder] -->|POST Native Claim JSON| B[Claims API Route /api/openimis/claims]
