@@ -99,6 +99,7 @@ export default function ReviewerDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans p-6">
+      <title>Claim Review</title>
       {/* Dashboard Header */}
       <header className="mb-6 flex justify-between items-center bg-white/60 backdrop-blur-md border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>

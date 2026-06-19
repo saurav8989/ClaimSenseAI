@@ -23,7 +23,7 @@ export default function DoctorPortal() {
         const res = await fetch('/api/openimis/claims');
         if (res.ok) {
           const data = await res.json();
-          // Filter for Dr. Sarah Jenkins (PROV-9082)
+          // Filter for Dr. Ram Prasad Yadav (PROV-9082)
           const filtered = data.filter(c => c.providerId === 'PROV-9082');
           // Sort by submittedAt descending (newest first)
           const sorted = filtered.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
@@ -105,6 +105,7 @@ export default function DoctorPortal() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black font-sans py-10 px-4 sm:px-8">
+      <title>Claim Build</title>
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header Dashboard Banner */}
@@ -118,7 +119,7 @@ export default function DoctorPortal() {
             </p>
           </div>
           <div className="text-right text-xs bg-teal-100 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-900 text-teal-800 dark:text-teal-200 px-3 py-1.5 rounded-xl font-bold">
-            👤 Dr. Sarah Jenkins (PROV-9082)
+            👤 Dr. Ram Prasad Yadav (PROV-9082)
           </div>
         </div>
 
