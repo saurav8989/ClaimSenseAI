@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import ClaimBuilder from '@/components/ClaimBuilder';
+import { searchsetToClaimsList, claimToFhirBundle, fhirBundleToClaim } from '@/lib/fhirConverter';
 
 export default function DoctorPortal() {
   const [noteText, setNoteText] = useState('');
@@ -23,8 +24,9 @@ export default function DoctorPortal() {
         const res = await fetch('/api/openimis/claims');
         if (res.ok) {
           const data = await res.json();
+          const claimsList = searchsetToClaimsList(data);
           // Filter for Dr. Ram Prasad Yadav (PROV-9082)
-          const filtered = data.filter(c => c.providerId === 'PROV-9082');
+          const filtered = claimsList.filter(c => c.providerId === 'PROV-9082');
           // Sort by submittedAt descending (newest first)
           const sorted = filtered.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
           setClaims(sorted);
@@ -76,17 +78,19 @@ export default function DoctorPortal() {
     setIsSubmitting(true);
     setAnalysisResult(null);
     try {
+      const fhirPayload = claimToFhirBundle(payload);
       const res = await fetch('/api/openimis/claims', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(fhirPayload)
       });
       
       if (res.ok) {
         const data = await res.json();
-        setAnalysisResult(data);
+        const claimObj = fhirBundleToClaim(data);
+        setAnalysisResult(claimObj);
         // Update local claims state history
-        setClaims(prev => [data, ...prev]);
+        setClaims(prev => [claimObj, ...prev]);
         // Clear fields on success
         setDiagnoses([]);
         setNoteText('');

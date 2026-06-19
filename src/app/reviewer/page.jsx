@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import ReviewerQueue from '@/components/ReviewerQueue';
 import ClaimDetailsPanel from '@/components/ClaimDetailsPanel';
 import DeviationTimeline from '@/components/DeviationTimeline';
+import { searchsetToClaimsList, fhirBundleToClaim } from '@/lib/fhirConverter';
 
 export default function ReviewerDashboard() {
   const [claims, setClaims] = useState([]);
@@ -16,15 +17,16 @@ export default function ReviewerDashboard() {
       try {
         const res = await fetch('/api/openimis/claims');
         const data = await res.json();
-        setClaims(data);
+        const claimsList = searchsetToClaimsList(data);
+        setClaims(claimsList);
         
         // Auto-select the highest risk pending claim by default
-        const pending = data.filter(c => c.status === 'PENDING_REVIEW' || !c.status);
+        const pending = claimsList.filter(c => c.status === 'PENDING_REVIEW' || !c.status);
         if (pending.length > 0) {
           const sorted = [...pending].sort((a, b) => b.riskScoring.overallRiskScore - a.riskScoring.overallRiskScore);
           setSelectedClaim(sorted[0]);
-        } else if (data.length > 0) {
-          setSelectedClaim(data[0]);
+        } else if (claimsList.length > 0) {
+          setSelectedClaim(claimsList[0]);
         }
       } catch (error) {
         console.error("Failed to fetch claims:", error);
@@ -68,7 +70,7 @@ export default function ReviewerDashboard() {
       
       if (res.ok) {
         const resData = await res.json();
-        const updatedClaim = resData.claim || {
+        const updatedClaim = resData.claim ? fhirBundleToClaim(resData.claim) : {
           claimId,
           status: action === 'Approve' ? 'APPROVED' : action === 'Reject' ? 'REJECTED' : 'MODIFIED',
           reviewerComments: comments,
