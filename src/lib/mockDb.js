@@ -24,9 +24,24 @@ export function getClaimById(claimId) {
 export function saveClaim(claim) {
   initDb();
   const claims = getClaims();
-  claims.push(claim);
+  
+  const cleanPatient = {
+    id: claim.patient?.id || "PAT-5542",
+    name: claim.patient?.name || "John Doe",
+    age: typeof claim.patient?.age === 'number' ? claim.patient.age : 45,
+    gender: claim.patient?.gender || "Male",
+    isPregnant: !!claim.patient?.isPregnant,
+    isLactating: !!claim.patient?.isLactating
+  };
+
+  const cleanClaim = {
+    ...claim,
+    patient: cleanPatient
+  };
+
+  claims.push(cleanClaim);
   fs.writeFileSync(dbPath, JSON.stringify(claims, null, 2), 'utf8');
-  return claim;
+  return cleanClaim;
 }
 
 export function updateClaimStatus(claimId, status, comments = "") {

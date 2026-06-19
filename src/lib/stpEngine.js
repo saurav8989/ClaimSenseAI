@@ -78,6 +78,13 @@ export function evaluateStpCompliance(claimPayload) {
   const deviations = [];
   const carePathway = claimPayload.carePathway || [];
   
+  // Extract patient details
+  const patient = claimPayload.patient || {};
+  const rawAge = patient.age;
+  const age = typeof rawAge === 'number' ? rawAge : (isNaN(parseFloat(rawAge)) ? 45 : parseFloat(rawAge));
+  const isPregnant = !!patient.isPregnant;
+  const isLactating = !!patient.isLactating;
+
   // Extract pathway elements by type/code
   const diagnostics = carePathway.filter(s => s.type === 'diagnostic_test').map(s => s.code?.toUpperCase().trim());
   const medications = carePathway.filter(s => s.type === 'medication').map(s => s.code?.toUpperCase().trim());
@@ -106,38 +113,101 @@ export function evaluateStpCompliance(claimPayload) {
       }
     }
 
-    // Rule 1.2: Therapy Alignment (Vivax vs. Falciparum/Mixed)
+    // Rule 1.2: Therapy Alignment (Vivax vs. Falciparum/Mixed) with Primaquine Contraindication overrides
     const upperCode = primaryDiagnosis.code.toUpperCase().trim();
+    const isPQContraindicated = isPregnant || isLactating || age < 0.5;
+
     if (upperCode.startsWith("1F42")) { // Vivax malaria
       const hasCQ = medications.includes("MED-CQ-150");
       const hasPQ = medications.includes("MED-PQ-7.5") || medications.includes("MED-PQ-2.5");
-      if (!hasCQ || !hasPQ) {
-        deviations.push({
-          type: "INCORRECT_THERAPY",
-          message: "Vivax malaria requires first-line Chloroquine (3 days) and Primaquine (14 days) combination therapy.",
-          penalty: 30
-        });
+      if (isPQContraindicated) {
+        if (!hasCQ) {
+          deviations.push({
+            type: "INCORRECT_THERAPY",
+            message: "Vivax malaria requires first-line Chloroquine (3 days) therapy.",
+            penalty: 30
+          });
+        }
+      } else {
+        if (!hasCQ || !hasPQ) {
+          deviations.push({
+            type: "INCORRECT_THERAPY",
+            message: "Vivax malaria requires first-line Chloroquine (3 days) and Primaquine (14 days) combination therapy.",
+            penalty: 30
+          });
+        }
       }
     } else if (upperCode.startsWith("1F40")) { // Falciparum malaria
       const hasAL = medications.includes("MED-AL-ACT");
       const hasPQ = medications.includes("MED-PQ-7.5") || medications.includes("MED-PQ-2.5");
-      if (!hasAL || !hasPQ) {
-        deviations.push({
-          type: "INCORRECT_THERAPY",
-          message: "Falciparum malaria requires Artemether-Lumefantrine (AL) and single-dose Primaquine on Day 1.",
-          penalty: 30
-        });
+      if (isPQContraindicated) {
+        if (!hasAL) {
+          deviations.push({
+            type: "INCORRECT_THERAPY",
+            message: "Falciparum malaria requires Artemether-Lumefantrine (AL) therapy.",
+            penalty: 30
+          });
+        }
+      } else {
+        if (!hasAL || !hasPQ) {
+          deviations.push({
+            type: "INCORRECT_THERAPY",
+            message: "Falciparum malaria requires Artemether-Lumefantrine (AL) and single-dose Primaquine on Day 1.",
+            penalty: 30
+          });
+        }
       }
     } else { // Generic Malaria
       const hasAL = medications.includes("MED-AL-ACT");
       const hasCQ = medications.includes("MED-CQ-150");
       const hasPQ = medications.includes("MED-PQ-7.5") || medications.includes("MED-PQ-2.5");
-      if ((!hasCQ && !hasAL) || !hasPQ) {
+      if (isPQContraindicated) {
+        if (!hasCQ && !hasAL) {
+          deviations.push({
+            type: "INCORRECT_THERAPY",
+            message: "Malaria treatment requires an approved first-line antimalarial (CQ or AL).",
+            penalty: 30
+          });
+        }
+      } else {
+        if ((!hasCQ && !hasAL) || !hasPQ) {
+          deviations.push({
+            type: "INCORRECT_THERAPY",
+            message: "Malaria treatment requires an approved antimalarial regimen (CQ + PQ or AL + PQ).",
+            penalty: 30
+          });
+        }
+      }
+    }
+
+    // Rule 1.2.5: Primaquine Contraindications and Age-based Dosing Checks
+    const hasPQInPathway = medications.includes("MED-PQ-7.5") || medications.includes("MED-PQ-2.5");
+    if (hasPQInPathway) {
+      if (isPQContraindicated) {
         deviations.push({
-          type: "INCORRECT_THERAPY",
-          message: "Malaria treatment requires an approved antimalarial regimen (CQ + PQ or AL + PQ).",
-          penalty: 30
+          type: "CONTRAINDICATION_CHECK",
+          message: "Primaquine is contraindicated during pregnancy, lactation (for infants < 6 months), or in infants under 6 months.",
+          penalty: 50
         });
+      } else {
+        // Age-based dosing checks (only run if not contraindicated)
+        if (age >= 0.5 && age < 1.0) {
+          if (medications.includes("MED-PQ-7.5")) {
+            deviations.push({
+              type: "INCORRECT_DOSING",
+              message: "Infants between 6 months and 1 year require low-dose Primaquine 2.5mg (MED-PQ-2.5) instead of 7.5mg.",
+              penalty: 30
+            });
+          }
+        } else if (age >= 1.0) {
+          if (medications.includes("MED-PQ-2.5")) {
+            deviations.push({
+              type: "INCORRECT_DOSING",
+              message: "Patients aged 1 year or older require standard-dose Primaquine 7.5mg (MED-PQ-7.5) instead of 2.5mg.",
+              penalty: 30
+            });
+          }
+        }
       }
     }
 
@@ -304,6 +374,17 @@ export function evaluateStpCompliance(claimPayload) {
         message: "Pneumonia cases presenting severe dyspnea, cyanosis, stridor, or treatment failure require immediate referral.",
         penalty: 30
       });
+    }
+
+    // Rule 5.3: Doxycycline Contraindication Check (RULE-PNE-2)
+    if (medications.includes("MED-DOXY-100")) {
+      if (age < 12 || isPregnant || isLactating) {
+        deviations.push({
+          type: "CONTRAINDICATION_CHECK",
+          message: "Doxycycline is strictly contraindicated in children under 12 years of age and in pregnant/lactating women.",
+          penalty: 45
+        });
+      }
     }
   }
 
