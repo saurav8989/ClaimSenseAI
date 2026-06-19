@@ -90,3 +90,32 @@ Streamlines the adjudication workflow for medical auditors:
   * Adherence Score: **30%** (reduced by `-50` for contraindicated NSAID prescription and `-20` for missing hospital referral).
   * Risk Category: **MEDIUM RISK (45/100)**.
 * **Result**: Dashboard highlights the bleeding hazard contraindication, prompting a fast-tracked rejection.
+
+---
+
+## 5. Visual Walkthrough & Interface Screenshots
+
+Here are the key interfaces of the ClaimSenseAI application showing the clinical auditing and validation features:
+
+### A. Doctor Portal & Claim Builder
+1. **Patient ID Autocomplete & Demographics Lock**:
+   Clinicians can type to search patient records. Selecting a suggestion auto-populates metadata and locks the gender field to prevent demographic mismatches.
+   ![Patient ID Autocomplete & Lock](./public/screenshots/doctor_portal_patient_autocomplete.png)
+
+2. **Claim Builder Form (Without Cost Fields)**:
+   The clean, clinical-focused form allows clinicians to review Standard Treatment Protocol (STP) guidelines and select protocol activities.
+   ![Claim Builder form](./public/screenshots/doctor_portal_claim_builder.png)
+
+3. **Submitted Claims Tracker**:
+   Shows real-time status of claims, risk categories, compliance levels, and reviewer feedback.
+   ![Submitted Claims Tracker](./public/screenshots/doctor_portal_tracker.png)
+
+### B. Medical Reviewer Dashboard
+1. **Queue & Adherence Scores**:
+   Reviewers can see the prioritized list of claims and instantly audit the STP compliance score.
+   ![Reviewer Dashboard](./public/screenshots/reviewer_portal_dashboard.png)
+
+2. **Timeline Auditing & Adjudication**:
+   Scroll-locked action buttons allow the reviewer to easily approve or reject claims while auditing the deviation timeline.
+   ![Reviewer Adjudication Details](./public/screenshots/reviewer_portal_details.png)
+
