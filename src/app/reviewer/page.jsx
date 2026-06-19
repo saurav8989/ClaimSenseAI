@@ -20,13 +20,13 @@ export default function ReviewerDashboard() {
         const claimsList = searchsetToClaimsList(data);
         setClaims(claimsList);
         
-        // Auto-select the highest risk pending claim by default
+        // Auto-select the oldest pending claim by default
         const pending = claimsList.filter(c => c.status === 'PENDING_REVIEW' || !c.status);
         if (pending.length > 0) {
-          const sorted = [...pending].sort((a, b) => b.riskScoring.overallRiskScore - a.riskScoring.overallRiskScore);
+          const sorted = [...pending].sort((a, b) => new Date(a.submittedAt || 0) - new Date(b.submittedAt || 0));
           setSelectedClaim(sorted[0]);
-        } else if (claimsList.length > 0) {
-          setSelectedClaim(claimsList[0]);
+        } else {
+          setSelectedClaim(null);
         }
       } catch (error) {
         console.error("Failed to fetch claims:", error);
@@ -80,19 +80,9 @@ export default function ReviewerDashboard() {
         // Update the claim in state rather than filtering it out
         const updatedClaims = claims.map(c => c.claimId === claimId ? { ...c, ...updatedClaim } : c);
         setClaims(updatedClaims);
-        
-        // Auto-select the next highest risk pending claim
-        const pendingClaims = updatedClaims.filter(c => c.status === 'PENDING_REVIEW' || !c.status);
-        if (pendingClaims.length > 0) {
-           const sorted = [...pendingClaims].sort((a, b) => b.riskScoring.overallRiskScore - a.riskScoring.overallRiskScore);
-           setSelectedClaim(sorted[0]);
-        } else {
-           const latestClaim = updatedClaims.find(c => c.claimId === claimId);
-           setSelectedClaim(latestClaim || null);
-        }
-        
-        // Show a success alert to the user
-        alert(`Successfully ${action.toLowerCase()}ed claim ${claimId}`);
+        // Keep the currently reviewed claim selected in the dashboard
+        const latestClaim = updatedClaims.find(c => c.claimId === claimId);
+        setSelectedClaim(latestClaim || null);
       }
     } catch (error) {
       console.error("Action failed:", error);

@@ -3,7 +3,15 @@
 import React from 'react';
 
 export default function DeviationTimeline({ claim }) {
-  if (!claim || !claim.carePathway || claim.carePathway.length === 0) {
+  if (!claim) {
+    return (
+      <div className="h-full flex flex-col bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200 items-center justify-center text-slate-400 p-6 text-center shadow-sm">
+        <p className="text-lg font-medium">Select a claim from the queue to view its care pathway.</p>
+      </div>
+    );
+  }
+
+  if (!claim.carePathway || claim.carePathway.length === 0) {
     return (
       <div className="h-full flex flex-col bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200 items-center justify-center text-slate-400 p-6 text-center shadow-sm">
         <p className="text-lg font-medium">No care pathway data available for this claim.</p>
