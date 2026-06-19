@@ -1,0 +1,92 @@
+[
+  {
+    "id": "PAT-0001",
+    "name": "Patient Alpha",
+    "age": 45.0,
+    "gender": "Male",
+    "isPregnant": false,
+    "isLactating": false,
+    "notes": "Standard adult male. Suitable for low-risk baseline testing."
+  },
+  {
+    "id": "PAT-0002",
+    "name": "Patient Beta",
+    "age": 0.3,
+    "gender": "Female",
+    "isPregnant": false,
+    "isLactating": false,
+    "notes": "Infant aged 4 months. Used to test Malaria Primaquine/AL contraindications."
+  },
+  {
+    "id": "PAT-0003",
+    "name": "Patient Gamma",
+    "age": 0.8,
+    "gender": "Male",
+    "isPregnant": false,
+    "isLactating": false,
+    "notes": "Infant aged 10 months. Used to test Malaria low-dose Primaquine 2.5mg dosing rule."
+  },
+  {
+    "id": "PAT-0004",
+    "name": "Patient Delta",
+    "age": 8.0,
+    "gender": "Female",
+    "isPregnant": false,
+    "isLactating": false,
+    "notes": "Child aged 8 years. Used to test Pneumonia Doxycycline contraindication check."
+  },
+  {
+    "id": "PAT-0005",
+    "name": "Patient Epsilon",
+    "age": 28.0,
+    "gender": "Female",
+    "isPregnant": true,
+    "isLactating": false,
+    "notes": "Pregnant adult female. Used to test Malaria Primaquine & Pneumonia Doxycycline contraindications."
+  },
+  {
+    "id": "PAT-0006",
+    "name": "Patient Zeta",
+    "age": 30.0,
+    "gender": "Female",
+    "isPregnant": false,
+    "isLactating": true,
+    "notes": "Lactating adult female. Used to test Malaria Primaquine contraindication check."
+  },
+  {
+    "id": "PAT-0007",
+    "name": "Patient Eta",
+    "age": 15.0,
+    "gender": "Male",
+    "isPregnant": false,
+    "isLactating": false,
+    "notes": "Teenager aged 15. Safe for standard antibiotic and antimalarial treatments."
+  },
+  {
+    "id": "PAT-0008",
+    "name": "Patient Theta",
+    "age": 65.0,
+    "gender": "Female",
+    "isPregnant": false,
+    "isLactating": false,
+    "notes": "Elderly female."
+  },
+  {
+    "id": "PAT-0009",
+    "name": "Patient Iota",
+    "age": 2.0,
+    "gender": "Male",
+    "isPregnant": false,
+    "isLactating": false,
+    "notes": "Toddler aged 2 years. Used to test Pneumonia Doxycycline contraindication & Malaria 7.5mg dosage checks."
+  },
+  {
+    "id": "PAT-0010",
+    "name": "Patient Kappa",
+    "age": 34.0,
+    "gender": "Female",
+    "isPregnant": false,
+    "isLactating": false,
+    "notes": "Standard adult female. No active contraindications."
+  }
+]
