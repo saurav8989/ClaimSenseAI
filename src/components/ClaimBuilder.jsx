@@ -465,7 +465,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
     // 2. Compile claim payload with patient details
     const claimPayload = {
       providerId: "PROV-9082",
-      providerName: "Dr. Sarah Jenkins",
+      providerName: "Dr. Ram Prasad Yadav",
       patient: {
         id: patientId.trim(),
         name: patientName || `Patient ${patientId.trim()}`,
