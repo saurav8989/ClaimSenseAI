@@ -84,6 +84,18 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
             <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Protocol Standard</div>
             <div className="text-sm font-semibold text-slate-800">{claim.stpCompliance?.protocolName || 'Unknown'}</div>
           </div>
+          <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm col-span-2 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">STP Adherence Score</span>
+              <span className="text-sm font-black text-teal-600">{claim.stpCompliance?.complianceScore !== undefined ? `${claim.stpCompliance.complianceScore}%` : 'N/A'}</span>
+            </div>
+            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 transition-all duration-500"
+                style={{ width: `${claim.stpCompliance?.complianceScore || 0}%` }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

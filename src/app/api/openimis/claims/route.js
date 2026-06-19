@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getClaims, getClaimById, saveClaim, updateClaimStatus, clearClaims } from '@/lib/mockDb';
-import { claimToFhirBundle, claimsListToSearchset, fhirBundleToClaim } from '@/lib/fhirConverter';
 
 // Attempt to dynamically load Developer 2's validation engines.
 let validateClinicalServices = null;
@@ -32,12 +31,10 @@ export async function GET(request) {
       if (!claim) {
         return NextResponse.json({ error: "Claim not found" }, { status: 404 });
       }
-      return NextResponse.json(claimToFhirBundle(claim));
+      return NextResponse.json(claim);
     }
 
-    const claims = getClaims();
-    const searchset = claimsListToSearchset(claims);
-    return NextResponse.json(searchset);
+    return NextResponse.json(getClaims());
   } catch (error) {
     console.error("GET claims error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -47,10 +44,10 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
+    const { claimId, action, comments } = body;
 
     // A. Adjudication Flow (Invoked by Reviewer Dashboard)
-    if (body.claimId && body.action) {
-      const { claimId, action, comments } = body;
+    if (claimId && action) {
       const updated = updateClaimStatus(claimId, action, comments);
       if (!updated) {
         return NextResponse.json({ error: `Claim ${claimId} not found` }, { status: 404 });
@@ -61,30 +58,22 @@ export async function POST(request) {
         message: `Claim ${claimId} successfully ${action.toLowerCase()}ed.`,
         claimId,
         action,
-        claim: claimToFhirBundle(updated)
+        claim: updated
       });
     }
 
     // B. Claim Submission Flow (Invoked by Doctor Portal)
-    let claimObj = null;
-    if (body.resourceType === "Bundle") {
-      claimObj = fhirBundleToClaim(body);
-    } else {
-      // Fallback for non-FHIR JSON
-      claimObj = body;
-    }
-
-    const generatedId = claimObj.claimId || `CLM-${Math.floor(10000 + Math.random() * 90000)}`;
-    const submittedAt = claimObj.submittedAt || new Date().toISOString();
+    const generatedId = `CLM-${Math.floor(10000 + Math.random() * 90000)}`;
+    const submittedAt = new Date().toISOString();
 
     const newClaim = {
-      ...claimObj,
+      ...body,
       claimId: generatedId,
       submittedAt,
       status: "PENDING_REVIEW"
     };
 
-    // 1. Run Clinical & STP Validation
+    // 1. Run Clinical & STP Validation (or use mock stubs if Dev 2's code isn't ready)
     let clinicalValidation = { isValid: true, issues: [] };
     let stpCompliance = { isCompliant: true, complianceScore: 100, protocolName: "General Consultation Protocol", deviations: [] };
     let riskScoring = { overallRiskScore: 0, riskCategory: "LOW", reviewerPriority: 5 };
@@ -98,6 +87,7 @@ export async function POST(request) {
       const primaryDiag = newClaim.diagnoses?.find(d => d.isPrimary) || newClaim.diagnoses?.[0];
       const code = primaryDiag?.code || "UNKNOWN";
 
+      // If Malaria code (starts with 1F4) and no Rapid Test or microscopy is present, trigger a penalty
       if (code.startsWith("1F4")) {
         const hasTest = newClaim.carePathway?.some(step => step.code === "TEST-MAL-RDT" || step.code === "TEST-MAL-MIC");
         if (!hasTest) {
@@ -111,6 +101,7 @@ export async function POST(request) {
         }
       }
       
+      // If Diabetes (starts with 5A11) and medication Metformin is added without test
       if (code.startsWith("5A11")) {
         const hasTest = newClaim.carePathway?.some(step => step.type === 'diagnostic_test');
         if (!hasTest) {
@@ -128,12 +119,13 @@ export async function POST(request) {
     newClaim.clinicalValidation = clinicalValidation;
     newClaim.stpCompliance = stpCompliance;
     newClaim.riskScoring = riskScoring;
+
+    // All claims start in PENDING_REVIEW status for adjudication review
     newClaim.status = "PENDING_REVIEW";
 
-    const savedClaim = saveClaim(newClaim);
-    const fhirBundleResponse = claimToFhirBundle(savedClaim);
+    saveClaim(newClaim);
 
-    return NextResponse.json(fhirBundleResponse);
+    return NextResponse.json(newClaim);
   } catch (error) {
     console.error("POST claims error:", error);
     return NextResponse.json({ error: "Invalid request body or server error" }, { status: 400 });
@@ -143,23 +135,9 @@ export async function POST(request) {
 export async function DELETE(request) {
   try {
     clearClaims();
-    return NextResponse.json({
-      resourceType: "OperationOutcome",
-      issue: [{
-        severity: "information",
-        code: "informational",
-        details: { text: "All claims successfully deleted." }
-      }]
-    });
+    return NextResponse.json({ success: true, message: "All claims successfully deleted." });
   } catch (error) {
     console.error("DELETE claims error:", error);
-    return NextResponse.json({
-      resourceType: "OperationOutcome",
-      issue: [{
-        severity: "error",
-        code: "exception",
-        details: { text: "Internal Server Error" }
-      }]
-    }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

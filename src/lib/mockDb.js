@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { claimToFhirBundle } from './fhirConverter';
 
 const dbPath = path.resolve(process.cwd(), 'claims_db.json');
 
@@ -14,21 +13,7 @@ function initDb() {
 export function getClaims() {
   initDb();
   const data = fs.readFileSync(dbPath, 'utf8');
-  const claims = JSON.parse(data);
-  
-  let modified = false;
-  claims.forEach(c => {
-    if (!c.fhirBundle) {
-      c.fhirBundle = claimToFhirBundle(c);
-      modified = true;
-    }
-  });
-
-  if (modified) {
-    fs.writeFileSync(dbPath, JSON.stringify(claims, null, 2), 'utf8');
-  }
-
-  return claims;
+  return JSON.parse(data);
 }
 
 export function getClaimById(claimId) {
@@ -54,8 +39,6 @@ export function saveClaim(claim) {
     patient: cleanPatient
   };
 
-  cleanClaim.fhirBundle = claimToFhirBundle(cleanClaim);
-
   claims.push(cleanClaim);
   fs.writeFileSync(dbPath, JSON.stringify(claims, null, 2), 'utf8');
   return cleanClaim;
@@ -74,10 +57,6 @@ export function updateClaimStatus(claimId, status, comments = "") {
     claims[idx].status = resolvedStatus;
     claims[idx].reviewerComments = comments || `Claim ${status.toLowerCase()}ed`;
     claims[idx].reviewedAt = new Date().toISOString();
-    
-    // Regenerate and attach the updated fhirBundle property
-    claims[idx].fhirBundle = claimToFhirBundle(claims[idx]);
-
     fs.writeFileSync(dbPath, JSON.stringify(claims, null, 2), 'utf8');
     return claims[idx];
   }

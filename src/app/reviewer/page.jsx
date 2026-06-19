@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import ReviewerQueue from '@/components/ReviewerQueue';
 import ClaimDetailsPanel from '@/components/ClaimDetailsPanel';
 import DeviationTimeline from '@/components/DeviationTimeline';
-import { searchsetToClaimsList, fhirBundleToClaim } from '@/lib/fhirConverter';
 
 export default function ReviewerDashboard() {
   const [claims, setClaims] = useState([]);
@@ -17,11 +16,10 @@ export default function ReviewerDashboard() {
       try {
         const res = await fetch('/api/openimis/claims');
         const data = await res.json();
-        const claimsList = searchsetToClaimsList(data);
-        setClaims(claimsList);
+        setClaims(data);
         
         // Auto-select the oldest pending claim by default
-        const pending = claimsList.filter(c => c.status === 'PENDING_REVIEW' || !c.status);
+        const pending = data.filter(c => c.status === 'PENDING_REVIEW' || !c.status);
         if (pending.length > 0) {
           const sorted = [...pending].sort((a, b) => new Date(a.submittedAt || 0) - new Date(b.submittedAt || 0));
           setSelectedClaim(sorted[0]);
@@ -70,7 +68,7 @@ export default function ReviewerDashboard() {
       
       if (res.ok) {
         const resData = await res.json();
-        const updatedClaim = resData.claim ? fhirBundleToClaim(resData.claim) : {
+        const updatedClaim = resData.claim || {
           claimId,
           status: action === 'Approve' ? 'APPROVED' : action === 'Reject' ? 'REJECTED' : 'MODIFIED',
           reviewerComments: comments,
