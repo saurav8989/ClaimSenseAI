@@ -5,8 +5,8 @@ import React from 'react';
 export default function ClaimDetailsPanel({ claim, onAction }) {
   // If no claim is selected (which shouldn't happen because we auto-select the highest risk, but just in case)
   if (!claim) return (
-    <div className="h-full flex flex-col bg-[#1e2330]/50 backdrop-blur-md rounded-xl border border-gray-700/50 items-center justify-center text-gray-500 p-6 text-center">
-      <p className="text-lg">Select a claim from the queue to view full details.</p>
+    <div className="h-full flex flex-col bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200 items-center justify-center text-slate-400 p-6 text-center shadow-sm">
+      <p className="text-lg font-medium">Select a claim from the queue to view full details.</p>
     </div>
   );
 
