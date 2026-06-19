@@ -60,16 +60,24 @@ export function suggestIcdCodes(noteText) {
     });
   }
 
-  // Normalize, lowercase and remove punctuation
+  // Normalize, lowercase and remove punctuation for text matching
+  const cleanCodeQuery = noteText.toLowerCase().trim();
   const cleanNote = noteText.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ').replace(/\s+/g, ' ').trim();
   const noteWords = cleanNote.split(/\s+/).filter(word => !STOP_WORDS.has(word));
 
   const results = icdData.map(condition => {
     const title = condition.title.toLowerCase();
+    const codeStr = condition.code.toLowerCase();
     let score = 0;
 
-    // 1. Direct or Partial Title Match
-    if (title === cleanNote) {
+    // 1. Exact or Partial Code Match
+    if (codeStr === cleanCodeQuery) {
+      score = 1.0;
+    } else if (codeStr.startsWith(cleanCodeQuery) || codeStr.includes(cleanCodeQuery)) {
+      score = 0.95;
+    }
+    // 2. Direct or Partial Title Match
+    else if (title === cleanNote) {
       score = 1.0;
     } else if (cleanNote.includes(title) || title.includes(cleanNote)) {
       score = 0.9;

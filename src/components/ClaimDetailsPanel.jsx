@@ -75,6 +75,22 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
             <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Protocol Standard</div>
             <div className="text-sm text-gray-200">{claim.stpCompliance?.protocolName || 'Unknown'}</div>
           </div>
+          <div className="bg-gray-800/40 p-3 rounded-md border border-gray-700/30">
+            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Patient</div>
+            <div className="text-sm text-gray-200 flex flex-col gap-1.5">
+              <span>{claim.patient?.name ? claim.patient.name + " • " : ""}{claim.patient?.gender || 'Unknown'}, {claim.patient?.age || '?'} y/o</span>
+              {(claim.patient?.isPregnant || claim.patient?.isLactating) && (
+                <div className="flex gap-2 mt-1">
+                  {claim.patient?.isPregnant && (
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 rounded">⚠️ Pregnant</span>
+                  )}
+                  {claim.patient?.isLactating && (
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 rounded">🍼 Lactating</span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -105,10 +121,28 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
               </li>
             ))}
             {/* Warn if there are STP deviations */}
-            {claim.stpCompliance?.isCompliant === false && (
-              <li className="flex items-start gap-2 text-sm text-yellow-400 bg-yellow-500/10 p-3 rounded border border-yellow-500/20">
-                <span>STP Deviations Found (Score: {claim.stpCompliance.complianceScore}/100)</span>
-              </li>
+            {claim.stpCompliance?.deviations?.length > 0 ? (
+               claim.stpCompliance.deviations.map((dev, idx) => {
+                 let colorClasses = "text-yellow-400 bg-yellow-500/10 border-yellow-500/20"; // default
+                 if (dev.type === 'CONTRAINDICATION_CHECK') {
+                   colorClasses = "text-red-400 bg-red-500/10 border-red-500/30";
+                 } else if (dev.type === 'INCORRECT_DOSING') {
+                   colorClasses = "text-orange-400 bg-orange-500/10 border-orange-500/30";
+                 }
+                 
+                 return (
+                   <li key={`dev-${idx}`} className={`flex flex-col items-start gap-1 text-sm p-3 rounded border ${colorClasses}`}>
+                     <span className="font-bold text-[10px] uppercase opacity-90">{dev.type.replace(/_/g, ' ')}</span>
+                     <span>{dev.message}</span>
+                   </li>
+                 );
+               })
+            ) : (
+              claim.stpCompliance?.isCompliant === false && (
+                <li className="flex items-start gap-2 text-sm text-yellow-400 bg-yellow-500/10 p-3 rounded border border-yellow-500/20">
+                  <span>STP Deviations Found (Score: {claim.stpCompliance.complianceScore}/100)</span>
+                </li>
+              )
             )}
             {/* Show success if everything is clean */}
             {claim.clinicalValidation?.isValid && claim.stpCompliance?.isCompliant && (
@@ -133,12 +167,6 @@ export default function ClaimDetailsPanel({ claim, onAction }) {
               className="flex-1 bg-green-600 hover:bg-green-500 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer shadow-[0_0_15px_rgba(22,163,74,0.3)]"
             >
               Approve
-            </button>
-            <button 
-              onClick={() => onAction(claim.claimId, 'Modify')}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)]"
-            >
-              Modify
             </button>
             <button 
               onClick={() => onAction(claim.claimId, 'Reject')}

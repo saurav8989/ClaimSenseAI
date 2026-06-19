@@ -38,11 +38,32 @@ export default function ReviewerDashboard() {
   // 2. Handle Adjudication Actions (Approve, Reject, Modify)
   const handleAction = async (claimId, action) => {
     try {
+      const claimToUpdate = claims.find(c => c.claimId === claimId);
+      let comments = `Claim ${action.toLowerCase()}ed`;
+      
+      if (action === 'Reject' && claimToUpdate) {
+        const issues = [];
+        if (claimToUpdate.clinicalValidation?.isValid === false && claimToUpdate.clinicalValidation.issues) {
+           const messages = claimToUpdate.clinicalValidation.issues.map(i => i.message).join(', ');
+           issues.push(`Clinical Issues: ${messages}`);
+        }
+        if (claimToUpdate.stpCompliance?.isCompliant === false) {
+           issues.push(`STP Deviation Score: ${claimToUpdate.stpCompliance.complianceScore}/100`);
+        }
+        if (issues.length > 0) {
+           comments = issues.join('. ');
+        } else {
+           comments = "Rejected by Reviewer";
+        }
+      } else if (action === 'Approve') {
+        comments = "Approved by Reviewer";
+      }
+
       // Send the decision to our Mock POST API
       const res = await fetch('/api/openimis/claims', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claimId, action })
+        body: JSON.stringify({ claimId, action, comments })
       });
       
       if (res.ok) {
@@ -50,7 +71,7 @@ export default function ReviewerDashboard() {
         const updatedClaim = resData.claim || {
           claimId,
           status: action === 'Approve' ? 'APPROVED' : action === 'Reject' ? 'REJECTED' : 'MODIFIED',
-          reviewerComments: `Claim ${action.toLowerCase()}ed`,
+          reviewerComments: comments,
           reviewedAt: new Date().toISOString()
         };
 
