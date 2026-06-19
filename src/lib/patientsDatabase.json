@@ -2,7 +2,7 @@
   {
     "id": "PAT-0001",
     "name": "Patient Alpha",
-    "age": 45.0,
+    "age": 45,
     "gender": "Male",
     "isPregnant": false,
     "isLactating": false,
@@ -11,7 +11,7 @@
   {
     "id": "PAT-0002",
     "name": "Patient Beta",
-    "age": 0.3,
+    "age": 0.35,
     "gender": "Female",
     "isPregnant": false,
     "isLactating": false,
@@ -29,7 +29,7 @@
   {
     "id": "PAT-0004",
     "name": "Patient Delta",
-    "age": 8.0,
+    "age": 8,
     "gender": "Female",
     "isPregnant": false,
     "isLactating": false,
@@ -38,7 +38,7 @@
   {
     "id": "PAT-0005",
     "name": "Patient Epsilon",
-    "age": 28.0,
+    "age": 28,
     "gender": "Female",
     "isPregnant": true,
     "isLactating": false,
@@ -47,7 +47,7 @@
   {
     "id": "PAT-0006",
     "name": "Patient Zeta",
-    "age": 30.0,
+    "age": 30,
     "gender": "Female",
     "isPregnant": false,
     "isLactating": true,
@@ -56,7 +56,7 @@
   {
     "id": "PAT-0007",
     "name": "Patient Eta",
-    "age": 15.0,
+    "age": 15,
     "gender": "Male",
     "isPregnant": false,
     "isLactating": false,
@@ -65,7 +65,7 @@
   {
     "id": "PAT-0008",
     "name": "Patient Theta",
-    "age": 65.0,
+    "age": 65,
     "gender": "Female",
     "isPregnant": false,
     "isLactating": false,
@@ -74,7 +74,7 @@
   {
     "id": "PAT-0009",
     "name": "Patient Iota",
-    "age": 2.0,
+    "age": 2,
     "gender": "Male",
     "isPregnant": false,
     "isLactating": false,
@@ -83,7 +83,7 @@
   {
     "id": "PAT-0010",
     "name": "Patient Kappa",
-    "age": 34.0,
+    "age": 34,
     "gender": "Female",
     "isPregnant": false,
     "isLactating": false,

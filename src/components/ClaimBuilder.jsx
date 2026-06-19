@@ -28,6 +28,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
 
   // Loaded test patients list
   const [patientsList, setPatientsList] = useState([]);
+  const [showPatientSuggestions, setShowPatientSuggestions] = useState(false);
 
   // Load patient database on mount
   useEffect(() => {
@@ -56,6 +57,31 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
       setIsLactating(!!matched.isLactating);
     }
   }, [patientId, patientsList]);
+
+  // Persist updated age to the backend patientsDatabase.json on blur
+  const handleAgeBlur = async () => {
+    const matched = patientsList.find(p => p.id.toUpperCase().trim() === patientId.toUpperCase().trim());
+    if (matched) {
+      const parsedAge = parseFloat(patientAge);
+      if (!isNaN(parsedAge) && parsedAge !== matched.age) {
+        try {
+          const res = await fetch('/api/patients', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: matched.id, age: parsedAge })
+          });
+          if (res.ok) {
+            // Update local patientsList state
+            setPatientsList(prev => prev.map(p => p.id.toUpperCase().trim() === matched.id.toUpperCase().trim() ? { ...p, age: parsedAge } : p));
+          } else {
+            console.error("Failed to persist updated age to server");
+          }
+        } catch (err) {
+          console.error("Failed to persist updated age:", err);
+        }
+      }
+    }
+  };
 
   // Reset pregnancy and lactation checks when gender changes away from Female
   useEffect(() => {
@@ -508,31 +534,43 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
         </h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div>
-            <label className="text-[10px] font-bold text-slate-400 uppercase">Quick Select Patient</label>
-            <select 
-              value={patientId} 
-              onChange={e => setPatientId(e.target.value)}
-              className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100 font-sans cursor-pointer"
-            >
-              <option value="">-- Select Patient --</option>
-              {patientsList.map(p => (
-                <option key={p.id} value={p.id}>
-                  {p.id} - {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
+          <div className="sm:col-span-2 relative">
             <label className="text-[10px] font-bold text-slate-400 uppercase">Patient ID</label>
             <input 
               type="text" 
               placeholder="e.g. PAT-0001" 
               value={patientId} 
               onChange={e => setPatientId(e.target.value)}
+              onFocus={() => setShowPatientSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowPatientSuggestions(false), 200)}
               className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100"
             />
+            {showPatientSuggestions && patientId && !patientsList.some(p => p.id.toUpperCase().trim() === patientId.toUpperCase().trim()) && (
+              <div className="absolute z-[100] left-0 right-0 mt-1 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg max-h-48 overflow-y-auto divide-y divide-slate-100 dark:divide-zinc-800">
+                {patientsList
+                  .filter(p => 
+                    p.id.toLowerCase().includes(patientId.toLowerCase()) || 
+                    p.name.toLowerCase().includes(patientId.toLowerCase())
+                  )
+                  .map(p => (
+                    <div 
+                      key={p.id}
+                      onClick={() => {
+                        setPatientId(p.id);
+                        setShowPatientSuggestions(false);
+                      }}
+                      className="p-2.5 hover:bg-teal-50/30 dark:hover:bg-teal-950/20 cursor-pointer text-xs flex justify-between items-center"
+                    >
+                      <div>
+                        <span className="font-mono font-bold text-teal-600 dark:text-teal-400 mr-2">{p.id}</span>
+                        <span className="text-slate-700 dark:text-zinc-300 font-semibold">{p.name}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-medium">{p.age} y/o • {p.gender}</span>
+                    </div>
+                  ))
+                }
+              </div>
+            )}
           </div>
 
           <div>
@@ -543,6 +581,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
               placeholder="45" 
               value={patientAge} 
               onChange={e => setPatientAge(e.target.value)}
+              onBlur={handleAgeBlur}
               className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100"
             />
           </div>
@@ -550,9 +589,10 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
           <div>
             <label className="text-[10px] font-bold text-slate-405 uppercase">Gender</label>
             <select 
+              disabled
               value={patientGender} 
               onChange={e => setPatientGender(e.target.value)}
-              className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100 font-sans cursor-pointer"
+              className="w-full mt-1 px-3 py-2 border rounded-xl bg-slate-100 dark:bg-zinc-800/50 dark:border-zinc-700 text-xs focus:outline-none font-medium text-slate-500 dark:text-zinc-400 font-sans cursor-not-allowed"
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
