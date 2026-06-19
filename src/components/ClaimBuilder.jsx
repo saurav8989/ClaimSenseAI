@@ -296,29 +296,33 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
       const defaultMeds = [];
 
       suggestion.protocolSummary.diagnosticTests?.forEach(test => {
-        const cost = priceCatalog[test.code] || 15.00;
-        defaultServices.push({
-          code: test.code,
-          name: test.name,
-          type: 'diagnostic_test',
-          cost: cost
-        });
+        if (test.mandatory) {
+          const cost = priceCatalog[test.code] || 15.00;
+          defaultServices.push({
+            code: test.code,
+            name: test.name,
+            type: 'diagnostic_test',
+            cost: cost
+          });
+        }
       });
 
       suggestion.protocolSummary.medications?.forEach(med => {
-        const unitPrice = priceCatalog[med.code] || 0.0;
-        const defaults = getMedDefaults(med.code);
-        const totalCost = unitPrice * defaults.frequency * defaults.duration;
+        if (med.firstLine) {
+          const unitPrice = priceCatalog[med.code] || 0.0;
+          const defaults = getMedDefaults(med.code);
+          const totalCost = unitPrice * defaults.frequency * defaults.duration;
 
-        defaultMeds.push({
-          code: med.code,
-          name: med.name,
-          type: 'medication',
-          unitPrice: unitPrice,
-          frequency: defaults.frequency,
-          duration: defaults.duration,
-          cost: totalCost
-        });
+          defaultMeds.push({
+            code: med.code,
+            name: med.name,
+            type: 'medication',
+            unitPrice: unitPrice,
+            frequency: defaults.frequency,
+            duration: defaults.duration,
+            cost: totalCost
+          });
+        }
       });
 
       // Merge with already selected items if any
