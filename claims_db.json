@@ -23,7 +23,6 @@
         "type": "diagnostic_test",
         "code": "TEST-MAL-RDT",
         "name": "Malaria Rapid Diagnostic Test (RDT)",
-        "cost": 15,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T03:54:23.605Z"
       },
@@ -32,7 +31,6 @@
         "type": "diagnostic_test",
         "code": "TEST-MAL-MIC",
         "name": "Malaria Blood Smear / Microscopy",
-        "cost": 15,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T03:54:23.605Z"
       },
@@ -41,7 +39,6 @@
         "type": "medication",
         "code": "MED-CQ-150",
         "name": "Chloroquine 150mg",
-        "cost": 0,
         "details": "Prescribed 4 tabs daily for 3 days (Total: 12 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T03:54:23.605Z"
       },
@@ -50,7 +47,6 @@
         "type": "medication",
         "code": "MED-PQ-7.5",
         "name": "Primaquine 7.5mg",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T03:54:23.605Z"
       },
@@ -59,7 +55,6 @@
         "type": "medication",
         "code": "MED-PQ-2.5",
         "name": "Primaquine 2.5mg",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T03:54:23.605Z"
       },
@@ -68,7 +63,6 @@
         "type": "medication",
         "code": "MED-AL-ACT",
         "name": "Artemether-Lumefantrine (ACT)",
-        "cost": 0,
         "details": "Prescribed 4 tabs daily for 3 days (Total: 12 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T03:54:23.605Z"
       },
@@ -77,7 +71,6 @@
         "type": "medication",
         "code": "MED-DHAP",
         "name": "Dihydroartemisinin-Piperaquine (DHAP)",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 30 days (Total: 30 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T03:54:23.605Z"
       },
@@ -86,14 +79,10 @@
         "type": "medication",
         "code": "MED-ART-INJ",
         "name": "Inj Artesunate (IV/IM)",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 30 days (Total: 30 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T03:54:23.605Z"
       }
     ],
-    "billing": {
-      "totalClaimedAmount": 30
-    },
     "claimId": "CLM-40875",
     "submittedAt": "2026-06-19T03:54:23.617Z",
     "status": "APPROVED",
@@ -154,7 +143,6 @@
         "type": "diagnostic_test",
         "code": "TEST-DEN-RDT",
         "name": "Dengue Rapid Diagnostic Test (RDT)",
-        "cost": 120,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T05:03:34.411Z"
       },
@@ -163,7 +151,6 @@
         "type": "diagnostic_test",
         "code": "TEST-CBC",
         "name": "Complete Blood Count",
-        "cost": 125,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T05:03:34.411Z"
       },
@@ -172,7 +159,6 @@
         "type": "medication",
         "code": "MED-PAR-500",
         "name": "Paracetamol 500mg",
-        "cost": 12.3,
         "details": "Prescribed 3 tabs daily for 5 days (Total: 15 tabs, HIB cap: 20)",
         "timestamp": "2026-06-19T05:03:34.412Z"
       },
@@ -181,7 +167,6 @@
         "type": "medication",
         "code": "MED-ORS",
         "name": "Oral Rehydration Salts (ORS)",
-        "cost": 39.64,
         "details": "Prescribed 1 tabs daily for 4 days (Total: 4 tabs, HIB cap: 10)",
         "timestamp": "2026-06-19T05:03:34.412Z"
       },
@@ -190,14 +175,10 @@
         "type": "medication",
         "code": "MED-IBU-400",
         "name": "Ibuprofen 400mg",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 30 days (Total: 30 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T05:03:34.412Z"
       }
     ],
-    "billing": {
-      "totalClaimedAmount": 296.94
-    },
     "claimId": "CLM-98289",
     "submittedAt": "2026-06-19T05:03:34.556Z",
     "status": "REJECTED",
@@ -258,7 +239,6 @@
         "type": "diagnostic_test",
         "code": "TEST-MAL-RDT",
         "name": "Malaria Rapid Diagnostic Test (RDT)",
-        "cost": 15,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T06:13:23.059Z"
       },
@@ -267,7 +247,6 @@
         "type": "diagnostic_test",
         "code": "TEST-MAL-MIC",
         "name": "Malaria Blood Smear / Microscopy",
-        "cost": 15,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T06:13:23.059Z"
       },
@@ -276,7 +255,6 @@
         "type": "medication",
         "code": "MED-CQ-150",
         "name": "Chloroquine 150mg",
-        "cost": 0,
         "details": "Prescribed 4 tabs daily for 3 days (Total: 12 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:13:23.059Z"
       },
@@ -285,7 +263,6 @@
         "type": "medication",
         "code": "MED-PQ-2.5",
         "name": "Primaquine 2.5mg",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:13:23.059Z"
       },
@@ -294,14 +271,10 @@
         "type": "medication",
         "code": "MED-DHAP",
         "name": "Dihydroartemisinin-Piperaquine (DHAP)",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 30 days (Total: 30 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:13:23.059Z"
       }
     ],
-    "billing": {
-      "totalClaimedAmount": 30
-    },
     "claimId": "CLM-96849",
     "submittedAt": "2026-06-19T06:13:23.073Z",
     "status": "PENDING_REVIEW",
@@ -360,7 +333,6 @@
         "type": "diagnostic_test",
         "code": "TEST-MAL-RDT",
         "name": "Malaria Rapid Diagnostic Test (RDT)",
-        "cost": 15,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T06:33:26.221Z"
       },
@@ -369,7 +341,6 @@
         "type": "diagnostic_test",
         "code": "TEST-MAL-MIC",
         "name": "Malaria Blood Smear / Microscopy",
-        "cost": 15,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T06:33:26.221Z"
       },
@@ -378,7 +349,6 @@
         "type": "medication",
         "code": "MED-CQ-150",
         "name": "Chloroquine 150mg",
-        "cost": 0,
         "details": "Prescribed 4 tabs daily for 3 days (Total: 12 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:33:26.221Z"
       },
@@ -387,7 +357,6 @@
         "type": "medication",
         "code": "MED-PQ-7.5",
         "name": "Primaquine 7.5mg",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:33:26.221Z"
       },
@@ -396,7 +365,6 @@
         "type": "medication",
         "code": "MED-PQ-2.5",
         "name": "Primaquine 2.5mg",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:33:26.221Z"
       },
@@ -405,7 +373,6 @@
         "type": "medication",
         "code": "MED-AL-ACT",
         "name": "Artemether-Lumefantrine (ACT)",
-        "cost": 0,
         "details": "Prescribed 4 tabs daily for 3 days (Total: 12 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:33:26.221Z"
       },
@@ -414,7 +381,6 @@
         "type": "medication",
         "code": "MED-DHAP",
         "name": "Dihydroartemisinin-Piperaquine (DHAP)",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 30 days (Total: 30 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:33:26.221Z"
       },
@@ -423,14 +389,10 @@
         "type": "medication",
         "code": "MED-ART-INJ",
         "name": "Inj Artesunate (IV/IM)",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 30 days (Total: 30 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T06:33:26.221Z"
       }
     ],
-    "billing": {
-      "totalClaimedAmount": 30
-    },
     "claimId": "CLM-78487",
     "submittedAt": "2026-06-19T06:33:26.239Z",
     "status": "PENDING_REVIEW",
@@ -489,7 +451,6 @@
         "type": "diagnostic_test",
         "code": "TEST-MAL-RDT",
         "name": "Malaria Rapid Diagnostic Test (RDT)",
-        "cost": 15,
         "details": "Billed diagnostic protocol test",
         "timestamp": "2026-06-19T07:27:22.046Z"
       },
@@ -498,14 +459,10 @@
         "type": "medication",
         "code": "MED-PQ-2.5",
         "name": "Primaquine 2.5mg",
-        "cost": 0,
         "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
         "timestamp": "2026-06-19T07:27:22.046Z"
       }
     ],
-    "billing": {
-      "totalClaimedAmount": 15
-    },
     "claimId": "CLM-68415",
     "submittedAt": "2026-06-19T07:27:22.095Z",
     "status": "PENDING_REVIEW",

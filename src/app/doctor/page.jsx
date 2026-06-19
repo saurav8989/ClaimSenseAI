@@ -316,7 +316,6 @@ export default function DoctorPortal() {
                   <tr className="border-b border-slate-150 dark:border-zinc-800 text-xs text-slate-400 uppercase tracking-wider font-semibold">
                     <th className="py-3 px-4">Claim ID</th>
                     <th className="py-3 px-4">Diagnosis</th>
-                    <th className="py-3 px-4 text-right">Claimed Amount</th>
                     <th className="py-3 px-4 text-center">Risk Tier</th>
                     <th className="py-3 px-4 text-center">Status</th>
                     <th className="py-3 px-4">Reviewer Comments</th>
@@ -333,9 +332,7 @@ export default function DoctorPortal() {
                           <div className="font-semibold text-slate-800 dark:text-zinc-200">{primaryDiag?.code}</div>
                           <div className="text-xs text-slate-400 truncate max-w-[200px]">{primaryDiag?.name}</div>
                         </td>
-                        <td className="py-3 px-4 text-right text-slate-600 dark:text-zinc-400 font-mono font-medium">
-                          {c.billing?.totalClaimedAmount || 0} NPR
-                        </td>
+
                         <td className="py-3 px-4 text-center">
                           <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded ${
                             c.riskScoring?.riskCategory === 'HIGH' ? 'text-red-500 bg-red-500/10' :

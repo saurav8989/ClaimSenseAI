@@ -11,7 +11,6 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   const [customType, setCustomType] = useState('medication');
   const [customName, setCustomName] = useState('');
   const [customCode, setCustomCode] = useState('');
-  const [customCost, setCustomCost] = useState('10.00');
 
   // Disease search autocomplete states (Option B)
   const [searchQuery, setSearchQuery] = useState('');
@@ -94,48 +93,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   // Ref to prevent resetting checklists when selection auto-prefills standard services
   const isPrefillingRef = useRef(false);
 
-  // Hardcoded price catalog based on HIB_Benefit_Package.txt (in NPR)
-  const priceCatalog = {
-    // Medications (Per tablet unit cost in NPR)
-    'MED-MET-500': 1.2,       // Metformin 500mg
-    'MED-GLI-1': 1.74,        // Glimepiride 1mg
-    'MED-AML-5': 0.46,        // Amlodipine 5mg
-    'MED-AML-10': 1.2,        // Amlodipine 10mg
-    'MED-LOS-25': 1.2,        // Losartan 25mg
-    'MED-LOS-50': 1.44,       // Losartan 50mg
-    'MED-PAR-500': 0.82,      // Paracetamol 500mg
-    'MED-ORS': 9.91,          // ORS (per packet)
-    'MED-AMOX-500': 5.196,    // Amoxicillin 500mg
-    'MED-AZITH-500': 14.28,   // Azithromycin 500mg
-    'MED-DOXY-100': 4.8,      // Doxycycline 100mg
-    'MED-SAL-INH': 196.6,     // Salbutamol Inhaler (per unit)
-    
-    // Malaria program items (provided free under Govt Vertical Programs - 0 NPR)
-    'MED-CQ-150': 0.0,
-    'MED-PQ-7.5': 0.0,
-    'MED-PQ-2.5': 0.0,
-    'MED-AL-ACT': 0.0,
-    'MED-DHAP': 0.0,
-    'MED-ART-INJ': 0.0,
-    'TEST-MAL-RDT': 0.0,
-    'TEST-MAL-MIC': 0.0,
 
-    // Investigations (Per test cost in NPR)
-    'TEST-BP-CHECK': 0.0,
-    'TEST-RR-CHECK': 0.0,
-    'TEST-LUNG-AUS': 0.0,
-    'TEST-ECG': 200.0,
-    'TEST-RENAL': 110.0,     // Blood Urea (60) + Creatinine (50)
-    'TEST-UA': 45.0,         // Sugar & Albumin (Urine)
-    'TEST-LIPID': 300.0,     // Lipid Profile
-    'TEST-GLU-FPG': 25.0,
-    'TEST-GLU-PPG': 25.0,
-    'TEST-GLU-RBS': 25.0,
-    'TEST-GLU-HBA1C': 550.0,
-    'TEST-DEN-RDT': 120.0,
-    'TEST-CBC': 125.0,
-    'TEST-LFT': 200.0
-  };
 
   // Capping limits from HIB_Benefit_Package.txt
   const cappingCatalog = {
@@ -297,30 +255,24 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
 
       suggestion.protocolSummary.diagnosticTests?.forEach(test => {
         if (test.mandatory) {
-          const cost = priceCatalog[test.code] || 15.00;
           defaultServices.push({
             code: test.code,
             name: test.name,
-            type: 'diagnostic_test',
-            cost: cost
+            type: 'diagnostic_test'
           });
         }
       });
 
       suggestion.protocolSummary.medications?.forEach(med => {
         if (med.firstLine) {
-          const unitPrice = priceCatalog[med.code] || 0.0;
           const defaults = getMedDefaults(med.code);
-          const totalCost = unitPrice * defaults.frequency * defaults.duration;
 
           defaultMeds.push({
             code: med.code,
             name: med.name,
             type: 'medication',
-            unitPrice: unitPrice,
             frequency: defaults.frequency,
-            duration: defaults.duration,
-            cost: totalCost
+            duration: defaults.duration
           });
         }
       });
@@ -355,12 +307,10 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   // Handle checking/unchecking a standard diagnostic test
   const handleServiceCheck = (test, isChecked) => {
     if (isChecked) {
-      const cost = priceCatalog[test.code] || 15.00;
       setSelectedServices([...selectedServices, {
         code: test.code,
         name: test.name,
-        type: 'diagnostic_test',
-        cost: cost
+        type: 'diagnostic_test'
       }]);
     } else {
       setSelectedServices(selectedServices.filter(s => s.code !== test.code));
@@ -370,34 +320,25 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   // Handle checking/unchecking a standard medication
   const handleMedCheck = (med, isChecked) => {
     if (isChecked) {
-      const unitPrice = priceCatalog[med.code] || 0.0;
       const defaults = getMedDefaults(med.code);
-      const totalCost = unitPrice * defaults.frequency * defaults.duration;
 
       setSelectedMeds([...selectedMeds, {
         code: med.code,
         name: med.name,
         type: 'medication',
-        unitPrice: unitPrice,
         frequency: defaults.frequency,
-        duration: defaults.duration,
-        cost: totalCost
+        duration: defaults.duration
       }]);
     } else {
       setSelectedMeds(selectedMeds.filter(m => m.code !== med.code));
     }
   };
 
-  // Update frequency and duration dynamically and recalculate costs
+  // Update frequency and duration dynamically
   const handleUpdateMedPrescription = (code, field, value) => {
     setSelectedMeds(prev => prev.map(m => {
       if (m.code === code) {
-        const updated = { ...m, [field]: value };
-        const freq = parseFloat(updated.frequency) || 0;
-        const dur = parseFloat(updated.duration) || 0;
-        const uPrice = parseFloat(updated.unitPrice) || 0;
-        updated.cost = parseFloat((uPrice * freq * dur).toFixed(2));
-        return updated;
+        return { ...m, [field]: value };
       }
       return m;
     }));
@@ -409,18 +350,15 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
     if (!customName.trim()) return;
 
     const itemCode = customCode.trim().toUpperCase() || `CUST-${Math.floor(100 + Math.random() * 900)}`;
-    const itemCost = parseFloat(customCost) || 0.00;
 
     const newItem = {
       code: itemCode,
       name: customName.trim(),
       type: customType,
-      cost: itemCost,
       isCustom: true
     };
 
     if (customType === 'medication') {
-      newItem.unitPrice = itemCost;
       newItem.frequency = 1;
       newItem.duration = 1;
       setSelectedMeds([...selectedMeds, newItem]);
@@ -431,7 +369,6 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
 
     setCustomName('');
     setCustomCode('');
-    setCustomCost('10.00');
   };
 
   // Remove custom items from lists
@@ -442,11 +379,6 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
       setSelectedServices(selectedServices.filter(s => s.code !== code));
     }
   };
-
-  // Compute overall bill
-  const totalServicesCost = selectedServices.reduce((sum, s) => sum + s.cost, 0);
-  const totalMedsCost = selectedMeds.reduce((sum, m) => sum + m.cost, 0);
-  const grandTotal = totalServicesCost + totalMedsCost;
 
   // Process and Submit
   const handleFormSubmit = () => {
@@ -470,8 +402,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
         type: s.type,
         code: s.code,
         name: s.name,
-        cost: s.cost,
-        details: s.isCustom ? "Custom billed service" : "Billed diagnostic protocol test",
+        details: s.isCustom ? "Custom service" : "Diagnostic protocol test",
         timestamp: new Date().toISOString()
       });
     });
@@ -484,7 +415,6 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
         type: 'medication',
         code: m.code,
         name: m.name,
-        cost: m.cost,
         details: m.isCustom
           ? `Custom prescribed medication (Qty: ${m.frequency || 1} daily for ${m.duration || 1} days)`
           : `Prescribed ${m.frequency} tabs daily for ${m.duration} days (Total: ${m.frequency * m.duration} tabs, HIB cap: ${cappingLimit})`,
@@ -509,10 +439,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
         name: d.name,
         isPrimary: d.isPrimary || index === 0
       })),
-      carePathway,
-      billing: {
-        totalClaimedAmount: parseFloat(grandTotal.toFixed(2))
-      }
+      carePathway
     };
 
     onSubmit(claimPayload);
@@ -770,7 +697,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                         />
                         <div className="flex-1">
                           <p>{test.name}</p>
-                           <span className="text-[10px] text-slate-400 font-mono">({test.code}) • {priceCatalog[test.code]?.toFixed(2)} NPR</span>
+                          <span className="text-[10px] text-slate-400 font-mono">({test.code})</span>
                           {test.mandatory && <span className="ml-2 text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-1 py-0.2 rounded font-black uppercase">Required</span>}
                         </div>
                       </label>
@@ -802,7 +729,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                         />
                         <div className="flex-1">
                           <p>{med.name}</p>
-                           <span className="text-[10px] text-slate-400 font-mono">({med.code}) • {priceCatalog[med.code]?.toFixed(2)} NPR</span>
+                          <span className="text-[10px] text-slate-400 font-mono">({med.code})</span>
                           {med.firstLine && <span className="ml-2 text-[9px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-1 py-0.2 rounded font-black uppercase">1st Line</span>}
                         </div>
                       </label>
@@ -836,7 +763,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                 </select>
               </div>
 
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-3">
                 <label className="text-[10px] font-bold text-slate-400 uppercase">Item Name</label>
                 <input 
                   type="text" 
@@ -845,17 +772,6 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                   onChange={e => setCustomName(e.target.value)}
                   className="w-full mt-0.5 px-2.5 py-1.5 border rounded-lg bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none"
                   required
-                />
-              </div>
-
-              <div className="sm:col-span-1">
-                <label className="text-[10px] font-bold text-slate-400 uppercase">Cost (NPR)</label>
-                <input 
-                  type="number" 
-                  step="0.01" 
-                  value={customCost} 
-                  onChange={e => setCustomCost(e.target.value)}
-                  className="w-full mt-0.5 px-2.5 py-1.5 border rounded-lg bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none"
                 />
               </div>
             </div>
@@ -896,7 +812,6 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                       <span className="text-[10px] text-slate-400 font-mono ml-2">({s.code})</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="font-semibold text-slate-700 dark:text-zinc-300">{s.cost.toFixed(2)} NPR</span>
                       <button 
                         onClick={() => handleRemoveItem(s.code, 'service')}
                         className="text-red-500 hover:text-red-700 text-sm font-bold transition-colors cursor-pointer pl-1"
@@ -922,14 +837,8 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                           </span>
                           <span className="font-semibold text-slate-800 dark:text-zinc-200">{m.name}</span>
                           <span className="text-[10px] text-slate-400 font-mono ml-2">({m.code})</span>
-                          {m.unitPrice !== undefined && (
-                            <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">
-                              Unit Price: <span className="font-mono font-bold text-slate-700 dark:text-zinc-300">{m.unitPrice.toFixed(2)} NPR</span>
-                            </div>
-                          )}
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="font-bold text-slate-850 dark:text-zinc-200 font-mono">{(m.cost || 0).toFixed(2)} NPR</span>
                           <button 
                             onClick={() => handleRemoveItem(m.code, 'medication')}
                             className="text-red-500 hover:text-red-700 text-sm font-bold transition-colors cursor-pointer pl-1"
@@ -988,12 +897,8 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
             </div>
           )}
 
-          {/* Billing Total & Submit */}
-          <div className="border-t border-slate-200 dark:border-zinc-800 pt-4 flex justify-between items-center">
-            <div>
-              <span className="text-xxs font-bold text-slate-400 uppercase tracking-wide">Total Estimated Cost</span>
-              <p className="text-2xl font-black text-slate-800 dark:text-zinc-50">{grandTotal.toFixed(2)} NPR</p>
-            </div>
+          {/* Submit Button */}
+          <div className="border-t border-slate-200 dark:border-zinc-800 pt-4 flex justify-end">
             <button
               onClick={handleFormSubmit}
               disabled={isSubmitting || diagnoses.length === 0}

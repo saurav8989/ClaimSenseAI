@@ -43,7 +43,6 @@ This JSON payload represents a medical claim submitted by the provider.
       "code": "BP-001",
       "name": "Blood Pressure Check",
       "details": "BP: 155/98 mmHg",
-      "cost": 15.00,
       "timestamp": "2026-06-16T14:10:00Z"
     },
     {
@@ -52,13 +51,9 @@ This JSON payload represents a medical claim submitted by the provider.
       "code": "RX-AML-5",
       "name": "Amlodipine 5mg",
       "details": "Oral, once daily for 30 days",
-      "cost": 45.00,
       "timestamp": "2026-06-16T14:25:00Z"
     }
-  ],
-  "billing": {
-    "totalClaimedAmount": 60.00
-  }
+  ]
 }
 ```
 
