@@ -1,7 +1,7 @@
 # ClaimSenseAI: Clinical Compliance & STP Validation
 ### Hackathon Project Submission Report
 
-ClaimSenseAI is an AI-powered clinical compliance auditing and adjudication system designed to automate standard treatment protocol (STP) validations, verify medical justifications, and identify billing fraud, waste, and abuse (FWA) in real-time.
+ClaimSenseAI is an AI-powered clinical compliance auditing and adjudication system designed to automate standard treatment protocol (STP) validations, verify medical justifications, and identify pathway errors and clinical violations in real-time.
 
 ---
 
@@ -35,7 +35,7 @@ graph TD
 ```
 
 ### A. Point-of-Care Claim Builder (`/doctor`)
-Enables physicians to build claims with active diagnostic and billing checks:
+Enables physicians to build claims with active diagnostic and clinical compliance checks:
 * **Patient ID Autocomplete**: Autocomplete search suggestion list matching patient records (ID or name) from the database (`patientsDatabase.json`). Selecting a suggestion auto-fills Name, Age, and Gender.
 * **Lock Demographics**: The Gender field is disabled (read-only) in the form, ensuring patient demographic profiles are derived strictly from database records.
 * **Age Blur Persistence**: Direct editing of a patient's age in the form triggers a background `POST` request to the patients API upon input field blur (`onBlur`), ensuring updates are instantly saved in the database.
