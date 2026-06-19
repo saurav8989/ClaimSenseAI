@@ -19,11 +19,43 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   const [isSearching, setIsSearching] = useState(false);
   
   // Patient details state variables
-  const [patientId, setPatientId] = useState('PAT-5542');
-  const [patientAge, setPatientAge] = useState(45);
+  const [patientId, setPatientId] = useState('');
+  const [patientName, setPatientName] = useState('');
+  const [patientAge, setPatientAge] = useState('');
   const [patientGender, setPatientGender] = useState('Male');
   const [isPregnant, setIsPregnant] = useState(false);
   const [isLactating, setIsLactating] = useState(false);
+
+  // Loaded test patients list
+  const [patientsList, setPatientsList] = useState([]);
+
+  // Load patient database on mount
+  useEffect(() => {
+    async function loadPatients() {
+      try {
+        const res = await fetch('/api/patients');
+        if (res.ok) {
+          const data = await res.json();
+          setPatientsList(data || []);
+        }
+      } catch (err) {
+        console.error("Failed to load patients:", err);
+      }
+    }
+    loadPatients();
+  }, []);
+
+  // Auto-resolve patient details when patientId matches any patient in patientsList
+  useEffect(() => {
+    const matched = patientsList.find(p => p.id.toUpperCase().trim() === patientId.toUpperCase().trim());
+    if (matched) {
+      setPatientName(matched.name);
+      setPatientAge(matched.age);
+      setPatientGender(matched.gender);
+      setIsPregnant(!!matched.isPregnant);
+      setIsLactating(!!matched.isLactating);
+    }
+  }, [patientId, patientsList]);
 
   // Reset pregnancy and lactation checks when gender changes away from Female
   useEffect(() => {
@@ -36,50 +68,99 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   // Ref to prevent resetting checklists when selection auto-prefills standard services
   const isPrefillingRef = useRef(false);
 
-  // Hardcoded price catalog for standard protocol services
+  // Hardcoded price catalog based on HIB_Benefit_Package.txt (in NPR)
   const priceCatalog = {
-    // Malaria
-    'TEST-MAL-RDT': 15.00,
-    'TEST-MAL-MIC': 20.00,
-    'MED-CQ-150': 10.00,
-    'MED-PQ-7.5': 12.00,
-    'MED-PQ-2.5': 8.00,
-    'MED-AL-ACT': 35.00,
-    'MED-DHAP': 45.00,
-    'MED-ART-INJ': 60.00,
-    // Hypertension
-    'TEST-BP-CHECK': 10.00,
-    'TEST-ECG': 25.00,
-    'TEST-RENAL': 30.00,
-    'TEST-UA': 15.00,
-    'TEST-LIPID': 20.00,
-    'MED-AML-5': 12.00,
-    'MED-LOS-25': 18.00,
-    'MED-AML-10': 22.00,
-    'MED-LOS-50': 30.00,
-    // Diabetes
-    'TEST-GLU-FPG': 15.00,
-    'TEST-GLU-PPG': 15.00,
-    'TEST-GLU-RBS': 10.00,
-    'TEST-GLU-HBA1C': 45.00,
-    'TEST-UA-PROT': 12.00,
-    'TEST-UA-KET': 12.00,
-    'MED-MET-500': 15.00,
-    'MED-GLI-1': 14.00,
-    // Dengue
-    'TEST-DEN-RDT': 30.00,
-    'TEST-CBC': 15.00,
-    'TEST-LFT': 25.00,
-    'MED-PAR-500': 5.00,
-    'MED-ORS': 8.00,
-    'MED-IBU-400': 10.00,
-    // Pneumonia
-    'TEST-RR-CHECK': 5.00,
-    'TEST-LUNG-AUS': 10.00,
-    'MED-AMOX-500': 22.00,
-    'MED-AZITH-500': 28.00,
-    'MED-DOXY-100': 24.00,
-    'MED-SAL-INH': 35.00,
+    // Medications (Per tablet unit cost in NPR)
+    'MED-MET-500': 1.2,       // Metformin 500mg
+    'MED-GLI-1': 1.74,        // Glimepiride 1mg
+    'MED-AML-5': 0.46,        // Amlodipine 5mg
+    'MED-AML-10': 1.2,        // Amlodipine 10mg
+    'MED-LOS-25': 1.2,        // Losartan 25mg
+    'MED-LOS-50': 1.44,       // Losartan 50mg
+    'MED-PAR-500': 0.82,      // Paracetamol 500mg
+    'MED-ORS': 9.91,          // ORS (per packet)
+    'MED-AMOX-500': 5.196,    // Amoxicillin 500mg
+    'MED-AZITH-500': 14.28,   // Azithromycin 500mg
+    'MED-DOXY-100': 4.8,      // Doxycycline 100mg
+    'MED-SAL-INH': 196.6,     // Salbutamol Inhaler (per unit)
+    
+    // Malaria program items (provided free under Govt Vertical Programs - 0 NPR)
+    'MED-CQ-150': 0.0,
+    'MED-PQ-7.5': 0.0,
+    'MED-PQ-2.5': 0.0,
+    'MED-AL-ACT': 0.0,
+    'MED-DHAP': 0.0,
+    'MED-ART-INJ': 0.0,
+    'TEST-MAL-RDT': 0.0,
+    'TEST-MAL-MIC': 0.0,
+
+    // Investigations (Per test cost in NPR)
+    'TEST-BP-CHECK': 0.0,
+    'TEST-RR-CHECK': 0.0,
+    'TEST-LUNG-AUS': 0.0,
+    'TEST-ECG': 200.0,
+    'TEST-RENAL': 110.0,     // Blood Urea (60) + Creatinine (50)
+    'TEST-UA': 45.0,         // Sugar & Albumin (Urine)
+    'TEST-LIPID': 300.0,     // Lipid Profile
+    'TEST-GLU-FPG': 25.0,
+    'TEST-GLU-PPG': 25.0,
+    'TEST-GLU-RBS': 25.0,
+    'TEST-GLU-HBA1C': 550.0,
+    'TEST-DEN-RDT': 120.0,
+    'TEST-CBC': 125.0,
+    'TEST-LFT': 200.0
+  };
+
+  // Capping limits from HIB_Benefit_Package.txt
+  const cappingCatalog = {
+    'MED-MET-500': 180,
+    'MED-GLI-1': 180,
+    'MED-AML-5': 180,
+    'MED-AML-10': 90,
+    'MED-LOS-25': 90,
+    'MED-LOS-50': 90,
+    'MED-PAR-500': 20,
+    'MED-AMOX-500': 56,
+    'MED-AZITH-500': 7,
+    'MED-DOXY-100': 40,
+    'MED-SAL-INH': 6,
+    'MED-ORS': 10
+  };
+
+  // Resolves default frequency and duration for standard meds
+  const getMedDefaults = (code) => {
+    const defaults = {
+      frequency: 1,
+      duration: 30
+    };
+
+    if (['MED-MET-500', 'MED-GLI-1', 'MED-AML-5', 'MED-LOS-25'].includes(code)) {
+      defaults.frequency = 1;
+      defaults.duration = 30;
+    } else if (['MED-AML-10', 'MED-LOS-50'].includes(code)) {
+      defaults.frequency = 1;
+      defaults.duration = 1;
+    } else if (['MED-CQ-150', 'MED-AL-ACT'].includes(code)) {
+      defaults.frequency = 4;
+      defaults.duration = 3;
+    } else if (['MED-PQ-7.5', 'MED-PQ-2.5'].includes(code)) {
+      defaults.frequency = 1;
+      defaults.duration = 14;
+    } else if (['MED-AMOX-500', 'MED-AZITH-500', 'MED-DOXY-100'].includes(code)) {
+      defaults.frequency = 3;
+      defaults.duration = 7;
+    } else if (code === 'MED-PAR-500') {
+      defaults.frequency = 3;
+      defaults.duration = 5;
+    } else if (code === 'MED-ORS') {
+      defaults.frequency = 1;
+      defaults.duration = 4;
+    } else if (code === 'MED-SAL-INH') {
+      defaults.frequency = 1;
+      defaults.duration = 1;
+    }
+
+    return defaults;
   };
 
   // Map ICD-11 codes to their Clinical Dictionary prefix
@@ -199,12 +280,18 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
       });
 
       suggestion.protocolSummary.medications?.forEach(med => {
-        const cost = priceCatalog[med.code] || 20.00;
+        const unitPrice = priceCatalog[med.code] || 0.0;
+        const defaults = getMedDefaults(med.code);
+        const totalCost = unitPrice * defaults.frequency * defaults.duration;
+
         defaultMeds.push({
           code: med.code,
           name: med.name,
           type: 'medication',
-          cost: cost
+          unitPrice: unitPrice,
+          frequency: defaults.frequency,
+          duration: defaults.duration,
+          cost: totalCost
         });
       });
 
@@ -253,16 +340,37 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
   // Handle checking/unchecking a standard medication
   const handleMedCheck = (med, isChecked) => {
     if (isChecked) {
-      const cost = priceCatalog[med.code] || 20.00;
+      const unitPrice = priceCatalog[med.code] || 0.0;
+      const defaults = getMedDefaults(med.code);
+      const totalCost = unitPrice * defaults.frequency * defaults.duration;
+
       setSelectedMeds([...selectedMeds, {
         code: med.code,
         name: med.name,
         type: 'medication',
-        cost: cost
+        unitPrice: unitPrice,
+        frequency: defaults.frequency,
+        duration: defaults.duration,
+        cost: totalCost
       }]);
     } else {
       setSelectedMeds(selectedMeds.filter(m => m.code !== med.code));
     }
+  };
+
+  // Update frequency and duration dynamically and recalculate costs
+  const handleUpdateMedPrescription = (code, field, value) => {
+    setSelectedMeds(prev => prev.map(m => {
+      if (m.code === code) {
+        const updated = { ...m, [field]: value };
+        const freq = parseFloat(updated.frequency) || 0;
+        const dur = parseFloat(updated.duration) || 0;
+        const uPrice = parseFloat(updated.unitPrice) || 0;
+        updated.cost = parseFloat((uPrice * freq * dur).toFixed(2));
+        return updated;
+      }
+      return m;
+    }));
   };
 
   // Add custom medications/procedures (crucial for testing rule violations!)
@@ -282,6 +390,9 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
     };
 
     if (customType === 'medication') {
+      newItem.unitPrice = itemCost;
+      newItem.frequency = 1;
+      newItem.duration = 1;
       setSelectedMeds([...selectedMeds, newItem]);
     } else {
       // Map other custom types (procedures or diagnostic tests) as services
@@ -309,6 +420,10 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
 
   // Process and Submit
   const handleFormSubmit = () => {
+    if (!patientId || !patientId.trim()) {
+      alert("Please enter or select a Patient ID.");
+      return;
+    }
     if (diagnoses.length === 0) {
       alert("Please select at least one diagnosis first.");
       return;
@@ -333,13 +448,16 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
 
     // Add medications
     selectedMeds.forEach(m => {
+      const cappingLimit = cappingCatalog[m.code] || 'N/A';
       carePathway.push({
         stepNumber: stepNumber++,
         type: 'medication',
         code: m.code,
         name: m.name,
         cost: m.cost,
-        details: m.isCustom ? "Custom prescribed medication" : "Prescribed first-line protocol dose",
+        details: m.isCustom
+          ? `Custom prescribed medication (Qty: ${m.frequency || 1} daily for ${m.duration || 1} days)`
+          : `Prescribed ${m.frequency} tabs daily for ${m.duration} days (Total: ${m.frequency * m.duration} tabs, HIB cap: ${cappingLimit})`,
         timestamp: new Date().toISOString()
       });
     });
@@ -349,8 +467,8 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
       providerId: "PROV-9082",
       providerName: "Dr. Sarah Jenkins",
       patient: {
-        id: patientId || "PAT-5542",
-        name: `Patient ${patientId || "PAT-5542"}`,
+        id: patientId.trim(),
+        name: patientName || `Patient ${patientId.trim()}`,
         age: parseFloat(patientAge) || 45.0,
         gender: patientGender,
         isPregnant: isPregnant,
@@ -389,12 +507,28 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
           👤 Patient Info
         </h3>
         
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div>
+            <label className="text-[10px] font-bold text-slate-400 uppercase">Quick Select Patient</label>
+            <select 
+              value={patientId} 
+              onChange={e => setPatientId(e.target.value)}
+              className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100 font-sans cursor-pointer"
+            >
+              <option value="">-- Select Patient --</option>
+              {patientsList.map(p => (
+                <option key={p.id} value={p.id}>
+                  {p.id} - {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label className="text-[10px] font-bold text-slate-400 uppercase">Patient ID</label>
             <input 
               type="text" 
-              placeholder="e.g. PAT-5542" 
+              placeholder="e.g. PAT-0001" 
               value={patientId} 
               onChange={e => setPatientId(e.target.value)}
               className="w-full mt-1 px-3 py-2 border rounded-xl bg-white dark:bg-zinc-800 dark:border-zinc-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-800 dark:text-zinc-100"
@@ -426,6 +560,13 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
             </select>
           </div>
         </div>
+
+        {/* Patient Notes */}
+        {patientId && patientsList.find(p => p.id.toUpperCase().trim() === patientId.toUpperCase().trim())?.notes && (
+          <p className="text-[10px] text-teal-700 dark:text-teal-400 italic bg-teal-50/30 dark:bg-teal-950/10 p-2 rounded-lg border border-teal-100/30 dark:border-teal-900/20">
+            💡 {patientsList.find(p => p.id.toUpperCase().trim() === patientId.toUpperCase().trim()).notes}
+          </p>
+        )}
 
         {/* Conditional Checkboxes for Females */}
         {patientGender === 'Female' && (
@@ -585,7 +726,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                         />
                         <div className="flex-1">
                           <p>{test.name}</p>
-                          <span className="text-[10px] text-slate-400 font-mono">({test.code}) • ${priceCatalog[test.code]?.toFixed(2)}</span>
+                           <span className="text-[10px] text-slate-400 font-mono">({test.code}) • {priceCatalog[test.code]?.toFixed(2)} NPR</span>
                           {test.mandatory && <span className="ml-2 text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-1 py-0.2 rounded font-black uppercase">Required</span>}
                         </div>
                       </label>
@@ -617,7 +758,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                         />
                         <div className="flex-1">
                           <p>{med.name}</p>
-                          <span className="text-[10px] text-slate-400 font-mono">({med.code}) • ${priceCatalog[med.code]?.toFixed(2)}</span>
+                           <span className="text-[10px] text-slate-400 font-mono">({med.code}) • {priceCatalog[med.code]?.toFixed(2)} NPR</span>
                           {med.firstLine && <span className="ml-2 text-[9px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-1 py-0.2 rounded font-black uppercase">1st Line</span>}
                         </div>
                       </label>
@@ -664,7 +805,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
               </div>
 
               <div className="sm:col-span-1">
-                <label className="text-[10px] font-bold text-slate-400 uppercase">Cost ($)</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase">Cost (NPR)</label>
                 <input 
                   type="number" 
                   step="0.01" 
@@ -711,7 +852,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                       <span className="text-[10px] text-slate-400 font-mono ml-2">({s.code})</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="font-semibold text-slate-700 dark:text-zinc-300">${s.cost.toFixed(2)}</span>
+                      <span className="font-semibold text-slate-700 dark:text-zinc-300">{s.cost.toFixed(2)} NPR</span>
                       <button 
                         onClick={() => handleRemoveItem(s.code, 'service')}
                         className="text-red-500 hover:text-red-700 text-sm font-bold transition-colors cursor-pointer pl-1"
@@ -722,27 +863,82 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
                   </div>
                 ))}
 
-                {/* Medications */}
-                {selectedMeds.map(m => (
-                  <div key={m.code} className="flex justify-between items-center p-3 bg-slate-50/10 dark:bg-zinc-950/10">
-                    <div>
-                      <span className="text-[9px] font-black uppercase bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-300 px-1 py-0.5 rounded mr-2">
-                        Medication
-                      </span>
-                      <span className="font-semibold text-slate-800 dark:text-zinc-200">{m.name}</span>
-                      <span className="text-[10px] text-slate-400 font-mono ml-2">({m.code})</span>
+                {/* Medications with quantity/frequency controls */}
+                {selectedMeds.map(m => {
+                  const cappingLimit = cappingCatalog[m.code];
+                  const totalQty = (m.frequency || 0) * (m.duration || 0);
+                  const isExceeded = cappingLimit && totalQty > cappingLimit;
+
+                  return (
+                    <div key={m.code} className="p-3 bg-slate-50/40 dark:bg-zinc-950/10 border-b border-slate-100 dark:border-zinc-850/60 last:border-b-0 space-y-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="text-[9px] font-black uppercase bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-300 px-1.5 py-0.5 rounded mr-2">
+                            Medication
+                          </span>
+                          <span className="font-semibold text-slate-800 dark:text-zinc-200">{m.name}</span>
+                          <span className="text-[10px] text-slate-400 font-mono ml-2">({m.code})</span>
+                          {m.unitPrice !== undefined && (
+                            <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">
+                              Unit Price: <span className="font-mono font-bold text-slate-700 dark:text-zinc-300">{m.unitPrice.toFixed(2)} NPR</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-bold text-slate-850 dark:text-zinc-200 font-mono">{(m.cost || 0).toFixed(2)} NPR</span>
+                          <button 
+                            onClick={() => handleRemoveItem(m.code, 'medication')}
+                            className="text-red-500 hover:text-red-700 text-sm font-bold transition-colors cursor-pointer pl-1"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Controls for Frequency & Duration */}
+                      <div className="flex flex-wrap items-center gap-4 pt-1.5 border-t border-slate-100/60 dark:border-zinc-850/30">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Freq/Day:</span>
+                          <input 
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={m.frequency !== undefined ? m.frequency : 1}
+                            onChange={(e) => handleUpdateMedPrescription(m.code, 'frequency', parseInt(e.target.value) || 0)}
+                            className="w-14 px-2 py-0.5 border border-slate-200 dark:border-zinc-700 rounded bg-white dark:bg-zinc-800 text-xxs font-mono text-center text-slate-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Duration (Days):</span>
+                          <input 
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={m.duration !== undefined ? m.duration : 30}
+                            onChange={(e) => handleUpdateMedPrescription(m.code, 'duration', parseInt(e.target.value) || 0)}
+                            className="w-14 px-2 py-0.5 border border-slate-200 dark:border-zinc-700 rounded bg-white dark:bg-zinc-800 text-xxs font-mono text-center text-slate-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                          />
+                        </div>
+
+                        {/* Capping Warning */}
+                        {cappingLimit && (
+                          <div className="flex-1 text-right">
+                            {isExceeded ? (
+                              <span className="inline-block bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 text-[9px] font-black px-2 py-0.5 rounded border border-rose-100 dark:border-rose-900/50">
+                                ⚠️ Exceeds HIB Limit ({cappingLimit} tabs)
+                              </span>
+                            ) : (
+                              <span className="text-[9px] text-slate-450 dark:text-zinc-550 font-medium">
+                                HIB Cap: {cappingLimit} tabs
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="font-semibold text-slate-700 dark:text-zinc-300">${m.cost.toFixed(2)}</span>
-                      <button 
-                        onClick={() => handleRemoveItem(m.code, 'medication')}
-                        className="text-red-500 hover:text-red-700 text-sm font-bold transition-colors cursor-pointer pl-1"
-                      >
-                        &times;
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
 
               </div>
             </div>
@@ -752,7 +948,7 @@ export default function ClaimBuilder({ diagnoses, setDiagnoses, onSubmit, isSubm
           <div className="border-t border-slate-200 dark:border-zinc-800 pt-4 flex justify-between items-center">
             <div>
               <span className="text-xxs font-bold text-slate-400 uppercase tracking-wide">Total Estimated Cost</span>
-              <p className="text-2xl font-black text-slate-800 dark:text-zinc-50">${grandTotal.toFixed(2)}</p>
+              <p className="text-2xl font-black text-slate-800 dark:text-zinc-50">{grandTotal.toFixed(2)} NPR</p>
             </div>
             <button
               onClick={handleFormSubmit}

@@ -333,7 +333,7 @@ export default function DoctorPortal() {
                           <div className="text-xs text-slate-400 truncate max-w-[200px]">{primaryDiag?.name}</div>
                         </td>
                         <td className="py-3 px-4 text-right text-slate-600 dark:text-zinc-400 font-mono font-medium">
-                          ${c.billing?.totalClaimedAmount || 0}
+                          {c.billing?.totalClaimedAmount || 0} NPR
                         </td>
                         <td className="py-3 px-4 text-center">
                           <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded ${
