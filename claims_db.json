@@ -464,5 +464,79 @@
       ],
       "reviewerPriority": 3
     }
+  },
+  {
+    "providerId": "PROV-9082",
+    "providerName": "Dr. Ram Prasad Yadav",
+    "patient": {
+      "id": "PAT-0001",
+      "name": "Patient Alpha",
+      "age": 45,
+      "gender": "Male",
+      "isPregnant": false,
+      "isLactating": false
+    },
+    "diagnoses": [
+      {
+        "code": "1F40.Z",
+        "name": "Malaria due to Plasmodium falciparum, unspecified",
+        "isPrimary": true
+      }
+    ],
+    "carePathway": [
+      {
+        "stepNumber": 1,
+        "type": "diagnostic_test",
+        "code": "TEST-MAL-RDT",
+        "name": "Malaria Rapid Diagnostic Test (RDT)",
+        "cost": 15,
+        "details": "Billed diagnostic protocol test",
+        "timestamp": "2026-06-19T07:27:22.046Z"
+      },
+      {
+        "stepNumber": 2,
+        "type": "medication",
+        "code": "MED-PQ-2.5",
+        "name": "Primaquine 2.5mg",
+        "cost": 0,
+        "details": "Prescribed 1 tabs daily for 14 days (Total: 14 tabs, HIB cap: N/A)",
+        "timestamp": "2026-06-19T07:27:22.046Z"
+      }
+    ],
+    "billing": {
+      "totalClaimedAmount": 15
+    },
+    "claimId": "CLM-68415",
+    "submittedAt": "2026-06-19T07:27:22.095Z",
+    "status": "PENDING_REVIEW",
+    "clinicalValidation": {
+      "isValid": true,
+      "issues": []
+    },
+    "stpCompliance": {
+      "isCompliant": false,
+      "complianceScore": 40,
+      "protocolName": "Malaria Standard Treatment Protocol",
+      "deviations": [
+        {
+          "type": "INCORRECT_THERAPY",
+          "message": "Falciparum malaria requires Artemether-Lumefantrine (AL) and single-dose Primaquine on Day 1.",
+          "penalty": 30
+        },
+        {
+          "type": "INCORRECT_DOSING",
+          "message": "Patients aged 1 year or older require standard-dose Primaquine 7.5mg (MED-PQ-7.5) instead of 2.5mg.",
+          "penalty": 30
+        }
+      ]
+    },
+    "riskScoring": {
+      "overallRiskScore": 30,
+      "riskCategory": "LOW",
+      "riskFlags": [
+        "HIGH_PROTOCOL_DEVIATION"
+      ],
+      "reviewerPriority": 5
+    }
   }
 ]
