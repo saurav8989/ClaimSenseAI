@@ -105,6 +105,7 @@ export default function DoctorPortal() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black font-sans py-10 px-4 sm:px-8">
+      <title>Claim Build</title>
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header Dashboard Banner */}
